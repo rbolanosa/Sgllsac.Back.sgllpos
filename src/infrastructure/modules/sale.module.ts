@@ -1,0 +1,27 @@
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { SaleEntity } from '../../domain/entities/sale.entity';
+import { SaleItemEntity } from '../../domain/entities/sale-item.entity';
+import { ProductEntity } from '../../domain/entities/product.entity';
+import { CustomerEntity } from '../../domain/entities/customer.entity';
+import { InventoryMovementEntity } from '../../domain/entities/inventory-movement.entity';
+import { SaleService } from '../../domain/services/sale.service';
+import { SaleController } from '../controllers/sale.controller';
+import { CompanySettingsModule } from './company-settings.module';
+
+@Module({
+  imports: [
+    TypeOrmModule.forFeature([
+      SaleEntity,
+      SaleItemEntity,
+      ProductEntity,
+      CustomerEntity,
+      InventoryMovementEntity,
+    ]),
+    CompanySettingsModule,
+  ],
+  controllers: [SaleController],
+  providers: [SaleService],
+  exports: [SaleService],
+})
+export class SaleModule {}

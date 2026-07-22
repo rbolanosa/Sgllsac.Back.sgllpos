@@ -1,0 +1,42 @@
+import { Repository, DataSource } from 'typeorm';
+import { SaleEntity, SaleStatus } from '../../domain/entities/sale.entity';
+import { SaleItemEntity } from '../../domain/entities/sale-item.entity';
+import { ProductEntity } from '../../domain/entities/product.entity';
+import { CustomerEntity } from '../../domain/entities/customer.entity';
+import { InventoryMovementEntity } from '../../domain/entities/inventory-movement.entity';
+import { CreateSaleDto, VoidSaleDto } from '../../application/dtos/sale.dto';
+import { CompanySettingsService } from './company-settings.service';
+export declare class SaleService {
+    private readonly saleRepo;
+    private readonly saleItemRepo;
+    private readonly productRepo;
+    private readonly customerRepo;
+    private readonly movementRepo;
+    private readonly dataSource;
+    private readonly companySettings;
+    constructor(saleRepo: Repository<SaleEntity>, saleItemRepo: Repository<SaleItemEntity>, productRepo: Repository<ProductEntity>, customerRepo: Repository<CustomerEntity>, movementRepo: Repository<InventoryMovementEntity>, dataSource: DataSource, companySettings: CompanySettingsService);
+    findAll(filters?: {
+        page?: number;
+        limit?: number;
+        status?: SaleStatus;
+        from?: string;
+        to?: string;
+        documentType?: string;
+    }): Promise<{
+        data: SaleEntity[];
+        total: number;
+        page: number;
+        limit: number;
+    }>;
+    findById(id: number): Promise<SaleEntity>;
+    create(dto: CreateSaleDto, cashierId?: number): Promise<SaleEntity>;
+    createCreditNote(originalId: number, reason: string, description: string): Promise<SaleEntity>;
+    voidSale(id: number, dto: VoidSaleDto, performedBy?: number): Promise<SaleEntity>;
+    getSalesSummary(from: string, to: string): Promise<{
+        totalSales: number;
+        totalRevenue: number;
+        totalTax: number;
+        avgTicket: number;
+    }>;
+    private generateInvoiceNumber;
+}

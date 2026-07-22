@@ -1,0 +1,28 @@
+import { TaxRegime } from '../../domain/entities/company-settings.entity';
+export declare class UpdateCompanySettingsDto {
+    ruc: string;
+    razonSocial: string;
+    nombreComercial?: string;
+    direccion: string;
+    ubigeo?: string;
+    distrito?: string;
+    provincia?: string;
+    departamento?: string;
+    regimenTributario?: TaxRegime;
+    usuarioSol?: string;
+    claveSol?: string;
+    serieFactura?: string;
+    serieBoleta?: string;
+    serieNotaVenta?: string;
+    correlativoFactura?: number;
+    correlativoBoleta?: number;
+    correlativoNotaVenta?: number;
+    igvRate?: number;
+    moneda?: string;
+    telefono?: string;
+    email?: string;
+    logoUrl?: string;
+    website?: string;
+    sunatApiUrl?: string;
+    productionMode?: boolean;
+}
