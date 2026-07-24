@@ -38,6 +38,11 @@ __decorate([
     (0, class_validator_1.IsEnum)(user_entity_1.UserRole),
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "role", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], CreateUserDto.prototype, "establishmentId", void 0);
 class UpdateUserDto {
 }
 exports.UpdateUserDto = UpdateUserDto;
@@ -66,6 +71,11 @@ __decorate([
     (0, class_validator_1.IsEnum)(user_entity_1.UserRole),
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "role", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], UpdateUserDto.prototype, "establishmentId", void 0);
 __decorate([
     (0, swagger_1.ApiPropertyOptional)(),
     (0, class_validator_1.IsOptional)(),

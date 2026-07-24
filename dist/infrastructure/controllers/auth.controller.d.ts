@@ -13,6 +13,7 @@ export declare class AuthController {
             name: string;
             email: string;
             role: import("../../domain/entities/user.entity").UserRole;
+            establishmentId: number;
         };
     }>;
     status(): {

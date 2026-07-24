@@ -29,6 +29,9 @@ export class UserEntity {
   @Column({ name: 'is_active', type: 'boolean', default: true })
   isActive: boolean;
 
+  @Column({ name: 'establishment_id', type: 'int', nullable: true })
+  establishmentId: number | null;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 

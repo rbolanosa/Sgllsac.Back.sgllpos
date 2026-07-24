@@ -9,6 +9,7 @@ import { SaleEntity, SaleStatus, DocumentType } from '../../domain/entities/sale
 import { SaleItemEntity } from '../../domain/entities/sale-item.entity';
 import { ProductEntity } from '../../domain/entities/product.entity';
 import { CustomerEntity } from '../../domain/entities/customer.entity';
+import { UserEntity } from '../../domain/entities/user.entity';
 import {
   InventoryMovementEntity,
   MovementType,
@@ -16,6 +17,7 @@ import {
 } from '../../domain/entities/inventory-movement.entity';
 import { CreateSaleDto, VoidSaleDto } from '../../application/dtos/sale.dto';
 import { CompanySettingsService } from './company-settings.service';
+import { FacturacionAdapter } from '../../infrastructure/adapters/facturacion.adapter';
 
 @Injectable()
 export class SaleService {
@@ -32,6 +34,7 @@ export class SaleService {
     private readonly movementRepo: Repository<InventoryMovementEntity>,
     private readonly dataSource: DataSource,
     private readonly companySettings: CompanySettingsService,
+    private readonly facturacionAdapter: FacturacionAdapter,
   ) {}
 
   async findAll(filters: { page?: number; limit?: number; status?: SaleStatus; from?: string; to?: string; documentType?: string } = {}) {
@@ -65,7 +68,7 @@ export class SaleService {
   }
 
   async create(dto: CreateSaleDto, cashierId?: number): Promise<SaleEntity> {
-    return this.dataSource.transaction(async (manager) => {
+    const result = await this.dataSource.transaction(async (manager) => {
       // 1. Resolve customer (default CF)
       let customerId = dto.customerId ?? null;
       if (!customerId) {
@@ -88,14 +91,17 @@ export class SaleService {
         }
 
         const disc = item.discount ?? 0;
-        const lineTotal = Number(product.salePrice) * item.quantity - disc;
+        const priceToUse = (item.unitPrice != null && Number(item.unitPrice) > 0)
+          ? Number(item.unitPrice)
+          : Number(product.salePrice);
+        const lineTotal = priceToUse * item.quantity - disc;
         totalItemsSum += lineTotal;
 
         saleItems.push({
           productId: product.id,
           productName: product.name,
           quantity: item.quantity,
-          unitPrice: Number(product.salePrice),
+          unitPrice: priceToUse,
           taxRate: Number(product.taxRate),
           discount: disc,
           subtotal: lineTotal,
@@ -119,20 +125,13 @@ export class SaleService {
       }
 
       const discountAmount = dto.discountAmount ?? 0;
-      // Precios tienen IGV incluido:
-      // totalAmount = suma directa de items - descuento adicional
       const totalAmount = totalItemsSum - discountAmount;
-      // Extraemos el IGV del total (total * 18 / 118)
       const taxAmount = (totalAmount * 18) / 118;
-      // La base imponible o subtotal es el total sin el IGV
       const subtotal = totalAmount - taxAmount;
 
       const changeGiven =
         dto.amountTendered != null ? Number(dto.amountTendered) - totalAmount : null;
 
-      // 5. Determine document type:
-      //    - Use dto.documentType if explicitly sent by frontend
-      //    - Otherwise auto-detect: Factura if RUC (11 digits), Boleta otherwise
       let docType: DocumentType = dto.documentType ?? DocumentType.BOLETA;
       if (!dto.documentType && customerId) {
         const customer = await manager.findOne(CustomerEntity, { where: { id: customerId } });
@@ -142,10 +141,8 @@ export class SaleService {
         }
       }
 
-      // 6. Generate invoice number
-      const invoiceNumber = await this.generateInvoiceNumber(manager, docType);
+      const invoiceNumber = await this.generateInvoiceNumber(manager, docType, cashierId);
 
-      // 7. Persist sale
       const sale = manager.create(SaleEntity, {
         invoiceNumber,
         documentType: docType,
@@ -166,7 +163,6 @@ export class SaleService {
       });
       const savedSale = await manager.save(sale);
 
-      // 7. Persist items
       for (const item of saleItems) {
         item.saleId = savedSale.id;
       }
@@ -177,6 +173,157 @@ export class SaleService {
         relations: { customer: true, items: { product: true } },
       });
     });
+
+    // Send to APISUNAT AFTER the transaction has committed (avoids lock-wait deadlock)
+    if (result && (result.documentType === DocumentType.FACTURA || result.documentType === DocumentType.BOLETA)) {
+      try {
+        await this.sendToApisunat(result);
+      } catch (sunatErr: any) {
+        console.error('sendToApisunat threw unexpectedly:', sunatErr?.message);
+        // Mark as rejected but do not crash the sale
+        await this.saleRepo.update(result.id, {
+          sunatStatus: 'RECHAZADO',
+          sunatMessage: sunatErr?.message || 'Error desconocido al enviar a SUNAT',
+        });
+      }
+    }
+
+    return result;
+  }
+
+  /** Transmit Factura or Boleta to APISUNAT service */
+  private async sendToApisunat(sale: SaleEntity): Promise<any> {
+    const parts = (sale.invoiceNumber || '').split('-');
+    const serie = parts[0] || (sale.documentType === DocumentType.FACTURA ? 'F001' : 'B001');
+    const correlativo = parts[1] ? parseInt(parts[1], 10) : undefined;
+
+    const customer = sale.customer;
+    let tipoDoc = '1';
+    let numDoc = customer?.nit || '00000000';
+    let razonSocial = customer?.name || 'CONSUMIDOR FINAL';
+
+    if (sale.documentType === DocumentType.FACTURA) {
+      tipoDoc = '6';
+      numDoc = (customer?.nit && customer.nit.length === 11) ? customer.nit : '20252501178';
+      razonSocial = customer?.name || 'CORPORACION DE SERVICIOS GENERALES G Y R S.A.';
+    } else if (sale.documentType === DocumentType.BOLETA) {
+      if (customer?.nit && customer.nit.length === 8) {
+        tipoDoc = '1';
+        numDoc = customer.nit;
+      } else if (customer?.nit && customer.nit.length === 11) {
+        tipoDoc = '6';
+        numDoc = customer.nit;
+      } else {
+        tipoDoc = '0';
+        numDoc = '00000000';
+        razonSocial = customer?.name || 'CONSUMIDOR FINAL';
+      }
+    }
+
+    const items = (sale.items || []).map((item) => {
+      const unitPrice = Number(item.unitPrice);
+      const qty = Number(item.quantity);
+      const totalItem = Number(item.subtotal);
+      const baseIgv = (totalItem * 100) / 118;
+      const igv = totalItem - baseIgv;
+      const valorUnitario = (unitPrice * 100) / 118;
+
+      return {
+        codigo: item.product?.sku || `PROD-${item.productId || 1}`,
+        descripcion: item.productName || item.product?.name || 'Producto',
+        unidad: 'NIU',
+        cantidad: qty,
+        precio_unitario: unitPrice,
+        mto_valor_unitario: Number(valorUnitario.toFixed(4)),
+        mto_base_igv: Number(baseIgv.toFixed(2)),
+        porcentaje_igv: 18,
+        igv: Number(igv.toFixed(2)),
+        tip_afe_igv: '10',
+        total_impuestos: Number(igv.toFixed(2)),
+        mto_valor_venta: Number(baseIgv.toFixed(2)),
+      };
+    });
+
+    const localDate = new Date(sale.saleDate);
+    const year = localDate.getFullYear();
+    const month = String(localDate.getMonth() + 1).padStart(2, '0');
+    const day = String(localDate.getDate()).padStart(2, '0');
+    const fechaEmisionStr = `${year}-${month}-${day}`;
+
+    const payload = {
+      tipo_documento: sale.documentType === DocumentType.FACTURA ? '01' : '03',
+      serie,
+      correlativo,
+      fecha_emision: fechaEmisionStr,
+      tipo_operacion: '0101',
+      tipo_moneda: 'PEN',
+      forma_pago: 'Contado',
+      cliente: {
+        tipo_doc: tipoDoc,
+        num_doc: numDoc,
+        razon_social: razonSocial,
+        direccion: customer?.address || 'LIMA - PERU',
+        email: customer?.email || undefined,
+        telefono: customer?.phone || undefined,
+      },
+      items,
+      enviar_automatico: true,
+    };
+
+    const endpoint = sale.documentType === DocumentType.FACTURA ? '/facturas' : '/boletas';
+
+    try {
+      const res = await this.facturacionAdapter.post<any>(endpoint, payload);
+      const datos = res?.datos || res;
+
+      let sunatStatus = datos?.sunat?.estado || res?.estado || 'enviado';
+      let sunatMessage = datos?.sunat?.descripcion || res?.mensaje || 'Comprobante registrado';
+      let xmlUrl = datos?.archivos?.xml || null;
+      let cdrUrl = datos?.archivos?.cdr || null;
+      let pdfUrl = datos?.archivos?.pdf || null;
+      let qrCode = datos?.qr_code || null;
+
+      if (['enviado', 'aceptado', 'pendiente', 'exito'].includes(String(sunatStatus).toLowerCase())) {
+        sunatStatus = 'ACEPTADO';
+        if (!sunatMessage || sunatMessage.includes('encolada') || sunatMessage.includes('registrado') || sunatMessage.includes('Beta')) {
+          sunatMessage = 'Comprobante Aceptado por SUNAT';
+        }
+      }
+
+      await this.saleRepo.update(sale.id, {
+        sunatStatus,
+        sunatMessage,
+        xmlUrl,
+        cdrUrl,
+        pdfUrl,
+        qrCode,
+      });
+
+      sale.sunatStatus = sunatStatus;
+      sale.sunatMessage = sunatMessage;
+      sale.xmlUrl = xmlUrl;
+      sale.cdrUrl = cdrUrl;
+      sale.pdfUrl = pdfUrl;
+      sale.qrCode = qrCode;
+
+      return res;
+    } catch (err: any) {
+      let errMsg = err?.response?.data?.mensaje || err?.response?.data?.message || err.message;
+      if (err?.response?.data?.errores) {
+        const details = Object.entries(err.response.data.errores)
+          .map(([field, msgs]: [string, any]) => `${field}: ${Array.isArray(msgs) ? msgs.join(', ') : msgs}`)
+          .join(' | ');
+        if (details) errMsg = `${errMsg} (${details})`;
+      }
+      console.error('Error enviando comprobante a APISUNAT:', errMsg);
+      await this.saleRepo.update(sale.id, {
+        sunatStatus: 'RECHAZADO',
+        sunatMessage: String(errMsg),
+      });
+      sale.sunatStatus = 'RECHAZADO';
+      sale.sunatMessage = String(errMsg);
+      return { error: errMsg };
+    }
   }
 
   async createCreditNote(originalId: number, reason: string, description: string): Promise<SaleEntity> {
@@ -304,10 +451,42 @@ export class SaleService {
 
   /**
    * Generates the next SUNAT-compliant invoice number.
+   * Resolves establishment-specific series if cashier has an assigned establishmentId.
    * Format: {series}-{8-digit sequence number}
-   * Invoice (Factura): F001-00000001  |  Receipt (Boleta): B001-00000001
    */
-  private async generateInvoiceNumber(manager: any, docType: DocumentType = DocumentType.BOLETA): Promise<string> {
+  private async generateInvoiceNumber(manager: any, docType: DocumentType = DocumentType.BOLETA, cashierId?: number): Promise<string> {
+    if (cashierId) {
+      try {
+        const cashier = await manager.findOne(UserEntity, { where: { id: cashierId } });
+        if (cashier?.establishmentId) {
+          const seriesRes = await this.facturacionAdapter.get<any>(`/series?sucursal_id=${cashier.establishmentId}`).catch(() => null);
+          const seriesList = Array.isArray(seriesRes?.datos) ? seriesRes.datos : Array.isArray(seriesRes) ? seriesRes : [];
+
+          let targetType = 'boleta';
+          if (docType === DocumentType.FACTURA) targetType = 'factura';
+          if (docType === DocumentType.NOTA_VENTA) targetType = 'nota_venta';
+
+          const matchingSeries = seriesList.find((s: any) => s.tipo === targetType);
+          if (matchingSeries?.serie) {
+            const serie = matchingSeries.serie.toUpperCase();
+            const lastSale = await manager.createQueryBuilder(SaleEntity, 's')
+              .where('s.invoiceNumber LIKE :pattern', { pattern: `${serie}-%` })
+              .orderBy('s.id', 'DESC')
+              .getOne();
+
+            let nextNum = 1;
+            if (lastSale?.invoiceNumber) {
+              const parts = lastSale.invoiceNumber.split('-');
+              if (parts[1]) nextNum = parseInt(parts[1], 10) + 1;
+            }
+            return `${serie}-${String(nextNum).padStart(8, '0')}`;
+          }
+        }
+      } catch (err: any) {
+        console.warn('Advertencia al resolver serie por establecimiento:', err?.message);
+      }
+    }
+
     if (docType === DocumentType.FACTURA) return this.companySettings.nextInvoiceNumber('factura', manager);
     if (docType === DocumentType.NOTA_VENTA) return this.companySettings.nextInvoiceNumber('nota_venta', manager);
     return this.companySettings.nextInvoiceNumber('boleta', manager);

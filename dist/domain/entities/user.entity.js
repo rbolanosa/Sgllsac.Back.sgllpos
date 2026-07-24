@@ -45,6 +45,10 @@ __decorate([
     __metadata("design:type", Boolean)
 ], UserEntity.prototype, "isActive", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ name: 'establishment_id', type: 'int', nullable: true }),
+    __metadata("design:type", Number)
+], UserEntity.prototype, "establishmentId", void 0);
+__decorate([
     (0, typeorm_1.CreateDateColumn)({ name: 'created_at' }),
     __metadata("design:type", Date)
 ], UserEntity.prototype, "createdAt", void 0);

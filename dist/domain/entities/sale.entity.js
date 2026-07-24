@@ -115,6 +115,30 @@ __decorate([
     __metadata("design:type", String)
 ], SaleEntity.prototype, "dteNumber", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ name: 'sunat_status', type: 'varchar', length: 50, nullable: true }),
+    __metadata("design:type", String)
+], SaleEntity.prototype, "sunatStatus", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'sunat_message', type: 'text', nullable: true }),
+    __metadata("design:type", String)
+], SaleEntity.prototype, "sunatMessage", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'xml_url', type: 'varchar', length: 500, nullable: true }),
+    __metadata("design:type", String)
+], SaleEntity.prototype, "xmlUrl", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'cdr_url', type: 'varchar', length: 500, nullable: true }),
+    __metadata("design:type", String)
+], SaleEntity.prototype, "cdrUrl", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'pdf_url', type: 'varchar', length: 500, nullable: true }),
+    __metadata("design:type", String)
+], SaleEntity.prototype, "pdfUrl", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'qr_code', type: 'text', nullable: true }),
+    __metadata("design:type", String)
+], SaleEntity.prototype, "qrCode", void 0);
+__decorate([
     (0, typeorm_1.OneToMany)(() => sale_item_entity_1.SaleItemEntity, (item) => item.sale, { cascade: true, eager: false }),
     __metadata("design:type", Array)
 ], SaleEntity.prototype, "items", void 0);

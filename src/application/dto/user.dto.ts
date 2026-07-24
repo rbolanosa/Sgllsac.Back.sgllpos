@@ -20,6 +20,10 @@ export class CreateUserDto {
   @IsOptional()
   @IsEnum(UserRole)
   role?: UserRole;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  establishmentId?: number;
 }
 
 export class UpdateUserDto {
@@ -43,6 +47,10 @@ export class UpdateUserDto {
   @IsOptional()
   @IsEnum(UserRole)
   role?: UserRole;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  establishmentId?: number;
 
   @ApiPropertyOptional()
   @IsOptional()

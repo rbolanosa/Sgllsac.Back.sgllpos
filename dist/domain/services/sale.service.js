@@ -20,10 +20,12 @@ const sale_entity_1 = require("../../domain/entities/sale.entity");
 const sale_item_entity_1 = require("../../domain/entities/sale-item.entity");
 const product_entity_1 = require("../../domain/entities/product.entity");
 const customer_entity_1 = require("../../domain/entities/customer.entity");
+const user_entity_1 = require("../../domain/entities/user.entity");
 const inventory_movement_entity_1 = require("../../domain/entities/inventory-movement.entity");
 const company_settings_service_1 = require("./company-settings.service");
+const facturacion_adapter_1 = require("../../infrastructure/adapters/facturacion.adapter");
 let SaleService = class SaleService {
-    constructor(saleRepo, saleItemRepo, productRepo, customerRepo, movementRepo, dataSource, companySettings) {
+    constructor(saleRepo, saleItemRepo, productRepo, customerRepo, movementRepo, dataSource, companySettings, facturacionAdapter) {
         this.saleRepo = saleRepo;
         this.saleItemRepo = saleItemRepo;
         this.productRepo = productRepo;
@@ -31,6 +33,7 @@ let SaleService = class SaleService {
         this.movementRepo = movementRepo;
         this.dataSource = dataSource;
         this.companySettings = companySettings;
+        this.facturacionAdapter = facturacionAdapter;
     }
     async findAll(filters = {}) {
         const { page = 1, limit = 30, status, from, to, documentType } = filters;
@@ -63,7 +66,7 @@ let SaleService = class SaleService {
         return sale;
     }
     async create(dto, cashierId) {
-        return this.dataSource.transaction(async (manager) => {
+        const result = await this.dataSource.transaction(async (manager) => {
             let customerId = dto.customerId ?? null;
             if (!customerId) {
                 const cf = await manager.findOne(customer_entity_1.CustomerEntity, { where: { nit: 'CF' } });
@@ -82,13 +85,16 @@ let SaleService = class SaleService {
                     throw new common_1.BadRequestException(`Insufficient stock for "${product.name}". Available: ${product.stockQuantity}`);
                 }
                 const disc = item.discount ?? 0;
-                const lineTotal = Number(product.salePrice) * item.quantity - disc;
+                const priceToUse = (item.unitPrice != null && Number(item.unitPrice) > 0)
+                    ? Number(item.unitPrice)
+                    : Number(product.salePrice);
+                const lineTotal = priceToUse * item.quantity - disc;
                 totalItemsSum += lineTotal;
                 saleItems.push({
                     productId: product.id,
                     productName: product.name,
                     quantity: item.quantity,
-                    unitPrice: Number(product.salePrice),
+                    unitPrice: priceToUse,
                     taxRate: Number(product.taxRate),
                     discount: disc,
                     subtotal: lineTotal,
@@ -118,7 +124,7 @@ let SaleService = class SaleService {
                         docType = sale_entity_1.DocumentType.FACTURA;
                 }
             }
-            const invoiceNumber = await this.generateInvoiceNumber(manager, docType);
+            const invoiceNumber = await this.generateInvoiceNumber(manager, docType, cashierId);
             const sale = manager.create(sale_entity_1.SaleEntity, {
                 invoiceNumber,
                 documentType: docType,
@@ -147,6 +153,144 @@ let SaleService = class SaleService {
                 relations: { customer: true, items: { product: true } },
             });
         });
+        if (result && (result.documentType === sale_entity_1.DocumentType.FACTURA || result.documentType === sale_entity_1.DocumentType.BOLETA)) {
+            try {
+                await this.sendToApisunat(result);
+            }
+            catch (sunatErr) {
+                console.error('sendToApisunat threw unexpectedly:', sunatErr?.message);
+                await this.saleRepo.update(result.id, {
+                    sunatStatus: 'RECHAZADO',
+                    sunatMessage: sunatErr?.message || 'Error desconocido al enviar a SUNAT',
+                });
+            }
+        }
+        return result;
+    }
+    async sendToApisunat(sale) {
+        const parts = (sale.invoiceNumber || '').split('-');
+        const serie = parts[0] || (sale.documentType === sale_entity_1.DocumentType.FACTURA ? 'F001' : 'B001');
+        const correlativo = parts[1] ? parseInt(parts[1], 10) : undefined;
+        const customer = sale.customer;
+        let tipoDoc = '1';
+        let numDoc = customer?.nit || '00000000';
+        let razonSocial = customer?.name || 'CONSUMIDOR FINAL';
+        if (sale.documentType === sale_entity_1.DocumentType.FACTURA) {
+            tipoDoc = '6';
+            numDoc = (customer?.nit && customer.nit.length === 11) ? customer.nit : '20252501178';
+            razonSocial = customer?.name || 'CORPORACION DE SERVICIOS GENERALES G Y R S.A.';
+        }
+        else if (sale.documentType === sale_entity_1.DocumentType.BOLETA) {
+            if (customer?.nit && customer.nit.length === 8) {
+                tipoDoc = '1';
+                numDoc = customer.nit;
+            }
+            else if (customer?.nit && customer.nit.length === 11) {
+                tipoDoc = '6';
+                numDoc = customer.nit;
+            }
+            else {
+                tipoDoc = '0';
+                numDoc = '00000000';
+                razonSocial = customer?.name || 'CONSUMIDOR FINAL';
+            }
+        }
+        const items = (sale.items || []).map((item) => {
+            const unitPrice = Number(item.unitPrice);
+            const qty = Number(item.quantity);
+            const totalItem = Number(item.subtotal);
+            const baseIgv = (totalItem * 100) / 118;
+            const igv = totalItem - baseIgv;
+            const valorUnitario = (unitPrice * 100) / 118;
+            return {
+                codigo: item.product?.sku || `PROD-${item.productId || 1}`,
+                descripcion: item.productName || item.product?.name || 'Producto',
+                unidad: 'NIU',
+                cantidad: qty,
+                precio_unitario: unitPrice,
+                mto_valor_unitario: Number(valorUnitario.toFixed(4)),
+                mto_base_igv: Number(baseIgv.toFixed(2)),
+                porcentaje_igv: 18,
+                igv: Number(igv.toFixed(2)),
+                tip_afe_igv: '10',
+                total_impuestos: Number(igv.toFixed(2)),
+                mto_valor_venta: Number(baseIgv.toFixed(2)),
+            };
+        });
+        const localDate = new Date(sale.saleDate);
+        const year = localDate.getFullYear();
+        const month = String(localDate.getMonth() + 1).padStart(2, '0');
+        const day = String(localDate.getDate()).padStart(2, '0');
+        const fechaEmisionStr = `${year}-${month}-${day}`;
+        const payload = {
+            tipo_documento: sale.documentType === sale_entity_1.DocumentType.FACTURA ? '01' : '03',
+            serie,
+            correlativo,
+            fecha_emision: fechaEmisionStr,
+            tipo_operacion: '0101',
+            tipo_moneda: 'PEN',
+            forma_pago: 'Contado',
+            cliente: {
+                tipo_doc: tipoDoc,
+                num_doc: numDoc,
+                razon_social: razonSocial,
+                direccion: customer?.address || 'LIMA - PERU',
+                email: customer?.email || undefined,
+                telefono: customer?.phone || undefined,
+            },
+            items,
+            enviar_automatico: true,
+        };
+        const endpoint = sale.documentType === sale_entity_1.DocumentType.FACTURA ? '/facturas' : '/boletas';
+        try {
+            const res = await this.facturacionAdapter.post(endpoint, payload);
+            const datos = res?.datos || res;
+            let sunatStatus = datos?.sunat?.estado || res?.estado || 'enviado';
+            let sunatMessage = datos?.sunat?.descripcion || res?.mensaje || 'Comprobante registrado';
+            let xmlUrl = datos?.archivos?.xml || null;
+            let cdrUrl = datos?.archivos?.cdr || null;
+            let pdfUrl = datos?.archivos?.pdf || null;
+            let qrCode = datos?.qr_code || null;
+            if (['enviado', 'aceptado', 'pendiente', 'exito'].includes(String(sunatStatus).toLowerCase())) {
+                sunatStatus = 'ACEPTADO';
+                if (!sunatMessage || sunatMessage.includes('encolada') || sunatMessage.includes('registrado') || sunatMessage.includes('Beta')) {
+                    sunatMessage = 'Comprobante Aceptado por SUNAT';
+                }
+            }
+            await this.saleRepo.update(sale.id, {
+                sunatStatus,
+                sunatMessage,
+                xmlUrl,
+                cdrUrl,
+                pdfUrl,
+                qrCode,
+            });
+            sale.sunatStatus = sunatStatus;
+            sale.sunatMessage = sunatMessage;
+            sale.xmlUrl = xmlUrl;
+            sale.cdrUrl = cdrUrl;
+            sale.pdfUrl = pdfUrl;
+            sale.qrCode = qrCode;
+            return res;
+        }
+        catch (err) {
+            let errMsg = err?.response?.data?.mensaje || err?.response?.data?.message || err.message;
+            if (err?.response?.data?.errores) {
+                const details = Object.entries(err.response.data.errores)
+                    .map(([field, msgs]) => `${field}: ${Array.isArray(msgs) ? msgs.join(', ') : msgs}`)
+                    .join(' | ');
+                if (details)
+                    errMsg = `${errMsg} (${details})`;
+            }
+            console.error('Error enviando comprobante a APISUNAT:', errMsg);
+            await this.saleRepo.update(sale.id, {
+                sunatStatus: 'RECHAZADO',
+                sunatMessage: String(errMsg),
+            });
+            sale.sunatStatus = 'RECHAZADO';
+            sale.sunatMessage = String(errMsg);
+            return { error: errMsg };
+        }
     }
     async createCreditNote(originalId, reason, description) {
         return this.dataSource.transaction(async (manager) => {
@@ -257,7 +401,39 @@ let SaleService = class SaleService {
             avgTicket: Number(result?.avgTicket ?? 0),
         };
     }
-    async generateInvoiceNumber(manager, docType = sale_entity_1.DocumentType.BOLETA) {
+    async generateInvoiceNumber(manager, docType = sale_entity_1.DocumentType.BOLETA, cashierId) {
+        if (cashierId) {
+            try {
+                const cashier = await manager.findOne(user_entity_1.UserEntity, { where: { id: cashierId } });
+                if (cashier?.establishmentId) {
+                    const seriesRes = await this.facturacionAdapter.get(`/series?sucursal_id=${cashier.establishmentId}`).catch(() => null);
+                    const seriesList = Array.isArray(seriesRes?.datos) ? seriesRes.datos : Array.isArray(seriesRes) ? seriesRes : [];
+                    let targetType = 'boleta';
+                    if (docType === sale_entity_1.DocumentType.FACTURA)
+                        targetType = 'factura';
+                    if (docType === sale_entity_1.DocumentType.NOTA_VENTA)
+                        targetType = 'nota_venta';
+                    const matchingSeries = seriesList.find((s) => s.tipo === targetType);
+                    if (matchingSeries?.serie) {
+                        const serie = matchingSeries.serie.toUpperCase();
+                        const lastSale = await manager.createQueryBuilder(sale_entity_1.SaleEntity, 's')
+                            .where('s.invoiceNumber LIKE :pattern', { pattern: `${serie}-%` })
+                            .orderBy('s.id', 'DESC')
+                            .getOne();
+                        let nextNum = 1;
+                        if (lastSale?.invoiceNumber) {
+                            const parts = lastSale.invoiceNumber.split('-');
+                            if (parts[1])
+                                nextNum = parseInt(parts[1], 10) + 1;
+                        }
+                        return `${serie}-${String(nextNum).padStart(8, '0')}`;
+                    }
+                }
+            }
+            catch (err) {
+                console.warn('Advertencia al resolver serie por establecimiento:', err?.message);
+            }
+        }
         if (docType === sale_entity_1.DocumentType.FACTURA)
             return this.companySettings.nextInvoiceNumber('factura', manager);
         if (docType === sale_entity_1.DocumentType.NOTA_VENTA)
@@ -279,6 +455,7 @@ exports.SaleService = SaleService = __decorate([
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.DataSource,
-        company_settings_service_1.CompanySettingsService])
+        company_settings_service_1.CompanySettingsService,
+        facturacion_adapter_1.FacturacionAdapter])
 ], SaleService);
 //# sourceMappingURL=sale.service.js.map

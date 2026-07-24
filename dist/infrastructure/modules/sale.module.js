@@ -14,6 +14,7 @@ const sale_item_entity_1 = require("../../domain/entities/sale-item.entity");
 const product_entity_1 = require("../../domain/entities/product.entity");
 const customer_entity_1 = require("../../domain/entities/customer.entity");
 const inventory_movement_entity_1 = require("../../domain/entities/inventory-movement.entity");
+const user_entity_1 = require("../../domain/entities/user.entity");
 const sale_service_1 = require("../../domain/services/sale.service");
 const sale_controller_1 = require("../controllers/sale.controller");
 const company_settings_module_1 = require("./company-settings.module");
@@ -29,6 +30,7 @@ exports.SaleModule = SaleModule = __decorate([
                 product_entity_1.ProductEntity,
                 customer_entity_1.CustomerEntity,
                 inventory_movement_entity_1.InventoryMovementEntity,
+                user_entity_1.UserEntity,
             ]),
             company_settings_module_1.CompanySettingsModule,
         ],

@@ -110,6 +110,18 @@ export class CompanySettingsEntity {
   @Column({ name: 'production_mode', type: 'boolean', default: false, comment: 'false=beta, true=producción' })
   productionMode: boolean;
 
+  @Column({ name: 'sunat_api_key', type: 'varchar', length: 255, nullable: true })
+  sunatApiKey: string | null;
+
+  @Column({ name: 'sunat_api_secret', type: 'varchar', length: 255, nullable: true })
+  sunatApiSecret: string | null;
+
+  @Column({ name: 'certificado_url', type: 'varchar', length: 500, nullable: true })
+  certificadoUrl: string | null;
+
+  @Column({ name: 'certificado_password', type: 'varchar', length: 255, nullable: true })
+  certificadoPassword: string | null;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 

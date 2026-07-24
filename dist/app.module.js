@@ -61,6 +61,7 @@ const sale_module_1 = require("./infrastructure/modules/sale.module");
 const purchase_order_module_1 = require("./infrastructure/modules/purchase-order.module");
 const company_settings_module_1 = require("./infrastructure/modules/company-settings.module");
 const user_module_1 = require("./infrastructure/modules/user.module");
+const establishments_module_1 = require("./infrastructure/modules/establishments.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -101,6 +102,7 @@ exports.AppModule = AppModule = __decorate([
             sale_module_1.SaleModule,
             purchase_order_module_1.PurchaseOrderModule,
             company_settings_module_1.CompanySettingsModule,
+            establishments_module_1.EstablishmentsModule,
         ],
     })
 ], AppModule);

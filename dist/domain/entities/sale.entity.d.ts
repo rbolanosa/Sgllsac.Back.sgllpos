@@ -38,6 +38,12 @@ export declare class SaleEntity {
     status: SaleStatus;
     notes: string | null;
     dteNumber: string | null;
+    sunatStatus: string | null;
+    sunatMessage: string | null;
+    xmlUrl: string | null;
+    cdrUrl: string | null;
+    pdfUrl: string | null;
+    qrCode: string | null;
     items: SaleItemEntity[];
     createdAt: Date;
     updatedAt: Date;

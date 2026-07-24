@@ -10,6 +10,7 @@ export declare class UserEntity {
     password: string;
     role: UserRole;
     isActive: boolean;
+    establishmentId: number | null;
     createdAt: Date;
     updatedAt: Date;
 }

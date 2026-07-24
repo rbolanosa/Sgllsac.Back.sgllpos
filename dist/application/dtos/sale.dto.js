@@ -41,6 +41,14 @@ __decorate([
     (0, class_validator_1.Min)(0),
     __metadata("design:type", Number)
 ], SaleItemInputDto.prototype, "discount", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.Min)(0),
+    __metadata("design:type", Number)
+], SaleItemInputDto.prototype, "unitPrice", void 0);
 class PaymentItemInputDto {
 }
 exports.PaymentItemInputDto = PaymentItemInputDto;

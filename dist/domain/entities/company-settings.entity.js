@@ -135,6 +135,22 @@ __decorate([
     __metadata("design:type", Boolean)
 ], CompanySettingsEntity.prototype, "productionMode", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ name: 'sunat_api_key', type: 'varchar', length: 255, nullable: true }),
+    __metadata("design:type", String)
+], CompanySettingsEntity.prototype, "sunatApiKey", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'sunat_api_secret', type: 'varchar', length: 255, nullable: true }),
+    __metadata("design:type", String)
+], CompanySettingsEntity.prototype, "sunatApiSecret", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'certificado_url', type: 'varchar', length: 500, nullable: true }),
+    __metadata("design:type", String)
+], CompanySettingsEntity.prototype, "certificadoUrl", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'certificado_password', type: 'varchar', length: 255, nullable: true }),
+    __metadata("design:type", String)
+], CompanySettingsEntity.prototype, "certificadoPassword", void 0);
+__decorate([
     (0, typeorm_1.CreateDateColumn)({ name: 'created_at' }),
     __metadata("design:type", Date)
 ], CompanySettingsEntity.prototype, "createdAt", void 0);

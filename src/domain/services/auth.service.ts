@@ -16,7 +16,7 @@ export class AuthService {
   async login(email: string, password: string) {
     const user = await this.userRepo.findOne({
       where: { email, isActive: true },
-      select: { id: true, name: true, email: true, role: true, password: true },
+      select: { id: true, name: true, email: true, role: true, establishmentId: true, password: true },
     });
 
     if (!user) throw new UnauthorizedException('Credenciales inválidas');
@@ -24,16 +24,17 @@ export class AuthService {
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) throw new UnauthorizedException('Credenciales inválidas');
 
-    const payload = { sub: user.id, email: user.email, role: user.role };
+    const payload = { sub: user.id, email: user.email, role: user.role, establishmentId: user.establishmentId };
     const token = this.jwtService.sign(payload);
 
     return {
       token,
       user: {
-        id:    user.id,
-        name:  user.name,
-        email: user.email,
-        role:  user.role,
+        id:              user.id,
+        name:            user.name,
+        email:           user.email,
+        role:            user.role,
+        establishmentId: user.establishmentId,
       },
     };
   }

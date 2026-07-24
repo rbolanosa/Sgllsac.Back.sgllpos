@@ -94,6 +94,24 @@ export class SaleEntity {
   @Column({ name: 'dte_number', type: 'varchar', length: 100, nullable: true })
   dteNumber: string | null;
 
+  @Column({ name: 'sunat_status', type: 'varchar', length: 50, nullable: true })
+  sunatStatus: string | null;
+
+  @Column({ name: 'sunat_message', type: 'text', nullable: true })
+  sunatMessage: string | null;
+
+  @Column({ name: 'xml_url', type: 'varchar', length: 500, nullable: true })
+  xmlUrl: string | null;
+
+  @Column({ name: 'cdr_url', type: 'varchar', length: 500, nullable: true })
+  cdrUrl: string | null;
+
+  @Column({ name: 'pdf_url', type: 'varchar', length: 500, nullable: true })
+  pdfUrl: string | null;
+
+  @Column({ name: 'qr_code', type: 'text', nullable: true })
+  qrCode: string | null;
+
   @OneToMany(() => SaleItemEntity, (item) => item.sale, { cascade: true, eager: false })
   items: SaleItemEntity[];
 

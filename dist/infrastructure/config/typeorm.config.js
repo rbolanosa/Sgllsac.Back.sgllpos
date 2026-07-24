@@ -38,7 +38,7 @@ const config_1 = require("@nestjs/config");
 const typeorm_1 = require("typeorm");
 const path = __importStar(require("path"));
 const dotenv = __importStar(require("dotenv"));
-dotenv.config({ path: path.resolve(__dirname, '../../../../.env') });
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 exports.typeOrmConfig = {
     imports: [config_1.ConfigModule],
     inject: [config_1.ConfigService],

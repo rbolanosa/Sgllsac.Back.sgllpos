@@ -9,4 +9,9 @@ export declare class CompanySettingsController {
         logoUrl: string;
         message: string;
     }>;
+    registerSunatApi(file: Express.Multer.File, contrasenaCertificado?: string): Promise<{
+        message: string;
+        apiKey: string;
+        apiSecret: string;
+    }>;
 }

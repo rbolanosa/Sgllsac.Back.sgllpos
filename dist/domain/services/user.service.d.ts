@@ -12,6 +12,7 @@ export declare class UserService {
         email: string;
         role: import("../entities/user.entity").UserRole;
         isActive: boolean;
+        establishmentId: number | null;
         createdAt: Date;
         updatedAt: Date;
     }>;
@@ -21,6 +22,7 @@ export declare class UserService {
         email: string;
         role: import("../entities/user.entity").UserRole;
         isActive: boolean;
+        establishmentId: number | null;
         createdAt: Date;
         updatedAt: Date;
     }>;

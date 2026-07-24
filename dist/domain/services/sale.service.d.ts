@@ -6,6 +6,7 @@ import { CustomerEntity } from '../../domain/entities/customer.entity';
 import { InventoryMovementEntity } from '../../domain/entities/inventory-movement.entity';
 import { CreateSaleDto, VoidSaleDto } from '../../application/dtos/sale.dto';
 import { CompanySettingsService } from './company-settings.service';
+import { FacturacionAdapter } from '../../infrastructure/adapters/facturacion.adapter';
 export declare class SaleService {
     private readonly saleRepo;
     private readonly saleItemRepo;
@@ -14,7 +15,8 @@ export declare class SaleService {
     private readonly movementRepo;
     private readonly dataSource;
     private readonly companySettings;
-    constructor(saleRepo: Repository<SaleEntity>, saleItemRepo: Repository<SaleItemEntity>, productRepo: Repository<ProductEntity>, customerRepo: Repository<CustomerEntity>, movementRepo: Repository<InventoryMovementEntity>, dataSource: DataSource, companySettings: CompanySettingsService);
+    private readonly facturacionAdapter;
+    constructor(saleRepo: Repository<SaleEntity>, saleItemRepo: Repository<SaleItemEntity>, productRepo: Repository<ProductEntity>, customerRepo: Repository<CustomerEntity>, movementRepo: Repository<InventoryMovementEntity>, dataSource: DataSource, companySettings: CompanySettingsService, facturacionAdapter: FacturacionAdapter);
     findAll(filters?: {
         page?: number;
         limit?: number;
@@ -30,6 +32,7 @@ export declare class SaleService {
     }>;
     findById(id: number): Promise<SaleEntity>;
     create(dto: CreateSaleDto, cashierId?: number): Promise<SaleEntity>;
+    private sendToApisunat;
     createCreditNote(originalId: number, reason: string, description: string): Promise<SaleEntity>;
     voidSale(id: number, dto: VoidSaleDto, performedBy?: number): Promise<SaleEntity>;
     getSalesSummary(from: string, to: string): Promise<{

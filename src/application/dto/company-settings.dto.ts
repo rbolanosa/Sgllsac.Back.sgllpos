@@ -118,4 +118,20 @@ export class UpdateCompanySettingsDto {
   @IsOptional()
   @IsBoolean()
   productionMode?: boolean;
+
+  @IsOptional()
+  @IsString()
+  sunatApiKey?: string;
+
+  @IsOptional()
+  @IsString()
+  sunatApiSecret?: string;
+
+  @IsOptional()
+  @IsString()
+  certificadoUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  certificadoPassword?: string;
 }

@@ -17,7 +17,7 @@ export declare class SaleController {
         avgTicket: number;
     }>;
     findOne(id: number): Promise<import("../../domain/entities/sale.entity").SaleEntity>;
-    create(dto: CreateSaleDto): Promise<import("../../domain/entities/sale.entity").SaleEntity>;
+    create(dto: CreateSaleDto, req: any): Promise<import("../../domain/entities/sale.entity").SaleEntity>;
     void(id: number, dto: VoidSaleDto): Promise<import("../../domain/entities/sale.entity").SaleEntity>;
     createCreditNote(body: {
         originalSaleId: number;

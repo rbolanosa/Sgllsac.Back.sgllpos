@@ -3,6 +3,7 @@ export declare class SaleItemInputDto {
     productId: number;
     quantity: number;
     discount?: number;
+    unitPrice?: number;
 }
 export declare class PaymentItemInputDto {
     method: string;

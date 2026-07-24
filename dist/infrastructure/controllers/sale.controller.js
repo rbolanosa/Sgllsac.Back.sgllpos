@@ -31,8 +31,9 @@ let SaleController = class SaleController {
     findOne(id) {
         return this.saleService.findById(id);
     }
-    create(dto) {
-        return this.saleService.create(dto);
+    create(dto, req) {
+        const cashierId = req.user?.sub || req.user?.id || 1;
+        return this.saleService.create(dto, cashierId);
     }
     void(id, dto) {
         return this.saleService.voidSale(id, dto);
@@ -76,8 +77,9 @@ __decorate([
     (0, common_1.Post)(),
     (0, swagger_1.ApiOperation)({ summary: 'Create a new sale (POS checkout)' }),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [sale_dto_1.CreateSaleDto]),
+    __metadata("design:paramtypes", [sale_dto_1.CreateSaleDto, Object]),
     __metadata("design:returntype", void 0)
 ], SaleController.prototype, "create", null);
 __decorate([

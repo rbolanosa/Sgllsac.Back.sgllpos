@@ -60,14 +60,14 @@ let AuthService = class AuthService {
     async login(email, password) {
         const user = await this.userRepo.findOne({
             where: { email, isActive: true },
-            select: { id: true, name: true, email: true, role: true, password: true },
+            select: { id: true, name: true, email: true, role: true, establishmentId: true, password: true },
         });
         if (!user)
             throw new common_1.UnauthorizedException('Credenciales inválidas');
         const valid = await bcrypt.compare(password, user.password);
         if (!valid)
             throw new common_1.UnauthorizedException('Credenciales inválidas');
-        const payload = { sub: user.id, email: user.email, role: user.role };
+        const payload = { sub: user.id, email: user.email, role: user.role, establishmentId: user.establishmentId };
         const token = this.jwtService.sign(payload);
         return {
             token,
@@ -76,6 +76,7 @@ let AuthService = class AuthService {
                 name: user.name,
                 email: user.email,
                 role: user.role,
+                establishmentId: user.establishmentId,
             },
         };
     }

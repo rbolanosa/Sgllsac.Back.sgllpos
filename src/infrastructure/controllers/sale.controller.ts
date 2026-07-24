@@ -1,5 +1,5 @@
 import {
-  Controller, Get, Post, Patch, Body, Param, ParseIntPipe, Query,
+  Controller, Get, Post, Patch, Body, Param, ParseIntPipe, Query, Req,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { SaleService } from '../../domain/services/sale.service';
@@ -39,9 +39,9 @@ export class SaleController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new sale (POS checkout)' })
-  create(@Body() dto: CreateSaleDto) {
-    // In a real system, cashierId would come from JWT token
-    return this.saleService.create(dto);
+  create(@Body() dto: CreateSaleDto, @Req() req: any) {
+    const cashierId = req.user?.sub || req.user?.id || 1;
+    return this.saleService.create(dto, cashierId);
   }
 
   @Patch(':id/void')

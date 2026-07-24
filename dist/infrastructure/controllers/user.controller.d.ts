@@ -11,6 +11,7 @@ export declare class UserController {
         email: string;
         role: import("../../domain/entities/user.entity").UserRole;
         isActive: boolean;
+        establishmentId: number | null;
         createdAt: Date;
         updatedAt: Date;
     }>;
@@ -20,6 +21,7 @@ export declare class UserController {
         email: string;
         role: import("../../domain/entities/user.entity").UserRole;
         isActive: boolean;
+        establishmentId: number | null;
         createdAt: Date;
         updatedAt: Date;
     }>;

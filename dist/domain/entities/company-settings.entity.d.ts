@@ -36,6 +36,10 @@ export declare class CompanySettingsEntity {
     website: string | null;
     sunatApiUrl: string | null;
     productionMode: boolean;
+    sunatApiKey: string | null;
+    sunatApiSecret: string | null;
+    certificadoUrl: string | null;
+    certificadoPassword: string | null;
     createdAt: Date;
     updatedAt: Date;
 }

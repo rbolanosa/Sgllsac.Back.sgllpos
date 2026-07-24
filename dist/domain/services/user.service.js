@@ -57,14 +57,14 @@ let UserService = class UserService {
     }
     async findAll() {
         return this.userRepo.find({
-            select: { id: true, name: true, email: true, role: true, isActive: true, createdAt: true, updatedAt: true },
+            select: { id: true, name: true, email: true, role: true, establishmentId: true, isActive: true, createdAt: true, updatedAt: true },
             order: { createdAt: 'DESC' },
         });
     }
     async findOne(id) {
         const user = await this.userRepo.findOne({
             where: { id },
-            select: { id: true, name: true, email: true, role: true, isActive: true, createdAt: true, updatedAt: true },
+            select: { id: true, name: true, email: true, role: true, establishmentId: true, isActive: true, createdAt: true, updatedAt: true },
         });
         if (!user)
             throw new common_1.NotFoundException(`Usuario #${id} no encontrado`);
@@ -101,6 +101,8 @@ let UserService = class UserService {
             user.email = dto.email;
         if (dto.role !== undefined)
             user.role = dto.role;
+        if (dto.establishmentId !== undefined)
+            user.establishmentId = dto.establishmentId;
         if (dto.isActive !== undefined)
             user.isActive = dto.isActive;
         await this.userRepo.save(user);

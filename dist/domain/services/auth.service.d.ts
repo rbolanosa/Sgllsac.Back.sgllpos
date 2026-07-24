@@ -12,6 +12,7 @@ export declare class AuthService {
             name: string;
             email: string;
             role: import("../entities/user.entity").UserRole;
+            establishmentId: number;
         };
     }>;
     validateById(id: number): Promise<UserEntity | null>;

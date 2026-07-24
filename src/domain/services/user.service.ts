@@ -14,7 +14,7 @@ export class UserService {
 
   async findAll() {
     return this.userRepo.find({
-      select: { id: true, name: true, email: true, role: true, isActive: true, createdAt: true, updatedAt: true },
+      select: { id: true, name: true, email: true, role: true, establishmentId: true, isActive: true, createdAt: true, updatedAt: true },
       order: { createdAt: 'DESC' },
     });
   }
@@ -22,7 +22,7 @@ export class UserService {
   async findOne(id: number) {
     const user = await this.userRepo.findOne({
       where: { id },
-      select: { id: true, name: true, email: true, role: true, isActive: true, createdAt: true, updatedAt: true },
+      select: { id: true, name: true, email: true, role: true, establishmentId: true, isActive: true, createdAt: true, updatedAt: true },
     });
     if (!user) throw new NotFoundException(`Usuario #${id} no encontrado`);
     return user;
@@ -59,6 +59,7 @@ export class UserService {
     if (dto.name !== undefined) user.name = dto.name;
     if (dto.email !== undefined) user.email = dto.email;
     if (dto.role !== undefined) user.role = dto.role;
+    if (dto.establishmentId !== undefined) user.establishmentId = dto.establishmentId;
     if (dto.isActive !== undefined) user.isActive = dto.isActive;
 
     await this.userRepo.save(user);

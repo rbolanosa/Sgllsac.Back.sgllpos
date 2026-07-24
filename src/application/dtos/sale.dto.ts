@@ -24,6 +24,13 @@ export class SaleItemInputDto {
   @IsNumber()
   @Min(0)
   discount?: number = 0;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  unitPrice?: number;
 }
 
 export class PaymentItemInputDto {

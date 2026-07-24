@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as dotenv from 'dotenv';
 
 // Carga el .env cuando el archivo se usa desde TypeORM CLI (ts-node)
-dotenv.config({ path: path.resolve(__dirname, '../../../../.env') });
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
 export const typeOrmConfig: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule],

@@ -21,12 +21,22 @@ const fs_1 = require("fs");
 const company_settings_service_1 = require("../../domain/services/company-settings.service");
 const company_settings_dto_1 = require("../../application/dto/company-settings.dto");
 const UPLOADS_DIR = (0, path_1.join)(process.cwd(), 'uploads', 'logos');
+const CERTS_DIR = (0, path_1.join)(process.cwd(), 'uploads', 'certificates');
 if (!(0, fs_1.existsSync)(UPLOADS_DIR))
     (0, fs_1.mkdirSync)(UPLOADS_DIR, { recursive: true });
+if (!(0, fs_1.existsSync)(CERTS_DIR))
+    (0, fs_1.mkdirSync)(CERTS_DIR, { recursive: true });
 const logoStorage = (0, multer_1.diskStorage)({
     destination: (_req, _file, cb) => cb(null, UPLOADS_DIR),
     filename: (_req, file, cb) => {
         const unique = `logo-${Date.now()}${(0, path_1.extname)(file.originalname)}`;
+        cb(null, unique);
+    },
+});
+const certStorage = (0, multer_1.diskStorage)({
+    destination: (_req, _file, cb) => cb(null, CERTS_DIR),
+    filename: (_req, file, cb) => {
+        const unique = `cert-${Date.now()}${(0, path_1.extname)(file.originalname)}`;
         cb(null, unique);
     },
 });
@@ -45,7 +55,13 @@ let CompanySettingsController = class CompanySettingsController {
             throw new common_1.BadRequestException('No file provided');
         const logoUrl = `/uploads/logos/${file.filename}`;
         await this.service.update({ logoUrl });
+        await this.service.syncLogoToApisunat(file);
         return { logoUrl, message: 'Logo uploaded successfully' };
+    }
+    async registerSunatApi(file, contrasenaCertificado) {
+        if (!file)
+            throw new common_1.BadRequestException('El archivo del certificado digital es requerido.');
+        return this.service.registerSunatApi(file, contrasenaCertificado);
     }
 };
 exports.CompanySettingsController = CompanySettingsController;
@@ -81,6 +97,18 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], CompanySettingsController.prototype, "uploadLogo", null);
+__decorate([
+    (0, common_1.Post)('register-sunat-api'),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('certificado', {
+        storage: certStorage,
+        limits: { fileSize: 10 * 1024 * 1024 },
+    })),
+    __param(0, (0, common_1.UploadedFile)()),
+    __param(1, (0, common_1.Body)('contrasenaCertificado')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", Promise)
+], CompanySettingsController.prototype, "registerSunatApi", null);
 exports.CompanySettingsController = CompanySettingsController = __decorate([
     (0, common_1.Controller)({ path: 'company-settings', version: '1' }),
     __metadata("design:paramtypes", [company_settings_service_1.CompanySettingsService])
