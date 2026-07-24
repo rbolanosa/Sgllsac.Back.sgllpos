@@ -52,6 +52,11 @@ export class CreateSaleDto {
   @IsNumber()
   customerId?: number;
 
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  customerPhone?: string;
+
   @ApiPropertyOptional({ enum: DocumentType, default: DocumentType.BOLETA })
   @IsOptional()
   @IsEnum(DocumentType)

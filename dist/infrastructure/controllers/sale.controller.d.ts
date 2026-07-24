@@ -1,3 +1,4 @@
+import { Response } from 'express';
 import { SaleService } from '../../domain/services/sale.service';
 import { CreateSaleDto, VoidSaleDto } from '../../application/dtos/sale.dto';
 import { SaleStatus } from '../../domain/entities/sale.entity';
@@ -16,12 +17,16 @@ export declare class SaleController {
         totalTax: number;
         avgTicket: number;
     }>;
+    getPdfByToken(token: string, res: Response): Promise<void>;
+    getPdfToken(id: number): {
+        token: string;
+        path: string;
+    };
+    getPdf(id: number, res: Response): Promise<void>;
     findOne(id: number): Promise<import("../../domain/entities/sale.entity").SaleEntity>;
     create(dto: CreateSaleDto, req: any): Promise<import("../../domain/entities/sale.entity").SaleEntity>;
     void(id: number, dto: VoidSaleDto): Promise<import("../../domain/entities/sale.entity").SaleEntity>;
-    createCreditNote(body: {
-        originalSaleId: number;
-        motivo: string;
-        descripcion: string;
-    }): Promise<import("../../domain/entities/sale.entity").SaleEntity>;
+    sendWhatsapp(id: number, body: {
+        phone: string;
+    }): Promise<any>;
 }

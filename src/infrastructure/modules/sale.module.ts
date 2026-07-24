@@ -10,6 +10,8 @@ import { SaleService } from '../../domain/services/sale.service';
 import { SaleController } from '../controllers/sale.controller';
 import { CompanySettingsModule } from './company-settings.module';
 
+import { WhatsappAdapter } from '../adapters/whatsapp.adapter';
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -23,8 +25,8 @@ import { CompanySettingsModule } from './company-settings.module';
     CompanySettingsModule,
   ],
   controllers: [SaleController],
-  providers: [SaleService],
-  exports: [SaleService],
+  providers: [SaleService, WhatsappAdapter],
+  exports: [SaleService, WhatsappAdapter],
 })
 export class SaleModule {}
 

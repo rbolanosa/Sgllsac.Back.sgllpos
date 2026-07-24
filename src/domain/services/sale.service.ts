@@ -15,9 +15,11 @@ import {
   MovementType,
   MovementReferenceType,
 } from '../../domain/entities/inventory-movement.entity';
+import * as crypto from 'crypto';
 import { CreateSaleDto, VoidSaleDto } from '../../application/dtos/sale.dto';
 import { CompanySettingsService } from './company-settings.service';
 import { FacturacionAdapter } from '../../infrastructure/adapters/facturacion.adapter';
+import { WhatsappAdapter } from '../../infrastructure/adapters/whatsapp.adapter';
 
 @Injectable()
 export class SaleService {
@@ -35,6 +37,7 @@ export class SaleService {
     private readonly dataSource: DataSource,
     private readonly companySettings: CompanySettingsService,
     private readonly facturacionAdapter: FacturacionAdapter,
+    private readonly whatsappAdapter: WhatsappAdapter,
   ) {}
 
   async findAll(filters: { page?: number; limit?: number; status?: SaleStatus; from?: string; to?: string; documentType?: string } = {}) {
@@ -186,6 +189,14 @@ export class SaleService {
           sunatMessage: sunatErr?.message || 'Error desconocido al enviar a SUNAT',
         });
       }
+    }
+
+    // Trigger automatic WhatsApp message if customer phone is available
+    const phoneToNotify = (dto as any).customerPhone || result?.customer?.phone;
+    if (phoneToNotify) {
+      this.whatsappAdapter.sendInvoiceMessage(result, phoneToNotify).catch((e) => {
+        console.warn('Advertencia WhatsApp:', e.message);
+      });
     }
 
     return result;
@@ -490,5 +501,53 @@ export class SaleService {
     if (docType === DocumentType.FACTURA) return this.companySettings.nextInvoiceNumber('factura', manager);
     if (docType === DocumentType.NOTA_VENTA) return this.companySettings.nextInvoiceNumber('nota_venta', manager);
     return this.companySettings.nextInvoiceNumber('boleta', manager);
+  }
+
+  /** Send WhatsApp invoice message directly via Evolution API without opening browser tabs */
+  async sendWhatsappMessage(id: number, phone: string): Promise<any> {
+    const sale = await this.findById(id);
+    const company = await this.companySettings.get();
+    const result = await this.whatsappAdapter.sendInvoiceMessage(sale, phone, company);
+    return {
+      success: true,
+      message: `Comprobante enviado por WhatsApp al ${phone}`,
+      result,
+    };
+  }
+
+  /** Generate PDF buffer for a sale receipt */
+  async generatePdfBuffer(id: number): Promise<{ buffer: Buffer; fileName: string }> {
+    const sale = await this.findById(id);
+    const company = await this.companySettings.get();
+    const buffer = await this.whatsappAdapter.generateReceiptPdfBuffer(sale, company);
+    const fileName = `${sale.invoiceNumber || 'COMPROBANTE'}.pdf`;
+    return { buffer, fileName };
+  }
+
+  /** Generate secure HMAC signed token for public PDF download */
+  getSecurePdfToken(saleId: number): string {
+    const secret = process.env.JWT_SECRET || 'devpro-secure-pdf-secret-2026';
+    const hash = crypto.createHmac('sha256', secret)
+      .update(`sale-pdf-${saleId}`)
+      .digest('hex')
+      .substring(0, 24);
+    return `sec_${saleId}_${hash}`;
+  }
+
+  /** Verify HMAC token and return saleId if valid */
+  verifyPdfToken(token: string): number | null {
+    try {
+      const parts = token.split('_');
+      if (parts.length !== 3 || parts[0] !== 'sec') return null;
+      const saleId = parseInt(parts[1], 10);
+      if (isNaN(saleId)) return null;
+      const expected = this.getSecurePdfToken(saleId);
+      if (crypto.timingSafeEqual(Buffer.from(token), Buffer.from(expected))) {
+        return saleId;
+      }
+    } catch {
+      return null;
+    }
+    return null;
   }
 }

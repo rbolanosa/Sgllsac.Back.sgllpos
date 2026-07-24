@@ -28,6 +28,26 @@ let SaleController = class SaleController {
     getSummary(from, to) {
         return this.saleService.getSalesSummary(from, to);
     }
+    async getPdfByToken(token, res) {
+        const saleId = this.saleService.verifyPdfToken(token);
+        if (!saleId) {
+            throw new common_1.ForbiddenException('Enlace de comprobante no válido o expirado');
+        }
+        const { buffer, fileName } = await this.saleService.generatePdfBuffer(saleId);
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `inline; filename="${fileName}"`);
+        res.send(buffer);
+    }
+    getPdfToken(id) {
+        const token = this.saleService.getSecurePdfToken(id);
+        return { token, path: `/sales/comprobante/pdf/${token}` };
+    }
+    async getPdf(id, res) {
+        const { buffer, fileName } = await this.saleService.generatePdfBuffer(id);
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `inline; filename="${fileName}"`);
+        res.send(buffer);
+    }
     findOne(id) {
         return this.saleService.findById(id);
     }
@@ -38,8 +58,8 @@ let SaleController = class SaleController {
     void(id, dto) {
         return this.saleService.voidSale(id, dto);
     }
-    createCreditNote(body) {
-        return this.saleService.createCreditNote(body.originalSaleId, body.motivo, body.descripcion);
+    sendWhatsapp(id, body) {
+        return this.saleService.sendWhatsappMessage(id, body.phone);
     }
 };
 exports.SaleController = SaleController;
@@ -65,6 +85,32 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", void 0)
 ], SaleController.prototype, "getSummary", null);
+__decorate([
+    (0, common_1.Get)('comprobante/pdf/:token'),
+    (0, swagger_1.ApiOperation)({ summary: 'Secure public PDF download via HMAC signed token' }),
+    __param(0, (0, common_1.Param)('token')),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], SaleController.prototype, "getPdfByToken", null);
+__decorate([
+    (0, common_1.Get)(':id/pdf-token'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get secure signed PDF download token' }),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", void 0)
+], SaleController.prototype, "getPdfToken", null);
+__decorate([
+    (0, common_1.Get)(':id/pdf'),
+    (0, swagger_1.ApiOperation)({ summary: 'Download invoice receipt PDF file' }),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:returntype", Promise)
+], SaleController.prototype, "getPdf", null);
 __decorate([
     (0, common_1.Get)(':id'),
     (0, swagger_1.ApiOperation)({ summary: 'Get sale by ID' }),
@@ -92,13 +138,14 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], SaleController.prototype, "void", null);
 __decorate([
-    (0, common_1.Post)('credit-note'),
-    (0, swagger_1.ApiOperation)({ summary: 'Issue a credit note (nota de credito) for an existing sale' }),
-    __param(0, (0, common_1.Body)()),
+    (0, common_1.Post)(':id/send-whatsapp'),
+    (0, swagger_1.ApiOperation)({ summary: 'Send invoice receipt via WhatsApp Evolution API' }),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", void 0)
-], SaleController.prototype, "createCreditNote", null);
+], SaleController.prototype, "sendWhatsapp", null);
 exports.SaleController = SaleController = __decorate([
     (0, swagger_1.ApiTags)('Sales'),
     (0, swagger_1.ApiBearerAuth)('JWT-auth'),

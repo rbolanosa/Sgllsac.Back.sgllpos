@@ -1,6 +1,7 @@
 import {
-  Controller, Get, Post, Patch, Body, Param, ParseIntPipe, Query, Req,
+  Controller, Get, Post, Patch, Body, Param, ParseIntPipe, Query, Req, Res, ForbiddenException,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { SaleService } from '../../domain/services/sale.service';
 import { CreateSaleDto, VoidSaleDto } from '../../application/dtos/sale.dto';
@@ -31,6 +32,35 @@ export class SaleController {
     return this.saleService.getSalesSummary(from, to);
   }
 
+  @Get('comprobante/pdf/:token')
+  @ApiOperation({ summary: 'Secure public PDF download via HMAC signed token' })
+  async getPdfByToken(@Param('token') token: string, @Res() res: Response) {
+    const saleId = this.saleService.verifyPdfToken(token);
+    if (!saleId) {
+      throw new ForbiddenException('Enlace de comprobante no válido o expirado');
+    }
+    const { buffer, fileName } = await this.saleService.generatePdfBuffer(saleId);
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `inline; filename="${fileName}"`);
+    res.send(buffer);
+  }
+
+  @Get(':id/pdf-token')
+  @ApiOperation({ summary: 'Get secure signed PDF download token' })
+  getPdfToken(@Param('id', ParseIntPipe) id: number) {
+    const token = this.saleService.getSecurePdfToken(id);
+    return { token, path: `/sales/comprobante/pdf/${token}` };
+  }
+
+  @Get(':id/pdf')
+  @ApiOperation({ summary: 'Download invoice receipt PDF file' })
+  async getPdf(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
+    const { buffer, fileName } = await this.saleService.generatePdfBuffer(id);
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `inline; filename="${fileName}"`);
+    res.send(buffer);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get sale by ID' })
   findOne(@Param('id', ParseIntPipe) id: number) {
@@ -50,11 +80,9 @@ export class SaleController {
     return this.saleService.voidSale(id, dto);
   }
 
-  @Post('credit-note')
-  @ApiOperation({ summary: 'Issue a credit note (nota de credito) for an existing sale' })
-  createCreditNote(
-    @Body() body: { originalSaleId: number; motivo: string; descripcion: string },
-  ) {
-    return this.saleService.createCreditNote(body.originalSaleId, body.motivo, body.descripcion);
+  @Post(':id/send-whatsapp')
+  @ApiOperation({ summary: 'Send invoice receipt via WhatsApp Evolution API' })
+  sendWhatsapp(@Param('id', ParseIntPipe) id: number, @Body() body: { phone: string }) {
+    return this.saleService.sendWhatsappMessage(id, body.phone);
   }
 }

@@ -78,6 +78,12 @@ __decorate([
     __metadata("design:type", Number)
 ], CreateSaleDto.prototype, "customerId", void 0);
 __decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateSaleDto.prototype, "customerPhone", void 0);
+__decorate([
     (0, swagger_1.ApiPropertyOptional)({ enum: sale_entity_1.DocumentType, default: sale_entity_1.DocumentType.BOLETA }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsEnum)(sale_entity_1.DocumentType),

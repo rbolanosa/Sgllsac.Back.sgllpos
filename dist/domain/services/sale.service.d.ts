@@ -7,6 +7,7 @@ import { InventoryMovementEntity } from '../../domain/entities/inventory-movemen
 import { CreateSaleDto, VoidSaleDto } from '../../application/dtos/sale.dto';
 import { CompanySettingsService } from './company-settings.service';
 import { FacturacionAdapter } from '../../infrastructure/adapters/facturacion.adapter';
+import { WhatsappAdapter } from '../../infrastructure/adapters/whatsapp.adapter';
 export declare class SaleService {
     private readonly saleRepo;
     private readonly saleItemRepo;
@@ -16,7 +17,8 @@ export declare class SaleService {
     private readonly dataSource;
     private readonly companySettings;
     private readonly facturacionAdapter;
-    constructor(saleRepo: Repository<SaleEntity>, saleItemRepo: Repository<SaleItemEntity>, productRepo: Repository<ProductEntity>, customerRepo: Repository<CustomerEntity>, movementRepo: Repository<InventoryMovementEntity>, dataSource: DataSource, companySettings: CompanySettingsService, facturacionAdapter: FacturacionAdapter);
+    private readonly whatsappAdapter;
+    constructor(saleRepo: Repository<SaleEntity>, saleItemRepo: Repository<SaleItemEntity>, productRepo: Repository<ProductEntity>, customerRepo: Repository<CustomerEntity>, movementRepo: Repository<InventoryMovementEntity>, dataSource: DataSource, companySettings: CompanySettingsService, facturacionAdapter: FacturacionAdapter, whatsappAdapter: WhatsappAdapter);
     findAll(filters?: {
         page?: number;
         limit?: number;
@@ -42,4 +44,11 @@ export declare class SaleService {
         avgTicket: number;
     }>;
     private generateInvoiceNumber;
+    sendWhatsappMessage(id: number, phone: string): Promise<any>;
+    generatePdfBuffer(id: number): Promise<{
+        buffer: Buffer;
+        fileName: string;
+    }>;
+    getSecurePdfToken(saleId: number): string;
+    verifyPdfToken(token: string): number | null;
 }

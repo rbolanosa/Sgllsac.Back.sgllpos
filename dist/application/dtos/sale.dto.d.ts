@@ -11,6 +11,7 @@ export declare class PaymentItemInputDto {
 }
 export declare class CreateSaleDto {
     customerId?: number;
+    customerPhone?: string;
     documentType?: DocumentType;
     paymentMethod: PaymentMethod;
     payments?: PaymentItemInputDto[];

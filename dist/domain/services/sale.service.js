@@ -1,10 +1,43 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
@@ -22,10 +55,12 @@ const product_entity_1 = require("../../domain/entities/product.entity");
 const customer_entity_1 = require("../../domain/entities/customer.entity");
 const user_entity_1 = require("../../domain/entities/user.entity");
 const inventory_movement_entity_1 = require("../../domain/entities/inventory-movement.entity");
+const crypto = __importStar(require("crypto"));
 const company_settings_service_1 = require("./company-settings.service");
 const facturacion_adapter_1 = require("../../infrastructure/adapters/facturacion.adapter");
+const whatsapp_adapter_1 = require("../../infrastructure/adapters/whatsapp.adapter");
 let SaleService = class SaleService {
-    constructor(saleRepo, saleItemRepo, productRepo, customerRepo, movementRepo, dataSource, companySettings, facturacionAdapter) {
+    constructor(saleRepo, saleItemRepo, productRepo, customerRepo, movementRepo, dataSource, companySettings, facturacionAdapter, whatsappAdapter) {
         this.saleRepo = saleRepo;
         this.saleItemRepo = saleItemRepo;
         this.productRepo = productRepo;
@@ -34,6 +69,7 @@ let SaleService = class SaleService {
         this.dataSource = dataSource;
         this.companySettings = companySettings;
         this.facturacionAdapter = facturacionAdapter;
+        this.whatsappAdapter = whatsappAdapter;
     }
     async findAll(filters = {}) {
         const { page = 1, limit = 30, status, from, to, documentType } = filters;
@@ -164,6 +200,12 @@ let SaleService = class SaleService {
                     sunatMessage: sunatErr?.message || 'Error desconocido al enviar a SUNAT',
                 });
             }
+        }
+        const phoneToNotify = dto.customerPhone || result?.customer?.phone;
+        if (phoneToNotify) {
+            this.whatsappAdapter.sendInvoiceMessage(result, phoneToNotify).catch((e) => {
+                console.warn('Advertencia WhatsApp:', e.message);
+            });
         }
         return result;
     }
@@ -440,6 +482,49 @@ let SaleService = class SaleService {
             return this.companySettings.nextInvoiceNumber('nota_venta', manager);
         return this.companySettings.nextInvoiceNumber('boleta', manager);
     }
+    async sendWhatsappMessage(id, phone) {
+        const sale = await this.findById(id);
+        const company = await this.companySettings.get();
+        const result = await this.whatsappAdapter.sendInvoiceMessage(sale, phone, company);
+        return {
+            success: true,
+            message: `Comprobante enviado por WhatsApp al ${phone}`,
+            result,
+        };
+    }
+    async generatePdfBuffer(id) {
+        const sale = await this.findById(id);
+        const company = await this.companySettings.get();
+        const buffer = await this.whatsappAdapter.generateReceiptPdfBuffer(sale, company);
+        const fileName = `${sale.invoiceNumber || 'COMPROBANTE'}.pdf`;
+        return { buffer, fileName };
+    }
+    getSecurePdfToken(saleId) {
+        const secret = process.env.JWT_SECRET || 'devpro-secure-pdf-secret-2026';
+        const hash = crypto.createHmac('sha256', secret)
+            .update(`sale-pdf-${saleId}`)
+            .digest('hex')
+            .substring(0, 24);
+        return `sec_${saleId}_${hash}`;
+    }
+    verifyPdfToken(token) {
+        try {
+            const parts = token.split('_');
+            if (parts.length !== 3 || parts[0] !== 'sec')
+                return null;
+            const saleId = parseInt(parts[1], 10);
+            if (isNaN(saleId))
+                return null;
+            const expected = this.getSecurePdfToken(saleId);
+            if (crypto.timingSafeEqual(Buffer.from(token), Buffer.from(expected))) {
+                return saleId;
+            }
+        }
+        catch {
+            return null;
+        }
+        return null;
+    }
 };
 exports.SaleService = SaleService;
 exports.SaleService = SaleService = __decorate([
@@ -456,6 +541,7 @@ exports.SaleService = SaleService = __decorate([
         typeorm_2.Repository,
         typeorm_2.DataSource,
         company_settings_service_1.CompanySettingsService,
-        facturacion_adapter_1.FacturacionAdapter])
+        facturacion_adapter_1.FacturacionAdapter,
+        whatsapp_adapter_1.WhatsappAdapter])
 ], SaleService);
 //# sourceMappingURL=sale.service.js.map
