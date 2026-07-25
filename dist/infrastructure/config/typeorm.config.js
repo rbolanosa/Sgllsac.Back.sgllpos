@@ -50,7 +50,7 @@ exports.typeOrmConfig = {
         password: configService.get('DATABASE_PASSWORD', ''),
         database: configService.get('DATABASE_NAME', 'devpro_db'),
         synchronize: configService.get('DATABASE_SYNCHRONIZE') === 'true',
-        logging: configService.get('NODE_ENV') === 'development',
+        ssl: process.env.DATABASE_SSL === 'true' || process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
         entities: [path.join(__dirname, '../../**/*.entity{.ts,.js}')],
         migrations: [
             path.join(__dirname, '../database/migrations/*{.ts,.js}'),

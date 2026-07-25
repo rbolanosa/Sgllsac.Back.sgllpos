@@ -80,13 +80,15 @@ exports.AppModule = AppModule = __decorate([
                     new winston.transports.Console({
                         format: winston.format.combine(winston.format.colorize(), winston.format.simple()),
                     }),
-                    new winston.transports.Stream({
-                        stream: rfs.createStream('application-%DATE%.log', {
-                            interval: '1d',
-                            maxFiles: 14,
-                            path: path.resolve(process.cwd(), 'logs'),
+                    ...(process.env.VERCEL ? [] : [
+                        new winston.transports.Stream({
+                            stream: rfs.createStream('application-%DATE%.log', {
+                                interval: '1d',
+                                maxFiles: 14,
+                                path: path.resolve(process.cwd(), 'logs'),
+                            }),
                         }),
-                    }),
+                    ]),
                 ],
             }),
             typeorm_1.TypeOrmModule.forRootAsync(typeorm_config_1.typeOrmConfig),

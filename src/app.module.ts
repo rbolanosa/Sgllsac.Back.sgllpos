@@ -45,13 +45,15 @@ import { EstablishmentsModule } from './infrastructure/modules/establishments.mo
             winston.format.simple(),
           ),
         }),
-        new winston.transports.Stream({
-          stream: rfs.createStream('application-%DATE%.log', {
-            interval: '1d',
-            maxFiles: 14,
-            path: path.resolve(process.cwd(), 'logs'),
+        ...(process.env.VERCEL ? [] : [
+          new winston.transports.Stream({
+            stream: rfs.createStream('application-%DATE%.log', {
+              interval: '1d',
+              maxFiles: 14,
+              path: path.resolve(process.cwd(), 'logs'),
+            }),
           }),
-        }),
+        ]),
       ],
     }),
 

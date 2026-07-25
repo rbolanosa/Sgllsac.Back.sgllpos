@@ -18,7 +18,7 @@ export const typeOrmConfig: TypeOrmModuleAsyncOptions = {
     password: configService.get<string>('DATABASE_PASSWORD', ''),
     database: configService.get<string>('DATABASE_NAME', 'devpro_db'),
     synchronize: configService.get<string>('DATABASE_SYNCHRONIZE') === 'true',
-    logging: configService.get<string>('NODE_ENV') === 'development',
+    ssl: process.env.DATABASE_SSL === 'true' || process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
     entities: [path.join(__dirname, '../../**/*.entity{.ts,.js}')],
     migrations: [
       path.join(__dirname, '../database/migrations/*{.ts,.js}'),
