@@ -53,19 +53,19 @@ const establishment_entity_1 = require("../../domain/entities/establishment.enti
 const establishment_series_entity_1 = require("../../domain/entities/establishment-series.entity");
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 const entities = [
-    user_entity_1.User,
-    category_entity_1.Category,
-    product_entity_1.Product,
-    customer_entity_1.Customer,
-    supplier_entity_1.Supplier,
-    sale_entity_1.Sale,
-    sale_item_entity_1.SaleItem,
-    purchase_order_entity_1.PurchaseOrder,
-    purchase_order_item_entity_1.PurchaseOrderItem,
-    inventory_movement_entity_1.InventoryMovement,
-    company_settings_entity_1.CompanySettings,
-    establishment_entity_1.Establishment,
-    establishment_series_entity_1.EstablishmentSeries,
+    user_entity_1.UserEntity,
+    category_entity_1.CategoryEntity,
+    product_entity_1.ProductEntity,
+    customer_entity_1.CustomerEntity,
+    supplier_entity_1.SupplierEntity,
+    sale_entity_1.SaleEntity,
+    sale_item_entity_1.SaleItemEntity,
+    purchase_order_entity_1.PurchaseOrderEntity,
+    purchase_order_item_entity_1.PurchaseOrderItemEntity,
+    inventory_movement_entity_1.InventoryMovementEntity,
+    company_settings_entity_1.CompanySettingsEntity,
+    establishment_entity_1.EstablishmentEntity,
+    establishment_series_entity_1.EstablishmentSeriesEntity,
 ];
 exports.typeOrmConfig = {
     imports: [config_1.ConfigModule],

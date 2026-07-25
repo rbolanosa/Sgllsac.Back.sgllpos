@@ -4,37 +4,37 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 import * as path from 'path';
 import * as dotenv from 'dotenv';
 
-import { User } from '../../domain/entities/user.entity';
-import { Category } from '../../domain/entities/category.entity';
-import { Product } from '../../domain/entities/product.entity';
-import { Customer } from '../../domain/entities/customer.entity';
-import { Supplier } from '../../domain/entities/supplier.entity';
-import { Sale } from '../../domain/entities/sale.entity';
-import { SaleItem } from '../../domain/entities/sale-item.entity';
-import { PurchaseOrder } from '../../domain/entities/purchase-order.entity';
-import { PurchaseOrderItem } from '../../domain/entities/purchase-order-item.entity';
-import { InventoryMovement } from '../../domain/entities/inventory-movement.entity';
-import { CompanySettings } from '../../domain/entities/company-settings.entity';
-import { Establishment } from '../../domain/entities/establishment.entity';
-import { EstablishmentSeries } from '../../domain/entities/establishment-series.entity';
+import { UserEntity } from '../../domain/entities/user.entity';
+import { CategoryEntity } from '../../domain/entities/category.entity';
+import { ProductEntity } from '../../domain/entities/product.entity';
+import { CustomerEntity } from '../../domain/entities/customer.entity';
+import { SupplierEntity } from '../../domain/entities/supplier.entity';
+import { SaleEntity } from '../../domain/entities/sale.entity';
+import { SaleItemEntity } from '../../domain/entities/sale-item.entity';
+import { PurchaseOrderEntity } from '../../domain/entities/purchase-order.entity';
+import { PurchaseOrderItemEntity } from '../../domain/entities/purchase-order-item.entity';
+import { InventoryMovementEntity } from '../../domain/entities/inventory-movement.entity';
+import { CompanySettingsEntity } from '../../domain/entities/company-settings.entity';
+import { EstablishmentEntity } from '../../domain/entities/establishment.entity';
+import { EstablishmentSeriesEntity } from '../../domain/entities/establishment-series.entity';
 
 // Carga el .env cuando el archivo se usa desde TypeORM CLI (ts-node)
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
 const entities = [
-  User,
-  Category,
-  Product,
-  Customer,
-  Supplier,
-  Sale,
-  SaleItem,
-  PurchaseOrder,
-  PurchaseOrderItem,
-  InventoryMovement,
-  CompanySettings,
-  Establishment,
-  EstablishmentSeries,
+  UserEntity,
+  CategoryEntity,
+  ProductEntity,
+  CustomerEntity,
+  SupplierEntity,
+  SaleEntity,
+  SaleItemEntity,
+  PurchaseOrderEntity,
+  PurchaseOrderItemEntity,
+  InventoryMovementEntity,
+  CompanySettingsEntity,
+  EstablishmentEntity,
+  EstablishmentSeriesEntity,
 ];
 
 export const typeOrmConfig: TypeOrmModuleAsyncOptions = {
