@@ -78,7 +78,7 @@ exports.typeOrmConfig = {
         password: configService.get('DATABASE_PASSWORD', ''),
         database: configService.get('DATABASE_NAME', 'devpro_db'),
         synchronize: false,
-        ssl: (configService.get('DATABASE_HOST')?.includes('rlwy.net') || process.env.NODE_ENV === 'production')
+        ssl: process.env.DATABASE_SSL === 'true'
             ? { rejectUnauthorized: false }
             : false,
         entities,
