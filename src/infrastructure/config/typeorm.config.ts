@@ -43,16 +43,15 @@ export const typeOrmConfig: TypeOrmModuleAsyncOptions = {
   useFactory: (configService: ConfigService): DataSourceOptions => ({
     type: 'mysql',
     host: configService.get<string>('DATABASE_HOST', '127.0.0.1'),
-    port: configService.get<number>('DATABASE_PORT', 3306),
+    port: Number(configService.get<number>('DATABASE_PORT', 3306)),
     username: configService.get<string>('DATABASE_USER', 'root'),
     password: configService.get<string>('DATABASE_PASSWORD', ''),
     database: configService.get<string>('DATABASE_NAME', 'devpro_db'),
-    synchronize: configService.get<string>('DATABASE_SYNCHRONIZE') === 'true',
-    ssl: process.env.DATABASE_SSL === 'true' || process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    synchronize: false,
+    ssl: (configService.get<string>('DATABASE_HOST')?.includes('rlwy.net') || process.env.NODE_ENV === 'production')
+      ? { rejectUnauthorized: false }
+      : false,
     entities,
-    migrations: [
-      path.join(__dirname, '../database/migrations/*{.ts,.js}'),
-    ],
     migrationsTableName: 'migrations',
   }),
 };
