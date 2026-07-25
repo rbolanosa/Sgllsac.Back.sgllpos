@@ -38,7 +38,35 @@ const config_1 = require("@nestjs/config");
 const typeorm_1 = require("typeorm");
 const path = __importStar(require("path"));
 const dotenv = __importStar(require("dotenv"));
+const user_entity_1 = require("../../domain/entities/user.entity");
+const category_entity_1 = require("../../domain/entities/category.entity");
+const product_entity_1 = require("../../domain/entities/product.entity");
+const customer_entity_1 = require("../../domain/entities/customer.entity");
+const supplier_entity_1 = require("../../domain/entities/supplier.entity");
+const sale_entity_1 = require("../../domain/entities/sale.entity");
+const sale_item_entity_1 = require("../../domain/entities/sale-item.entity");
+const purchase_order_entity_1 = require("../../domain/entities/purchase-order.entity");
+const purchase_order_item_entity_1 = require("../../domain/entities/purchase-order-item.entity");
+const inventory_movement_entity_1 = require("../../domain/entities/inventory-movement.entity");
+const company_settings_entity_1 = require("../../domain/entities/company-settings.entity");
+const establishment_entity_1 = require("../../domain/entities/establishment.entity");
+const establishment_series_entity_1 = require("../../domain/entities/establishment-series.entity");
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+const entities = [
+    user_entity_1.User,
+    category_entity_1.Category,
+    product_entity_1.Product,
+    customer_entity_1.Customer,
+    supplier_entity_1.Supplier,
+    sale_entity_1.Sale,
+    sale_item_entity_1.SaleItem,
+    purchase_order_entity_1.PurchaseOrder,
+    purchase_order_item_entity_1.PurchaseOrderItem,
+    inventory_movement_entity_1.InventoryMovement,
+    company_settings_entity_1.CompanySettings,
+    establishment_entity_1.Establishment,
+    establishment_series_entity_1.EstablishmentSeries,
+];
 exports.typeOrmConfig = {
     imports: [config_1.ConfigModule],
     inject: [config_1.ConfigService],
@@ -51,7 +79,7 @@ exports.typeOrmConfig = {
         database: configService.get('DATABASE_NAME', 'devpro_db'),
         synchronize: configService.get('DATABASE_SYNCHRONIZE') === 'true',
         ssl: process.env.DATABASE_SSL === 'true' || process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-        entities: [path.join(__dirname, '../../**/*.entity{.ts,.js}')],
+        entities,
         migrations: [
             path.join(__dirname, '../database/migrations/*{.ts,.js}'),
         ],
