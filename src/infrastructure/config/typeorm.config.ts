@@ -11,7 +11,7 @@ export const typeOrmConfig: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule],
   inject: [ConfigService],
   useFactory: (configService: ConfigService): DataSourceOptions => ({
-    type: 'mariadb',
+    type: 'mysql',
     host: configService.get<string>('DATABASE_HOST', '127.0.0.1'),
     port: configService.get<number>('DATABASE_PORT', 3306),
     username: configService.get<string>('DATABASE_USER', 'root'),
@@ -29,7 +29,7 @@ export const typeOrmConfig: TypeOrmModuleAsyncOptions = {
 
 // DataSource para TypeORM CLI (npm run migration:run / generate / etc.)
 export const AppDataSource = new DataSource({
-  type: 'mariadb',
+  type: 'mysql',
   host: process.env.DATABASE_HOST || '127.0.0.1',
   port: parseInt(process.env.DATABASE_PORT || '3306', 10),
   username: process.env.DATABASE_USER || 'root',

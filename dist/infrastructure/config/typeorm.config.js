@@ -43,7 +43,7 @@ exports.typeOrmConfig = {
     imports: [config_1.ConfigModule],
     inject: [config_1.ConfigService],
     useFactory: (configService) => ({
-        type: 'mariadb',
+        type: 'mysql',
         host: configService.get('DATABASE_HOST', '127.0.0.1'),
         port: configService.get('DATABASE_PORT', 3306),
         username: configService.get('DATABASE_USER', 'root'),
@@ -59,7 +59,7 @@ exports.typeOrmConfig = {
     }),
 };
 exports.AppDataSource = new typeorm_1.DataSource({
-    type: 'mariadb',
+    type: 'mysql',
     host: process.env.DATABASE_HOST || '127.0.0.1',
     port: parseInt(process.env.DATABASE_PORT || '3306', 10),
     username: process.env.DATABASE_USER || 'root',
