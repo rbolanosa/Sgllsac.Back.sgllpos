@@ -1,6 +1,8 @@
 import { Repository } from 'typeorm';
-import { ProductEntity } from '../../domain/entities/product.entity';
-import { InventoryMovementEntity, MovementType } from '../../domain/entities/inventory-movement.entity';
+import { ProductEntity } from '../entities/product.entity';
+import { InventoryMovementEntity, MovementType } from '../entities/inventory-movement.entity';
+import { CategoryEntity } from '../entities/category.entity';
+import { SupplierEntity } from '../entities/supplier.entity';
 import { CreateProductDto, UpdateProductDto, StockAdjustmentDto } from '../../application/dtos/product.dto';
 export interface ProductFilters {
     search?: string;
@@ -11,10 +13,29 @@ export interface ProductFilters {
     page?: number;
     limit?: number;
 }
+export interface ImportResult {
+    total: number;
+    created: number;
+    updated: number;
+    errors: {
+        row: number;
+        sku: string;
+        message: string;
+    }[];
+    results: {
+        row: number;
+        sku: string;
+        name: string;
+        status: 'created' | 'updated' | 'error';
+        message?: string;
+    }[];
+}
 export declare class ProductService {
     private readonly productRepo;
     private readonly movementRepo;
-    constructor(productRepo: Repository<ProductEntity>, movementRepo: Repository<InventoryMovementEntity>);
+    private readonly categoryRepo;
+    private readonly supplierRepo;
+    constructor(productRepo: Repository<ProductEntity>, movementRepo: Repository<InventoryMovementEntity>, categoryRepo: Repository<CategoryEntity>, supplierRepo: Repository<SupplierEntity>);
     findAll(filters?: ProductFilters): Promise<{
         data: ProductEntity[];
         total: number;
@@ -28,4 +49,6 @@ export declare class ProductService {
     remove(id: number): Promise<void>;
     adjustStock(id: number, dto: StockAdjustmentDto, type: MovementType, performedBy?: number): Promise<ProductEntity>;
     getLowStockProducts(): Promise<ProductEntity[]>;
+    generateExcelTemplate(): Promise<Buffer>;
+    importFromExcel(fileBuffer: Buffer): Promise<ImportResult>;
 }

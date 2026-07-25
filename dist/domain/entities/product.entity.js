@@ -9,19 +9,57 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProductEntity = exports.ProductUnit = void 0;
+exports.ProductEntity = exports.TipAfeIgv = exports.ProductUnit = void 0;
 const typeorm_1 = require("typeorm");
 const category_entity_1 = require("./category.entity");
 const supplier_entity_1 = require("./supplier.entity");
 var ProductUnit;
 (function (ProductUnit) {
-    ProductUnit["PIECE"] = "piece";
-    ProductUnit["KG"] = "kg";
-    ProductUnit["LITER"] = "liter";
-    ProductUnit["BOX"] = "box";
-    ProductUnit["DOZEN"] = "dozen";
-    ProductUnit["PACK"] = "pack";
+    ProductUnit["NIU"] = "NIU";
+    ProductUnit["KGM"] = "KGM";
+    ProductUnit["GRM"] = "GRM";
+    ProductUnit["LTR"] = "LTR";
+    ProductUnit["MLT"] = "MLT";
+    ProductUnit["MTR"] = "MTR";
+    ProductUnit["CMT"] = "CMT";
+    ProductUnit["MTK"] = "MTK";
+    ProductUnit["MTQ"] = "MTQ";
+    ProductUnit["TNE"] = "TNE";
+    ProductUnit["GLL"] = "GLL";
+    ProductUnit["BX"] = "BX";
+    ProductUnit["DZN"] = "DZN";
+    ProductUnit["PK"] = "PK";
+    ProductUnit["BG"] = "BG";
+    ProductUnit["BO"] = "BO";
+    ProductUnit["CJ"] = "CJ";
+    ProductUnit["SA"] = "SA";
+    ProductUnit["SET"] = "SET";
+    ProductUnit["ZZ"] = "ZZ";
+    ProductUnit["HUR"] = "HUR";
+    ProductUnit["DAY"] = "DAY";
+    ProductUnit["MON"] = "MON";
 })(ProductUnit || (exports.ProductUnit = ProductUnit = {}));
+var TipAfeIgv;
+(function (TipAfeIgv) {
+    TipAfeIgv["GRAVADO_ONEROSA"] = "10";
+    TipAfeIgv["GRAVADO_RETIRO_PREMIO"] = "11";
+    TipAfeIgv["GRAVADO_RETIRO_DONACION"] = "12";
+    TipAfeIgv["GRAVADO_RETIRO"] = "13";
+    TipAfeIgv["GRAVADO_RETIRO_PUBLICIDAD"] = "14";
+    TipAfeIgv["GRAVADO_BONIFICACIONES"] = "15";
+    TipAfeIgv["GRAVADO_RETIRO_TRABAJADOR"] = "16";
+    TipAfeIgv["GRAVADO_IVAP"] = "17";
+    TipAfeIgv["EXONERADO_ONEROSA"] = "20";
+    TipAfeIgv["EXONERADO_TRANSFERENCIA"] = "21";
+    TipAfeIgv["INAFECTO_ONEROSA"] = "30";
+    TipAfeIgv["INAFECTO_RETIRO_BONIF"] = "31";
+    TipAfeIgv["INAFECTO_RETIRO"] = "32";
+    TipAfeIgv["INAFECTO_RETIRO_MUESTRAS"] = "33";
+    TipAfeIgv["INAFECTO_RETIRO_CONVENIO"] = "34";
+    TipAfeIgv["INAFECTO_RETIRO_PREMIO"] = "35";
+    TipAfeIgv["INAFECTO_RETIRO_PUBLICIDAD"] = "36";
+    TipAfeIgv["EXPORTACION"] = "40";
+})(TipAfeIgv || (exports.TipAfeIgv = TipAfeIgv = {}));
 let ProductEntity = class ProductEntity {
 };
 exports.ProductEntity = ProductEntity;
@@ -64,9 +102,24 @@ __decorate([
     __metadata("design:type", supplier_entity_1.SupplierEntity)
 ], ProductEntity.prototype, "supplier", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: ProductUnit, default: ProductUnit.PIECE }),
+    (0, typeorm_1.Column)({
+        type: 'varchar',
+        length: 10,
+        default: ProductUnit.NIU,
+        comment: 'Catálogo Nº 3 SUNAT - Código de Unidad de Medida',
+    }),
     __metadata("design:type", String)
 ], ProductEntity.prototype, "unit", void 0);
+__decorate([
+    (0, typeorm_1.Column)({
+        name: 'tip_afe_igv',
+        type: 'varchar',
+        length: 5,
+        default: TipAfeIgv.GRAVADO_ONEROSA,
+        comment: 'Catálogo Nº 7 SUNAT - Tipo de Afectación del IGV',
+    }),
+    __metadata("design:type", String)
+], ProductEntity.prototype, "tipAfeIgv", void 0);
 __decorate([
     (0, typeorm_1.Column)({ name: 'cost_price', type: 'decimal', precision: 10, scale: 4, default: 0 }),
     __metadata("design:type", Number)
@@ -76,7 +129,7 @@ __decorate([
     __metadata("design:type", Number)
 ], ProductEntity.prototype, "salePrice", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ name: 'tax_rate', type: 'decimal', precision: 5, scale: 2, default: 12.0 }),
+    (0, typeorm_1.Column)({ name: 'tax_rate', type: 'decimal', precision: 5, scale: 2, default: 18.0 }),
     __metadata("design:type", Number)
 ], ProductEntity.prototype, "taxRate", void 0);
 __decorate([

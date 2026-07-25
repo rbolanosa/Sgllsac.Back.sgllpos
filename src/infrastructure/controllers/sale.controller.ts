@@ -4,7 +4,7 @@ import {
 import { Response } from 'express';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { SaleService } from '../../domain/services/sale.service';
-import { CreateSaleDto, VoidSaleDto } from '../../application/dtos/sale.dto';
+import { CreateSaleDto, VoidSaleDto, CreateCreditNoteDto } from '../../application/dtos/sale.dto';
 import { SaleStatus } from '../../domain/entities/sale.entity';
 
 @ApiTags('Sales')
@@ -74,6 +74,16 @@ export class SaleController {
     return this.saleService.create(dto, cashierId);
   }
 
+  @Post('credit-note')
+  @ApiOperation({ summary: 'Create credit note for an invoice or boleta' })
+  createCreditNote(@Body() dto: CreateCreditNoteDto) {
+    return this.saleService.createCreditNote(
+      dto.originalSaleId,
+      dto.motivo,
+      dto.descripcion || dto.motivo,
+    );
+  }
+
   @Patch(':id/void')
   @ApiOperation({ summary: 'Void a completed sale (reverses stock movements)' })
   void(@Param('id', ParseIntPipe) id: number, @Body() dto: VoidSaleDto) {
@@ -84,5 +94,11 @@ export class SaleController {
   @ApiOperation({ summary: 'Send invoice receipt via WhatsApp Evolution API' })
   sendWhatsapp(@Param('id', ParseIntPipe) id: number, @Body() body: { phone: string }) {
     return this.saleService.sendWhatsappMessage(id, body.phone);
+  }
+
+  @Post(':id/resend-sunat')
+  @ApiOperation({ summary: 'Resend rejected document or credit note to SUNAT' })
+  resendSunat(@Param('id', ParseIntPipe) id: number) {
+    return this.saleService.resendSunat(id);
   }
 }

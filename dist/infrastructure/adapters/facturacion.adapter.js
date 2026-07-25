@@ -99,7 +99,7 @@ let FacturacionAdapter = FacturacionAdapter_1 = class FacturacionAdapter {
     }
     async post(endpoint, body, attempt = 1) {
         if (this.isCircuitOpen()) {
-            throw new Error('Facturación: Circuit breaker abierto, servicio no disponible');
+            this.resetCircuit();
         }
         const { baseUrl, headers } = await this.getResolvedConfig();
         try {
@@ -115,7 +115,7 @@ let FacturacionAdapter = FacturacionAdapter_1 = class FacturacionAdapter {
             if (!status || status >= 500) {
                 this.recordFailure();
             }
-            if (attempt < this.maxRetries) {
+            if (attempt < this.maxRetries && (!status || status >= 500)) {
                 this.logger.warn(`Reintentando (${attempt}/${this.maxRetries})...`);
                 await new Promise((resolve) => setTimeout(resolve, this.retryDelay * attempt));
                 return this.post(endpoint, body, attempt + 1);

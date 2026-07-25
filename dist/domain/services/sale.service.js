@@ -44,6 +44,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var SaleService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SaleService = void 0;
 const common_1 = require("@nestjs/common");
@@ -59,7 +60,7 @@ const crypto = __importStar(require("crypto"));
 const company_settings_service_1 = require("./company-settings.service");
 const facturacion_adapter_1 = require("../../infrastructure/adapters/facturacion.adapter");
 const whatsapp_adapter_1 = require("../../infrastructure/adapters/whatsapp.adapter");
-let SaleService = class SaleService {
+let SaleService = SaleService_1 = class SaleService {
     constructor(saleRepo, saleItemRepo, productRepo, customerRepo, movementRepo, dataSource, companySettings, facturacionAdapter, whatsappAdapter) {
         this.saleRepo = saleRepo;
         this.saleItemRepo = saleItemRepo;
@@ -70,6 +71,7 @@ let SaleService = class SaleService {
         this.companySettings = companySettings;
         this.facturacionAdapter = facturacionAdapter;
         this.whatsappAdapter = whatsappAdapter;
+        this.logger = new common_1.Logger(SaleService_1.name);
     }
     async findAll(filters = {}) {
         const { page = 1, limit = 30, status, from, to, documentType } = filters;
@@ -241,22 +243,29 @@ let SaleService = class SaleService {
             const unitPrice = Number(item.unitPrice);
             const qty = Number(item.quantity);
             const totalItem = Number(item.subtotal);
-            const baseIgv = (totalItem * 100) / 118;
-            const igv = totalItem - baseIgv;
-            const valorUnitario = (unitPrice * 100) / 118;
+            const sunatUnit = item.product?.unit || 'NIU';
+            const tipAfeIgv = item.product?.tipAfeIgv || '10';
+            const taxRate = Number(item.product?.taxRate ?? 18);
+            const tipCode = parseInt(tipAfeIgv, 10);
+            const isGravado = tipCode >= 10 && tipCode <= 17;
+            const taxFactor = isGravado ? (100 / (100 + taxRate)) : 1;
+            const baseIgv = isGravado ? totalItem * taxFactor : totalItem;
+            const igvAmount = isGravado ? totalItem - baseIgv : 0;
+            const porcentajeIgv = isGravado ? taxRate : 0;
+            const valorUnitario = isGravado ? unitPrice * taxFactor : unitPrice;
             return {
-                codigo: item.product?.sku || `PROD-${item.productId || 1}`,
+                codigo: item.product?.sku || item.product?.barcode || `PROD-${item.productId || 1}`,
                 descripcion: item.productName || item.product?.name || 'Producto',
-                unidad: 'NIU',
+                unidad: sunatUnit,
                 cantidad: qty,
-                precio_unitario: unitPrice,
+                precio_unitario: Number(unitPrice.toFixed(4)),
                 mto_valor_unitario: Number(valorUnitario.toFixed(4)),
-                mto_base_igv: Number(baseIgv.toFixed(2)),
-                porcentaje_igv: 18,
-                igv: Number(igv.toFixed(2)),
-                tip_afe_igv: '10',
-                total_impuestos: Number(igv.toFixed(2)),
-                mto_valor_venta: Number(baseIgv.toFixed(2)),
+                mto_base_igv: Number(baseIgv.toFixed(4)),
+                porcentaje_igv: porcentajeIgv,
+                igv: Number(igvAmount.toFixed(4)),
+                tip_afe_igv: tipAfeIgv,
+                total_impuestos: Number(igvAmount.toFixed(4)),
+                mto_valor_venta: Number(baseIgv.toFixed(4)),
             };
         });
         const localDate = new Date(sale.saleDate);
@@ -335,7 +344,8 @@ let SaleService = class SaleService {
         }
     }
     async createCreditNote(originalId, reason, description) {
-        return this.dataSource.transaction(async (manager) => {
+        let originalDoc = null;
+        const ncRecord = await this.dataSource.transaction(async (manager) => {
             const original = await manager.findOne(sale_entity_1.SaleEntity, {
                 where: { id: originalId },
                 relations: { customer: true, items: { product: true } },
@@ -348,12 +358,25 @@ let SaleService = class SaleService {
             if (!['factura', 'boleta'].includes(original.documentType)) {
                 throw new common_1.BadRequestException('Credit notes can only be issued for invoices (factura) or receipts (boleta)');
             }
+            originalDoc = original;
             const serie = original.documentType === 'factura' ? 'FC01' : 'BC01';
-            const ncCount = await manager.count(sale_entity_1.SaleEntity, { where: { documentType: sale_entity_1.DocumentType.NOTA_CREDITO } });
-            const correlativo = String(ncCount + 1).padStart(8, '0');
+            const lastDoc = await manager
+                .createQueryBuilder(sale_entity_1.SaleEntity, 's')
+                .where('s.documentType = :docType', { docType: sale_entity_1.DocumentType.NOTA_CREDITO })
+                .andWhere('s.invoiceNumber LIKE :seriePattern', { seriePattern: `${serie}-%` })
+                .orderBy('s.id', 'DESC')
+                .getOne();
+            let nextNum = 1;
+            if (lastDoc && lastDoc.invoiceNumber) {
+                const parts = lastDoc.invoiceNumber.split('-');
+                if (parts[1]) {
+                    const parsed = parseInt(parts[1], 10);
+                    if (!isNaN(parsed))
+                        nextNum = parsed + 1;
+                }
+            }
+            const correlativo = String(nextNum).padStart(8, '0');
             const ncNumber = `${serie}-${correlativo}`;
-            original.status = sale_entity_1.SaleStatus.REFUNDED;
-            await manager.save(original);
             for (const item of original.items) {
                 if (!item.productId)
                     continue;
@@ -388,8 +411,260 @@ let SaleService = class SaleService {
                 status: sale_entity_1.SaleStatus.COMPLETED,
                 notes: `Credit note for ${original.invoiceNumber}: ${description}`,
             });
-            return manager.save(nc);
+            const savedNc = await manager.save(nc);
+            const ncItems = [];
+            for (const item of original.items) {
+                const ncItem = manager.create(sale_item_entity_1.SaleItemEntity, {
+                    saleId: savedNc.id,
+                    productId: item.productId,
+                    productName: item.productName,
+                    quantity: item.quantity,
+                    unitPrice: item.unitPrice,
+                    taxRate: item.taxRate,
+                    discount: item.discount,
+                    subtotal: item.subtotal,
+                });
+                ncItems.push(await manager.save(ncItem));
+            }
+            savedNc.items = ncItems;
+            return savedNc;
         });
+        if (ncRecord && originalDoc) {
+            try {
+                await this.sendCreditNoteToApisunat(ncRecord, originalDoc, reason, description);
+            }
+            catch (err) {
+                console.error('sendCreditNoteToApisunat threw unexpectedly:', err?.message);
+                await this.saleRepo.update(ncRecord.id, {
+                    sunatStatus: 'RECHAZADO',
+                    sunatMessage: err?.message || 'Error al transmitir Nota de Crédito a SUNAT',
+                });
+            }
+        }
+        return ncRecord;
+    }
+    async sendCreditNoteToApisunat(nc, original, reasonCode, description) {
+        const parts = (nc.invoiceNumber || '').split('-');
+        const serie = parts[0] || (original.documentType === sale_entity_1.DocumentType.FACTURA ? 'FC01' : 'BC01');
+        const correlativo = parts[1] ? parseInt(parts[1], 10) : undefined;
+        const origParts = (original.invoiceNumber || '').split('-');
+        const docAfectadoSerie = origParts[0] || (original.documentType === sale_entity_1.DocumentType.FACTURA ? 'F001' : 'B001');
+        const docAfectadoCorrelativo = origParts[1] ? String(parseInt(origParts[1], 10)) : '1';
+        const customer = original.customer;
+        let tipoDoc = '1';
+        let numDoc = customer?.nit || '00000000';
+        let razonSocial = customer?.name || 'CONSUMIDOR FINAL';
+        if (original.documentType === sale_entity_1.DocumentType.FACTURA) {
+            tipoDoc = '6';
+            numDoc = (customer?.nit && customer.nit.length === 11) ? customer.nit : '20252501178';
+            razonSocial = customer?.name || 'CORPORACION DE SERVICIOS GENERALES G Y R S.A.';
+        }
+        else {
+            if (customer?.nit && customer.nit.length === 8) {
+                tipoDoc = '1';
+                numDoc = customer.nit;
+            }
+            else if (customer?.nit && customer.nit.length === 11) {
+                tipoDoc = '6';
+                numDoc = customer.nit;
+            }
+            else {
+                tipoDoc = '0';
+                numDoc = '00000000';
+                razonSocial = customer?.name || 'CONSUMIDOR FINAL';
+            }
+        }
+        const items = (original.items || []).map((item) => {
+            const unitPrice = Number(item.unitPrice || 0);
+            const sunatUnit = item.product?.unit || 'NIU';
+            const tipAfeIgv = item.product?.tipAfeIgv || '10';
+            return {
+                descripcion: item.productName || item.product?.name || 'Producto',
+                unidad: sunatUnit,
+                cantidad: Number(item.quantity || 0),
+                precio_unitario: Number(unitPrice.toFixed(4)),
+                tip_afe_igv: tipAfeIgv,
+            };
+        });
+        const localDate = new Date(nc.saleDate);
+        const year = localDate.getFullYear();
+        const month = String(localDate.getMonth() + 1).padStart(2, '0');
+        const day = String(localDate.getDate()).padStart(2, '0');
+        const fechaEmisionStr = `${year}-${month}-${day}`;
+        const cleanCodMotivo = String(reasonCode || '01').split('-')[0].trim().padStart(2, '0');
+        const rawReasonLabel = String(reasonCode).includes('-') ? String(reasonCode).split('-').slice(1).join('-').trim() : '';
+        const cleanDesMotivo = description
+            ? (rawReasonLabel ? `${rawReasonLabel.toUpperCase()} | ${description.toUpperCase()}` : description.toUpperCase())
+            : (rawReasonLabel ? rawReasonLabel.toUpperCase() : 'ANULACIÓN DE LA OPERACIÓN');
+        const ncSerie = original.documentType === sale_entity_1.DocumentType.FACTURA ? 'FC01' : 'BC01';
+        const payload = {
+            serie: ncSerie,
+            fecha_emision: fechaEmisionStr,
+            doc_afectado_tipo: original.documentType === sale_entity_1.DocumentType.FACTURA ? '01' : '03',
+            doc_afectado_serie: docAfectadoSerie,
+            doc_afectado_correlativo: docAfectadoCorrelativo,
+            cod_motivo: cleanCodMotivo,
+            des_motivo: cleanDesMotivo,
+            cliente: {
+                tipo_doc: tipoDoc,
+                num_doc: numDoc,
+                razon_social: razonSocial,
+                direccion: customer?.address || 'LIMA - PERU',
+            },
+            items,
+            enviar_automatico: true,
+        };
+        let res;
+        try {
+            try {
+                res = await this.facturacionAdapter.post('/notas-credito', payload);
+            }
+            catch (firstErr) {
+                const msg = String(firstErr?.response?.data?.mensaje || firstErr?.response?.data?.message || '');
+                if (msg.includes('Serie') || msg.includes('App\\Models\\Serie')) {
+                    this.logger.log(`Registrando automáticamente la serie ${payload.serie} en APISUNAT...`);
+                    try {
+                        let sucursalId = 2;
+                        try {
+                            const seriesList = await this.facturacionAdapter.get('/series');
+                            const itemsList = seriesList?.datos || seriesList || [];
+                            if (Array.isArray(itemsList) && itemsList.length > 0) {
+                                sucursalId = itemsList[0]?.sucursal?.id || itemsList[0]?.sucursal_id || 2;
+                            }
+                        }
+                        catch (e) { }
+                        await this.facturacionAdapter.post('/series', {
+                            series: [
+                                {
+                                    tipo: 'nota_credito',
+                                    serie: payload.serie,
+                                    sucursal_id: sucursalId,
+                                },
+                            ],
+                        });
+                    }
+                    catch (regErr) {
+                        this.logger.warn(`No se pudo auto-registrar la serie ${payload.serie}: ${regErr?.message}`);
+                    }
+                    res = await this.facturacionAdapter.post('/notas-credito', payload);
+                }
+                else {
+                    throw firstErr;
+                }
+            }
+            const datos = res?.datos || res;
+            let sunatStatus = datos?.sunat?.estado || res?.estado || 'enviado';
+            let sunatMessage = datos?.sunat?.descripcion || res?.mensaje || 'Nota de Crédito registrada';
+            let xmlUrl = datos?.archivos?.xml || null;
+            let cdrUrl = datos?.archivos?.cdr || null;
+            let pdfUrl = datos?.archivos?.pdf || null;
+            let qrCode = datos?.qr_code || null;
+            if (['enviado', 'aceptado', 'pendiente', 'exito'].includes(String(sunatStatus).toLowerCase())) {
+                sunatStatus = 'ACEPTADO';
+                if (!sunatMessage || sunatMessage.includes('encolada') || sunatMessage.includes('registrado') || sunatMessage.includes('Beta')) {
+                    sunatMessage = 'Nota de Crédito Aceptada por SUNAT';
+                }
+                if (original?.id) {
+                    await this.saleRepo.update(original.id, { status: sale_entity_1.SaleStatus.REFUNDED });
+                }
+            }
+            else {
+                if (original?.id) {
+                    await this.saleRepo.update(original.id, { status: sale_entity_1.SaleStatus.COMPLETED });
+                }
+            }
+            let newInvoiceNumber = nc.invoiceNumber;
+            if (datos?.numero_completo) {
+                const parts = datos.numero_completo.split('-');
+                if (parts.length === 2) {
+                    newInvoiceNumber = `${parts[0]}-${String(parts[1]).padStart(8, '0')}`;
+                }
+                else {
+                    newInvoiceNumber = datos.numero_completo;
+                }
+            }
+            else if (datos?.serie && datos?.correlativo) {
+                newInvoiceNumber = `${datos.serie}-${String(datos.correlativo).padStart(8, '0')}`;
+            }
+            await this.saleRepo.update(nc.id, {
+                invoiceNumber: newInvoiceNumber,
+                sunatStatus,
+                sunatMessage,
+                xmlUrl,
+                cdrUrl,
+                pdfUrl,
+                qrCode,
+            });
+            nc.invoiceNumber = newInvoiceNumber;
+            nc.sunatStatus = sunatStatus;
+            nc.sunatMessage = sunatMessage;
+            nc.xmlUrl = xmlUrl;
+            nc.cdrUrl = cdrUrl;
+            nc.pdfUrl = pdfUrl;
+            nc.qrCode = qrCode;
+            return res;
+        }
+        catch (err) {
+            let errMsg = err?.response?.data?.mensaje || err?.response?.data?.message || err.message;
+            if (err?.response?.data?.errores) {
+                const details = Object.entries(err.response.data.errores)
+                    .map(([field, msgs]) => `${field}: ${Array.isArray(msgs) ? msgs.join(', ') : msgs}`)
+                    .join(' | ');
+                if (details)
+                    errMsg = `${errMsg} (${details})`;
+            }
+            console.error('Error enviando Nota de Crédito a APISUNAT:', errMsg);
+            if (original?.id) {
+                await this.saleRepo.update(original.id, { status: sale_entity_1.SaleStatus.COMPLETED });
+            }
+            await this.saleRepo.update(nc.id, {
+                sunatStatus: 'RECHAZADO',
+                sunatMessage: String(errMsg),
+            });
+            nc.sunatStatus = 'RECHAZADO';
+            nc.sunatMessage = String(errMsg);
+            return { error: errMsg };
+        }
+    }
+    async resendSunat(saleId) {
+        const sale = await this.saleRepo.findOne({
+            where: { id: saleId },
+            relations: { customer: true, items: { product: true } },
+        });
+        if (!sale)
+            throw new common_1.NotFoundException(`Sale #${saleId} not found`);
+        if (sale.documentType === sale_entity_1.DocumentType.NOTA_CREDITO) {
+            const original = sale.relatedDocumentId
+                ? await this.saleRepo.findOne({
+                    where: { id: sale.relatedDocumentId },
+                    relations: { customer: true, items: { product: true } },
+                })
+                : null;
+            if (!original) {
+                throw new common_1.BadRequestException('No se encontró el comprobante original de referencia');
+            }
+            const reason = sale.creditNoteReason || '01 - Anulación de la operación';
+            return this.sendCreditNoteToApisunat(sale, original, reason, sale.notes || '');
+        }
+        else {
+            return this.sendToApisunat(sale);
+        }
+    }
+    async fixIncorrectRefundedStatuses() {
+        try {
+            const rejectedNcs = await this.saleRepo.find({
+                where: { documentType: sale_entity_1.DocumentType.NOTA_CREDITO, sunatStatus: 'RECHAZADO' },
+            });
+            for (const nc of rejectedNcs) {
+                if (nc.relatedDocumentId) {
+                    const orig = await this.saleRepo.findOne({ where: { id: nc.relatedDocumentId } });
+                    if (orig && orig.status === sale_entity_1.SaleStatus.REFUNDED) {
+                        await this.saleRepo.update(orig.id, { status: sale_entity_1.SaleStatus.COMPLETED });
+                    }
+                }
+            }
+        }
+        catch { }
     }
     async voidSale(id, dto, performedBy) {
         return this.dataSource.transaction(async (manager) => {
@@ -527,7 +802,7 @@ let SaleService = class SaleService {
     }
 };
 exports.SaleService = SaleService;
-exports.SaleService = SaleService = __decorate([
+exports.SaleService = SaleService = SaleService_1 = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(sale_entity_1.SaleEntity)),
     __param(1, (0, typeorm_1.InjectRepository)(sale_item_entity_1.SaleItemEntity)),

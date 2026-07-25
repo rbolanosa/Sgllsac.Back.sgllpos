@@ -23,3 +23,8 @@ export declare class CreateSaleDto {
 export declare class VoidSaleDto {
     reason: string;
 }
+export declare class CreateCreditNoteDto {
+    originalSaleId: number;
+    motivo: string;
+    descripcion?: string;
+}

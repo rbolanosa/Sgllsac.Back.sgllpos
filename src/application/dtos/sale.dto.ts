@@ -106,3 +106,20 @@ export class VoidSaleDto {
   @IsNotEmpty()
   reason: string;
 }
+
+export class CreateCreditNoteDto {
+  @ApiProperty({ example: 1 })
+  @Type(() => Number)
+  @IsNumber()
+  originalSaleId: number;
+
+  @ApiProperty({ example: '02' })
+  @IsString()
+  @IsNotEmpty()
+  motivo: string;
+
+  @ApiPropertyOptional({ example: 'Anulación por error en el RUC' })
+  @IsOptional()
+  @IsString()
+  descripcion?: string;
+}

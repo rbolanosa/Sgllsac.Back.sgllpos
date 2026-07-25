@@ -4,7 +4,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { ProductUnit } from '../../domain/entities/product.entity';
+import { ProductUnit, TipAfeIgv } from '../../domain/entities/product.entity';
 
 export class CreateProductDto {
   @ApiPropertyOptional({ example: '7501000000000' })
@@ -42,9 +42,25 @@ export class CreateProductDto {
   @IsNumber()
   supplierId?: number;
 
-  @ApiProperty({ enum: ProductUnit, default: ProductUnit.PIECE })
-  @IsEnum(ProductUnit)
-  unit: ProductUnit = ProductUnit.PIECE;
+  /**
+   * Catálogo Nº 3 SUNAT - Código de Unidad de Medida
+   * Valores comunes: NIU (unidad), KGM (kg), ZZ (servicio), LTR (litro)
+   */
+  @ApiProperty({ enum: ProductUnit, default: ProductUnit.NIU, example: 'NIU' })
+  @IsString()
+  @IsOptional()
+  @MaxLength(10)
+  unit?: string = ProductUnit.NIU;
+
+  /**
+   * Catálogo Nº 7 SUNAT - Tipo de Afectación del IGV
+   * 10=Gravado (normal), 20=Exonerado, 30=Inafecto, 40=Exportación
+   */
+  @ApiProperty({ enum: TipAfeIgv, default: TipAfeIgv.GRAVADO_ONEROSA, example: '10' })
+  @IsString()
+  @IsOptional()
+  @MaxLength(5)
+  tipAfeIgv?: string = TipAfeIgv.GRAVADO_ONEROSA;
 
   @ApiProperty({ example: 4.5 })
   @Type(() => Number)
@@ -58,7 +74,7 @@ export class CreateProductDto {
   @Min(0)
   salePrice: number;
 
-  @ApiPropertyOptional({ default: 12 })
+  @ApiPropertyOptional({ default: 18, description: 'Porcentaje IGV. 18 para tasa general, 4 para IVAP, 0 para exonerado/inafecto' })
   @IsOptional()
   @Type(() => Number)
   @IsNumber()
@@ -129,10 +145,17 @@ export class UpdateProductDto {
   @IsNumber()
   supplierId?: number;
 
-  @ApiPropertyOptional({ enum: ProductUnit })
+  @ApiPropertyOptional({ enum: ProductUnit, example: 'NIU', description: 'Catálogo Nº 3 SUNAT' })
   @IsOptional()
-  @IsEnum(ProductUnit)
-  unit?: ProductUnit;
+  @IsString()
+  @MaxLength(10)
+  unit?: string;
+
+  @ApiPropertyOptional({ enum: TipAfeIgv, example: '10', description: 'Catálogo Nº 7 SUNAT - Tipo de Afectación IGV' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(5)
+  tipAfeIgv?: string;
 
   @ApiPropertyOptional()
   @IsOptional()

@@ -55,11 +55,17 @@ let SaleController = class SaleController {
         const cashierId = req.user?.sub || req.user?.id || 1;
         return this.saleService.create(dto, cashierId);
     }
+    createCreditNote(dto) {
+        return this.saleService.createCreditNote(dto.originalSaleId, dto.motivo, dto.descripcion || dto.motivo);
+    }
     void(id, dto) {
         return this.saleService.voidSale(id, dto);
     }
     sendWhatsapp(id, body) {
         return this.saleService.sendWhatsappMessage(id, body.phone);
+    }
+    resendSunat(id) {
+        return this.saleService.resendSunat(id);
     }
 };
 exports.SaleController = SaleController;
@@ -129,6 +135,14 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], SaleController.prototype, "create", null);
 __decorate([
+    (0, common_1.Post)('credit-note'),
+    (0, swagger_1.ApiOperation)({ summary: 'Create credit note for an invoice or boleta' }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [sale_dto_1.CreateCreditNoteDto]),
+    __metadata("design:returntype", void 0)
+], SaleController.prototype, "createCreditNote", null);
+__decorate([
     (0, common_1.Patch)(':id/void'),
     (0, swagger_1.ApiOperation)({ summary: 'Void a completed sale (reverses stock movements)' }),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
@@ -146,6 +160,14 @@ __decorate([
     __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", void 0)
 ], SaleController.prototype, "sendWhatsapp", null);
+__decorate([
+    (0, common_1.Post)(':id/resend-sunat'),
+    (0, swagger_1.ApiOperation)({ summary: 'Resend rejected document or credit note to SUNAT' }),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", void 0)
+], SaleController.prototype, "resendSunat", null);
 exports.SaleController = SaleController = __decorate([
     (0, swagger_1.ApiTags)('Sales'),
     (0, swagger_1.ApiBearerAuth)('JWT-auth'),

@@ -1,3 +1,4 @@
+import { Response } from 'express';
 import { ProductService } from '../../domain/services/product.service';
 import { CreateProductDto, UpdateProductDto, StockAdjustmentDto } from '../../application/dtos/product.dto';
 export declare class ProductController {
@@ -10,6 +11,8 @@ export declare class ProductController {
         limit: number;
     }>;
     getLowStock(): Promise<import("../../domain/entities/product.entity").ProductEntity[]>;
+    downloadTemplate(res: Response): Promise<void>;
+    importExcel(file: Express.Multer.File): Promise<import("../../domain/services/product.service").ImportResult>;
     findByBarcode(barcode: string): Promise<import("../../domain/entities/product.entity").ProductEntity>;
     findOne(id: number): Promise<import("../../domain/entities/product.entity").ProductEntity>;
     create(dto: CreateProductDto): Promise<import("../../domain/entities/product.entity").ProductEntity>;

@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import { SaleService } from '../../domain/services/sale.service';
-import { CreateSaleDto, VoidSaleDto } from '../../application/dtos/sale.dto';
+import { CreateSaleDto, VoidSaleDto, CreateCreditNoteDto } from '../../application/dtos/sale.dto';
 import { SaleStatus } from '../../domain/entities/sale.entity';
 export declare class SaleController {
     private readonly saleService;
@@ -25,8 +25,10 @@ export declare class SaleController {
     getPdf(id: number, res: Response): Promise<void>;
     findOne(id: number): Promise<import("../../domain/entities/sale.entity").SaleEntity>;
     create(dto: CreateSaleDto, req: any): Promise<import("../../domain/entities/sale.entity").SaleEntity>;
+    createCreditNote(dto: CreateCreditNoteDto): Promise<import("../../domain/entities/sale.entity").SaleEntity>;
     void(id: number, dto: VoidSaleDto): Promise<import("../../domain/entities/sale.entity").SaleEntity>;
     sendWhatsapp(id: number, body: {
         phone: string;
     }): Promise<any>;
+    resendSunat(id: number): Promise<any>;
 }

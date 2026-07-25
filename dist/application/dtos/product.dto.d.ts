@@ -1,4 +1,3 @@
-import { ProductUnit } from '../../domain/entities/product.entity';
 export declare class CreateProductDto {
     barcode?: string;
     sku?: string;
@@ -6,7 +5,8 @@ export declare class CreateProductDto {
     description?: string;
     categoryId?: number;
     supplierId?: number;
-    unit: ProductUnit;
+    unit?: string;
+    tipAfeIgv?: string;
     costPrice: number;
     salePrice: number;
     taxRate?: number;
@@ -22,7 +22,8 @@ export declare class UpdateProductDto {
     description?: string;
     categoryId?: number;
     supplierId?: number;
-    unit?: ProductUnit;
+    unit?: string;
+    tipAfeIgv?: string;
     costPrice?: number;
     salePrice?: number;
     taxRate?: number;

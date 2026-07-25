@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductController = void 0;
 const common_1 = require("@nestjs/common");
+const platform_express_1 = require("@nestjs/platform-express");
 const swagger_1 = require("@nestjs/swagger");
 const product_service_1 = require("../../domain/services/product.service");
 const product_dto_1 = require("../../application/dtos/product.dto");
@@ -27,6 +28,17 @@ let ProductController = class ProductController {
     }
     getLowStock() {
         return this.productService.getLowStockProducts();
+    }
+    async downloadTemplate(res) {
+        const buffer = await this.productService.generateExcelTemplate();
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', 'attachment; filename="DEVPRO_Plantilla_Productos_SUNAT.xlsx"');
+        res.end(buffer);
+    }
+    async importExcel(file) {
+        if (!file)
+            throw new Error('No se recibió ningún archivo.');
+        return this.productService.importFromExcel(file.buffer);
     }
     findByBarcode(barcode) {
         return this.productService.findByBarcode(barcode);
@@ -72,6 +84,31 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], ProductController.prototype, "getLowStock", null);
+__decorate([
+    (0, common_1.Get)('excel/template'),
+    (0, swagger_1.ApiOperation)({ summary: 'Download Excel template for bulk product import (includes SUNAT catalogs 3 & 7)' }),
+    __param(0, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], ProductController.prototype, "downloadTemplate", null);
+__decorate([
+    (0, common_1.Post)('excel/import'),
+    (0, swagger_1.ApiOperation)({ summary: 'Import products from Excel file. Creates new or updates by SKU.' }),
+    (0, swagger_1.ApiConsumes)('multipart/form-data'),
+    (0, swagger_1.ApiBody)({ schema: { type: 'object', properties: { file: { type: 'string', format: 'binary' } } } }),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', {
+        limits: { fileSize: 10 * 1024 * 1024 },
+        fileFilter: (_, file, cb) => {
+            const ok = file.mimetype.includes('spreadsheet') || file.mimetype.includes('excel') || file.originalname.endsWith('.xlsx') || file.originalname.endsWith('.xls');
+            cb(ok ? null : new Error('Solo se permiten archivos Excel (.xlsx / .xls)'), ok);
+        },
+    })),
+    __param(0, (0, common_1.UploadedFile)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], ProductController.prototype, "importExcel", null);
 __decorate([
     (0, common_1.Get)('barcode/:barcode'),
     (0, swagger_1.ApiOperation)({ summary: 'Find product by barcode (used by scanner)' }),

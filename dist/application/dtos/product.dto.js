@@ -16,7 +16,8 @@ const swagger_1 = require("@nestjs/swagger");
 const product_entity_1 = require("../../domain/entities/product.entity");
 class CreateProductDto {
     constructor() {
-        this.unit = product_entity_1.ProductUnit.PIECE;
+        this.unit = product_entity_1.ProductUnit.NIU;
+        this.tipAfeIgv = product_entity_1.TipAfeIgv.GRAVADO_ONEROSA;
         this.taxRate = 18;
         this.stockQuantity = 0;
         this.minStockLevel = 0;
@@ -65,10 +66,19 @@ __decorate([
     __metadata("design:type", Number)
 ], CreateProductDto.prototype, "supplierId", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ enum: product_entity_1.ProductUnit, default: product_entity_1.ProductUnit.PIECE }),
-    (0, class_validator_1.IsEnum)(product_entity_1.ProductUnit),
+    (0, swagger_1.ApiProperty)({ enum: product_entity_1.ProductUnit, default: product_entity_1.ProductUnit.NIU, example: 'NIU' }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.MaxLength)(10),
     __metadata("design:type", String)
 ], CreateProductDto.prototype, "unit", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ enum: product_entity_1.TipAfeIgv, default: product_entity_1.TipAfeIgv.GRAVADO_ONEROSA, example: '10' }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.MaxLength)(5),
+    __metadata("design:type", String)
+], CreateProductDto.prototype, "tipAfeIgv", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ example: 4.5 }),
     (0, class_transformer_1.Type)(() => Number),
@@ -84,7 +94,7 @@ __decorate([
     __metadata("design:type", Number)
 ], CreateProductDto.prototype, "salePrice", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ default: 12 }),
+    (0, swagger_1.ApiPropertyOptional)({ default: 18, description: 'Porcentaje IGV. 18 para tasa general, 4 para IVAP, 0 para exonerado/inafecto' }),
     (0, class_validator_1.IsOptional)(),
     (0, class_transformer_1.Type)(() => Number),
     (0, class_validator_1.IsNumber)(),
@@ -167,11 +177,19 @@ __decorate([
     __metadata("design:type", Number)
 ], UpdateProductDto.prototype, "supplierId", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ enum: product_entity_1.ProductUnit }),
+    (0, swagger_1.ApiPropertyOptional)({ enum: product_entity_1.ProductUnit, example: 'NIU', description: 'Catálogo Nº 3 SUNAT' }),
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsEnum)(product_entity_1.ProductUnit),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MaxLength)(10),
     __metadata("design:type", String)
 ], UpdateProductDto.prototype, "unit", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ enum: product_entity_1.TipAfeIgv, example: '10', description: 'Catálogo Nº 7 SUNAT - Tipo de Afectación IGV' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MaxLength)(5),
+    __metadata("design:type", String)
+], UpdateProductDto.prototype, "tipAfeIgv", void 0);
 __decorate([
     (0, swagger_1.ApiPropertyOptional)(),
     (0, class_validator_1.IsOptional)(),

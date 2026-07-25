@@ -18,6 +18,7 @@ export declare class SaleService {
     private readonly companySettings;
     private readonly facturacionAdapter;
     private readonly whatsappAdapter;
+    private readonly logger;
     constructor(saleRepo: Repository<SaleEntity>, saleItemRepo: Repository<SaleItemEntity>, productRepo: Repository<ProductEntity>, customerRepo: Repository<CustomerEntity>, movementRepo: Repository<InventoryMovementEntity>, dataSource: DataSource, companySettings: CompanySettingsService, facturacionAdapter: FacturacionAdapter, whatsappAdapter: WhatsappAdapter);
     findAll(filters?: {
         page?: number;
@@ -36,6 +37,9 @@ export declare class SaleService {
     create(dto: CreateSaleDto, cashierId?: number): Promise<SaleEntity>;
     private sendToApisunat;
     createCreditNote(originalId: number, reason: string, description: string): Promise<SaleEntity>;
+    private sendCreditNoteToApisunat;
+    resendSunat(saleId: number): Promise<any>;
+    fixIncorrectRefundedStatuses(): Promise<void>;
     voidSale(id: number, dto: VoidSaleDto, performedBy?: number): Promise<SaleEntity>;
     getSalesSummary(from: string, to: string): Promise<{
         totalSales: number;

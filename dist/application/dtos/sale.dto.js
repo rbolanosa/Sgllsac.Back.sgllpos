@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.VoidSaleDto = exports.CreateSaleDto = exports.PaymentItemInputDto = exports.SaleItemInputDto = void 0;
+exports.CreateCreditNoteDto = exports.VoidSaleDto = exports.CreateSaleDto = exports.PaymentItemInputDto = exports.SaleItemInputDto = void 0;
 const class_validator_1 = require("class-validator");
 const class_transformer_1 = require("class-transformer");
 const swagger_1 = require("@nestjs/swagger");
@@ -141,4 +141,25 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], VoidSaleDto.prototype, "reason", void 0);
+class CreateCreditNoteDto {
+}
+exports.CreateCreditNoteDto = CreateCreditNoteDto;
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 1 }),
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], CreateCreditNoteDto.prototype, "originalSaleId", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: '02' }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], CreateCreditNoteDto.prototype, "motivo", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ example: 'Anulación por error en el RUC' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateCreditNoteDto.prototype, "descripcion", void 0);
 //# sourceMappingURL=sale.dto.js.map
