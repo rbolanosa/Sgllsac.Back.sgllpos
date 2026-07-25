@@ -42,9 +42,16 @@ async function bootstrapServer() {
 
 export default async (req: any, res: any) => {
   try {
+    if (req.url === '/api/ping' || req.url === '/ping') {
+      return res.status(200).json({ status: 'ok', message: 'Vercel Serverless Function is running' });
+    }
     const server = await bootstrapServer();
     return server(req, res);
   } catch (err: any) {
-    return res.status(500).send(`Serverless Nest Error: ${err?.message || err}\n${err?.stack || ''}`);
+    return res.status(500).json({
+      error: 'Serverless Nest Error',
+      message: err?.message || String(err),
+      stack: err?.stack,
+    });
   }
 };
