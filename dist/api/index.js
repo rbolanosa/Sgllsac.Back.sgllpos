@@ -33,7 +33,12 @@ async function bootstrapServer() {
     return cachedServer;
 }
 exports.default = async (req, res) => {
-    const server = await bootstrapServer();
-    return server(req, res);
+    try {
+        const server = await bootstrapServer();
+        return server(req, res);
+    }
+    catch (err) {
+        return res.status(500).send(`Serverless Nest Error: ${err?.message || err}\n${err?.stack || ''}`);
+    }
 };
 //# sourceMappingURL=index.js.map

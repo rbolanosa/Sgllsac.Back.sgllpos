@@ -93,7 +93,7 @@ exports.AppModule = AppModule = __decorate([
             }),
             typeorm_1.TypeOrmModule.forRootAsync(typeorm_config_1.typeOrmConfig),
             event_emitter_1.EventEmitterModule.forRoot(),
-            schedule_1.ScheduleModule.forRoot(),
+            ...(process.env.VERCEL ? [] : [schedule_1.ScheduleModule.forRoot()]),
             auth_module_1.AuthModule,
             user_module_1.UserModule,
             health_module_1.HealthModule,
