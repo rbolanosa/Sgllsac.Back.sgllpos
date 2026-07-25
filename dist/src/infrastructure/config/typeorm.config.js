@@ -72,12 +72,13 @@ exports.typeOrmConfig = {
     inject: [config_1.ConfigService],
     useFactory: (configService) => ({
         type: 'mysql',
-        host: configService.get('DATABASE_HOST', '127.0.0.1'),
-        port: Number(configService.get('DATABASE_PORT', 3306)),
-        username: configService.get('DATABASE_USER', 'root'),
-        password: configService.get('DATABASE_PASSWORD', ''),
-        database: configService.get('DATABASE_NAME', 'devpro_db'),
+        host: configService.get('DATABASE_HOST') || '127.0.0.1',
+        port: parseInt(String(configService.get('DATABASE_PORT') || 3306), 10),
+        username: configService.get('DATABASE_USER') || 'root',
+        password: configService.get('DATABASE_PASSWORD') || '',
+        database: configService.get('DATABASE_NAME') || 'devpro_db',
         synchronize: false,
+        connectTimeout: 10000,
         ssl: process.env.DATABASE_SSL === 'true'
             ? { rejectUnauthorized: false }
             : false,
