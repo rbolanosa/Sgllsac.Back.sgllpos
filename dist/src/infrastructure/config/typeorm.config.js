@@ -73,16 +73,15 @@ exports.typeOrmConfig = {
     useFactory: (configService) => ({
         type: 'mysql',
         host: configService.get('DATABASE_HOST', '127.0.0.1'),
-        port: configService.get('DATABASE_PORT', 3306),
+        port: Number(configService.get('DATABASE_PORT', 3306)),
         username: configService.get('DATABASE_USER', 'root'),
         password: configService.get('DATABASE_PASSWORD', ''),
         database: configService.get('DATABASE_NAME', 'devpro_db'),
-        synchronize: configService.get('DATABASE_SYNCHRONIZE') === 'true',
-        ssl: process.env.DATABASE_SSL === 'true' || process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+        synchronize: false,
+        ssl: (configService.get('DATABASE_HOST')?.includes('rlwy.net') || process.env.NODE_ENV === 'production')
+            ? { rejectUnauthorized: false }
+            : false,
         entities,
-        migrations: [
-            path.join(__dirname, '../database/migrations/*{.ts,.js}'),
-        ],
         migrationsTableName: 'migrations',
     }),
 };
