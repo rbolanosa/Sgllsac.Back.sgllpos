@@ -1,2 +1,2 @@
-declare const server: import("express-serve-static-core").Express;
-export default server;
+declare const _default: (req: any, res: any) => Promise<any>;
+export default _default;

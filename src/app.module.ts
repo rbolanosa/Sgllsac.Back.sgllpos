@@ -64,7 +64,7 @@ import { EstablishmentsModule } from './infrastructure/modules/establishments.mo
     EventEmitterModule.forRoot(),
 
     // ─── Cron Jobs ────────────────────────────────────────────────────────────
-    ScheduleModule.forRoot(),
+    ...(process.env.VERCEL ? [] : [ScheduleModule.forRoot()]),
 
     // ─── Módulos de funcionalidad ─────────────────────────────────────────────
     AuthModule,
