@@ -9,6 +9,7 @@ import { Repository, DataSource } from 'typeorm';
 import { SaleEntity, SaleStatus, DocumentType } from '../../domain/entities/sale.entity';
 import { SaleItemEntity } from '../../domain/entities/sale-item.entity';
 import { ProductEntity } from '../../domain/entities/product.entity';
+import { ProductBatchEntity } from '../../domain/entities/product-batch.entity';
 import { CustomerEntity } from '../../domain/entities/customer.entity';
 import { UserEntity } from '../../domain/entities/user.entity';
 import {
@@ -115,6 +116,29 @@ export class SaleService {
         // 3. Decrement stock
         product.stockQuantity = Number(product.stockQuantity) - item.quantity;
         await manager.save(product);
+
+        // 3.1. FIFO Batch Deduction
+        let remainingToDeduct = item.quantity;
+        const activeBatches = await manager.find(ProductBatchEntity, {
+          where: { productId: product.id, isActive: true },
+          order: { createdAt: 'ASC' },
+        });
+
+        for (const batch of activeBatches) {
+          if (remainingToDeduct <= 0) break;
+          const availableInBatch = Number(batch.currentQuantity);
+          if (availableInBatch <= 0) continue;
+
+          if (availableInBatch <= remainingToDeduct) {
+            remainingToDeduct -= availableInBatch;
+            batch.currentQuantity = 0;
+            batch.isActive = false;
+          } else {
+            batch.currentQuantity = availableInBatch - remainingToDeduct;
+            remainingToDeduct = 0;
+          }
+          await manager.save(batch);
+        }
 
         // 4. Record movement
         await manager.save(

@@ -215,4 +215,22 @@ export class StockAdjustmentDto {
   @IsString()
   @IsNotEmpty()
   notes: string;
+
+  @ApiPropertyOptional({ example: 1 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  supplierId?: number;
+
+  @ApiPropertyOptional({ example: 2.5 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  costPrice?: number;
+
+  @ApiPropertyOptional({ example: '2026-12-31' })
+  @IsOptional()
+  @IsString()
+  expirationDate?: string;
 }

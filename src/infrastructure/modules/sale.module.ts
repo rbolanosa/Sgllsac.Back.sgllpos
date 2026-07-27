@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { SaleEntity } from '../../domain/entities/sale.entity';
 import { SaleItemEntity } from '../../domain/entities/sale-item.entity';
 import { ProductEntity } from '../../domain/entities/product.entity';
+import { ProductBatchEntity } from '../../domain/entities/product-batch.entity';
 import { CustomerEntity } from '../../domain/entities/customer.entity';
 import { InventoryMovementEntity } from '../../domain/entities/inventory-movement.entity';
 import { UserEntity } from '../../domain/entities/user.entity';
@@ -18,6 +19,7 @@ import { WhatsappAdapter } from '../adapters/whatsapp.adapter';
       SaleEntity,
       SaleItemEntity,
       ProductEntity,
+      ProductBatchEntity,
       CustomerEntity,
       InventoryMovementEntity,
       UserEntity,

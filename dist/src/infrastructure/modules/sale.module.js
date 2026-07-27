@@ -12,6 +12,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const sale_entity_1 = require("../../domain/entities/sale.entity");
 const sale_item_entity_1 = require("../../domain/entities/sale-item.entity");
 const product_entity_1 = require("../../domain/entities/product.entity");
+const product_batch_entity_1 = require("../../domain/entities/product-batch.entity");
 const customer_entity_1 = require("../../domain/entities/customer.entity");
 const inventory_movement_entity_1 = require("../../domain/entities/inventory-movement.entity");
 const user_entity_1 = require("../../domain/entities/user.entity");
@@ -29,6 +30,7 @@ exports.SaleModule = SaleModule = __decorate([
                 sale_entity_1.SaleEntity,
                 sale_item_entity_1.SaleItemEntity,
                 product_entity_1.ProductEntity,
+                product_batch_entity_1.ProductBatchEntity,
                 customer_entity_1.CustomerEntity,
                 inventory_movement_entity_1.InventoryMovementEntity,
                 user_entity_1.UserEntity,

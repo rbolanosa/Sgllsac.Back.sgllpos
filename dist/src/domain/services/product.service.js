@@ -54,14 +54,16 @@ const product_entity_1 = require("../entities/product.entity");
 const inventory_movement_entity_1 = require("../entities/inventory-movement.entity");
 const category_entity_1 = require("../entities/category.entity");
 const supplier_entity_1 = require("../entities/supplier.entity");
+const product_batch_entity_1 = require("../entities/product-batch.entity");
 const VALID_SUNAT_UNITS = Object.values(product_entity_1.ProductUnit);
 const VALID_TIP_AFE_IGV = Object.values(product_entity_1.TipAfeIgv);
 let ProductService = class ProductService {
-    constructor(productRepo, movementRepo, categoryRepo, supplierRepo) {
+    constructor(productRepo, movementRepo, categoryRepo, supplierRepo, batchRepo) {
         this.productRepo = productRepo;
         this.movementRepo = movementRepo;
         this.categoryRepo = categoryRepo;
         this.supplierRepo = supplierRepo;
+        this.batchRepo = batchRepo;
     }
     async findAll(filters = {}) {
         const { search, categoryId, supplierId, isActive, lowStock, page = 1, limit = 50 } = filters;
@@ -117,7 +119,16 @@ let ProductService = class ProductService {
                 throw new common_1.ConflictException(`SKU "${dto.sku}" already registered`);
         }
         const product = this.productRepo.create(dto);
-        return this.productRepo.save(product);
+        const saved = await this.productRepo.save(product);
+        if (Number(saved.stockQuantity) > 0) {
+            await this.batchRepo.save(this.batchRepo.create({
+                productId: saved.id,
+                costPrice: saved.costPrice,
+                initialQuantity: saved.stockQuantity,
+                currentQuantity: saved.stockQuantity,
+            }));
+        }
+        return saved;
     }
     async update(id, dto) {
         const product = await this.findById(id);
@@ -136,6 +147,45 @@ let ProductService = class ProductService {
         }
         const delta = type === inventory_movement_entity_1.MovementType.IN ? dto.quantity : -dto.quantity;
         product.stockQuantity = Number(product.stockQuantity) + delta;
+        if (type === inventory_movement_entity_1.MovementType.IN) {
+            const costToUse = dto.costPrice !== undefined ? Number(dto.costPrice) : Number(product.costPrice);
+            product.costPrice = costToUse;
+            if (dto.supplierId)
+                product.supplierId = dto.supplierId;
+            await this.batchRepo.save(this.batchRepo.create({
+                productId: id,
+                supplierId: dto.supplierId || null,
+                documentRef: dto.notes?.includes('Ref:') ? dto.notes : null,
+                costPrice: costToUse,
+                initialQuantity: dto.quantity,
+                currentQuantity: dto.quantity,
+                expirationDate: dto.expirationDate ? new Date(dto.expirationDate) : null,
+            }));
+        }
+        else {
+            let remainingToDeduct = dto.quantity;
+            const batches = await this.batchRepo.find({
+                where: { productId: id, isActive: true },
+                order: { createdAt: 'ASC' },
+            });
+            for (const batch of batches) {
+                if (remainingToDeduct <= 0)
+                    break;
+                const availableInBatch = Number(batch.currentQuantity);
+                if (availableInBatch <= 0)
+                    continue;
+                if (availableInBatch <= remainingToDeduct) {
+                    remainingToDeduct -= availableInBatch;
+                    batch.currentQuantity = 0;
+                    batch.isActive = false;
+                }
+                else {
+                    batch.currentQuantity = availableInBatch - remainingToDeduct;
+                    remainingToDeduct = 0;
+                }
+                await this.batchRepo.save(batch);
+            }
+        }
         await this.productRepo.save(product);
         await this.movementRepo.save(this.movementRepo.create({
             productId: id,
@@ -146,6 +196,13 @@ let ProductService = class ProductService {
             performedBy,
         }));
         return product;
+    }
+    async getBatches(id) {
+        return this.batchRepo.find({
+            where: { productId: id, isActive: true },
+            relations: { supplier: true },
+            order: { createdAt: 'ASC' },
+        });
     }
     async getLowStockProducts() {
         return this.productRepo
@@ -448,7 +505,9 @@ exports.ProductService = ProductService = __decorate([
     __param(1, (0, typeorm_1.InjectRepository)(inventory_movement_entity_1.InventoryMovementEntity)),
     __param(2, (0, typeorm_1.InjectRepository)(category_entity_1.CategoryEntity)),
     __param(3, (0, typeorm_1.InjectRepository)(supplier_entity_1.SupplierEntity)),
+    __param(4, (0, typeorm_1.InjectRepository)(product_batch_entity_1.ProductBatchEntity)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository])

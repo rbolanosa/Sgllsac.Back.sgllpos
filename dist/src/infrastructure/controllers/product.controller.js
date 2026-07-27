@@ -55,6 +55,9 @@ let ProductController = class ProductController {
     remove(id) {
         return this.productService.remove(id);
     }
+    getBatches(id) {
+        return this.productService.getBatches(id);
+    }
     addStock(id, dto) {
         return this.productService.adjustStock(id, dto, inventory_movement_entity_1.MovementType.IN);
     }
@@ -150,6 +153,14 @@ __decorate([
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
 ], ProductController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Get)(':id/batches'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get active product batches (FIFO)' }),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", void 0)
+], ProductController.prototype, "getBatches", null);
 __decorate([
     (0, common_1.Patch)(':id/stock/add'),
     (0, swagger_1.ApiOperation)({ summary: 'Add stock manually (entry)' }),

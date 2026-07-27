@@ -52,6 +52,7 @@ const inventory_movement_entity_1 = require("../../domain/entities/inventory-mov
 const company_settings_entity_1 = require("../../domain/entities/company-settings.entity");
 const establishment_entity_1 = require("../../domain/entities/establishment.entity");
 const establishment_series_entity_1 = require("../../domain/entities/establishment-series.entity");
+const product_batch_entity_1 = require("../../domain/entities/product-batch.entity");
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 const entities = [
     user_entity_1.UserEntity,
@@ -67,6 +68,7 @@ const entities = [
     company_settings_entity_1.CompanySettingsEntity,
     establishment_entity_1.EstablishmentEntity,
     establishment_series_entity_1.EstablishmentSeriesEntity,
+    product_batch_entity_1.ProductBatchEntity,
 ];
 exports.typeOrmConfig = {
     imports: [config_1.ConfigModule],

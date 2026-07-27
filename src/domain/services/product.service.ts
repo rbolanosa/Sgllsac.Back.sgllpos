@@ -11,6 +11,7 @@ import { ProductEntity, ProductUnit, TipAfeIgv } from '../entities/product.entit
 import { InventoryMovementEntity, MovementType, MovementReferenceType } from '../entities/inventory-movement.entity';
 import { CategoryEntity } from '../entities/category.entity';
 import { SupplierEntity } from '../entities/supplier.entity';
+import { ProductBatchEntity } from '../entities/product-batch.entity';
 import { CreateProductDto, UpdateProductDto, StockAdjustmentDto } from '../../application/dtos/product.dto';
 
 export interface ProductFilters {
@@ -48,6 +49,8 @@ export class ProductService {
     private readonly categoryRepo: Repository<CategoryEntity>,
     @InjectRepository(SupplierEntity)
     private readonly supplierRepo: Repository<SupplierEntity>,
+    @InjectRepository(ProductBatchEntity)
+    private readonly batchRepo: Repository<ProductBatchEntity>,
   ) {}
 
   // ─── CRUD ──────────────────────────────────────────────────────────────────
@@ -104,7 +107,19 @@ export class ProductService {
       if (exists) throw new ConflictException(`SKU "${dto.sku}" already registered`);
     }
     const product = this.productRepo.create(dto);
-    return this.productRepo.save(product);
+    const saved = await this.productRepo.save(product);
+
+    if (Number(saved.stockQuantity) > 0) {
+      await this.batchRepo.save(
+        this.batchRepo.create({
+          productId: saved.id,
+          costPrice: saved.costPrice,
+          initialQuantity: saved.stockQuantity,
+          currentQuantity: saved.stockQuantity,
+        }),
+      );
+    }
+    return saved;
   }
 
   async update(id: number, dto: UpdateProductDto): Promise<ProductEntity> {
@@ -135,6 +150,48 @@ export class ProductService {
 
     const delta = type === MovementType.IN ? dto.quantity : -dto.quantity;
     product.stockQuantity = Number(product.stockQuantity) + delta;
+
+    if (type === MovementType.IN) {
+      const costToUse = dto.costPrice !== undefined ? Number(dto.costPrice) : Number(product.costPrice);
+      product.costPrice = costToUse;
+      if (dto.supplierId) product.supplierId = dto.supplierId;
+
+      await this.batchRepo.save(
+        this.batchRepo.create({
+          productId: id,
+          supplierId: dto.supplierId || null,
+          documentRef: dto.notes?.includes('Ref:') ? dto.notes : null,
+          costPrice: costToUse,
+          initialQuantity: dto.quantity,
+          currentQuantity: dto.quantity,
+          expirationDate: dto.expirationDate ? new Date(dto.expirationDate) : null,
+        }),
+      );
+    } else {
+      // FIFO Batch Deduction
+      let remainingToDeduct = dto.quantity;
+      const batches = await this.batchRepo.find({
+        where: { productId: id, isActive: true },
+        order: { createdAt: 'ASC' },
+      });
+
+      for (const batch of batches) {
+        if (remainingToDeduct <= 0) break;
+        const availableInBatch = Number(batch.currentQuantity);
+        if (availableInBatch <= 0) continue;
+
+        if (availableInBatch <= remainingToDeduct) {
+          remainingToDeduct -= availableInBatch;
+          batch.currentQuantity = 0;
+          batch.isActive = false;
+        } else {
+          batch.currentQuantity = availableInBatch - remainingToDeduct;
+          remainingToDeduct = 0;
+        }
+        await this.batchRepo.save(batch);
+      }
+    }
+
     await this.productRepo.save(product);
 
     await this.movementRepo.save(
@@ -149,6 +206,14 @@ export class ProductService {
     );
 
     return product;
+  }
+
+  async getBatches(id: number): Promise<ProductBatchEntity[]> {
+    return this.batchRepo.find({
+      where: { productId: id, isActive: true },
+      relations: { supplier: true },
+      order: { createdAt: 'ASC' },
+    });
   }
 
   async getLowStockProducts() {

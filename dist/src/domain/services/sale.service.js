@@ -53,6 +53,7 @@ const typeorm_2 = require("typeorm");
 const sale_entity_1 = require("../../domain/entities/sale.entity");
 const sale_item_entity_1 = require("../../domain/entities/sale-item.entity");
 const product_entity_1 = require("../../domain/entities/product.entity");
+const product_batch_entity_1 = require("../../domain/entities/product-batch.entity");
 const customer_entity_1 = require("../../domain/entities/customer.entity");
 const user_entity_1 = require("../../domain/entities/user.entity");
 const inventory_movement_entity_1 = require("../../domain/entities/inventory-movement.entity");
@@ -139,6 +140,28 @@ let SaleService = SaleService_1 = class SaleService {
                 });
                 product.stockQuantity = Number(product.stockQuantity) - item.quantity;
                 await manager.save(product);
+                let remainingToDeduct = item.quantity;
+                const activeBatches = await manager.find(product_batch_entity_1.ProductBatchEntity, {
+                    where: { productId: product.id, isActive: true },
+                    order: { createdAt: 'ASC' },
+                });
+                for (const batch of activeBatches) {
+                    if (remainingToDeduct <= 0)
+                        break;
+                    const availableInBatch = Number(batch.currentQuantity);
+                    if (availableInBatch <= 0)
+                        continue;
+                    if (availableInBatch <= remainingToDeduct) {
+                        remainingToDeduct -= availableInBatch;
+                        batch.currentQuantity = 0;
+                        batch.isActive = false;
+                    }
+                    else {
+                        batch.currentQuantity = availableInBatch - remainingToDeduct;
+                        remainingToDeduct = 0;
+                    }
+                    await manager.save(batch);
+                }
                 await manager.save(manager.create(inventory_movement_entity_1.InventoryMovementEntity, {
                     productId: product.id,
                     movementType: inventory_movement_entity_1.MovementType.OUT,

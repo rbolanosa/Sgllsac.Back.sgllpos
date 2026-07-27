@@ -93,6 +93,12 @@ export class ProductController {
     return this.productService.remove(id);
   }
 
+  @Get(':id/batches')
+  @ApiOperation({ summary: 'Get active product batches (FIFO)' })
+  getBatches(@Param('id', ParseIntPipe) id: number) {
+    return this.productService.getBatches(id);
+  }
+
   @Patch(':id/stock/add')
   @ApiOperation({ summary: 'Add stock manually (entry)' })
   addStock(@Param('id', ParseIntPipe) id: number, @Body() dto: StockAdjustmentDto) {

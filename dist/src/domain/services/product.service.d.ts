@@ -3,6 +3,7 @@ import { ProductEntity } from '../entities/product.entity';
 import { InventoryMovementEntity, MovementType } from '../entities/inventory-movement.entity';
 import { CategoryEntity } from '../entities/category.entity';
 import { SupplierEntity } from '../entities/supplier.entity';
+import { ProductBatchEntity } from '../entities/product-batch.entity';
 import { CreateProductDto, UpdateProductDto, StockAdjustmentDto } from '../../application/dtos/product.dto';
 export interface ProductFilters {
     search?: string;
@@ -35,7 +36,8 @@ export declare class ProductService {
     private readonly movementRepo;
     private readonly categoryRepo;
     private readonly supplierRepo;
-    constructor(productRepo: Repository<ProductEntity>, movementRepo: Repository<InventoryMovementEntity>, categoryRepo: Repository<CategoryEntity>, supplierRepo: Repository<SupplierEntity>);
+    private readonly batchRepo;
+    constructor(productRepo: Repository<ProductEntity>, movementRepo: Repository<InventoryMovementEntity>, categoryRepo: Repository<CategoryEntity>, supplierRepo: Repository<SupplierEntity>, batchRepo: Repository<ProductBatchEntity>);
     findAll(filters?: ProductFilters): Promise<{
         data: ProductEntity[];
         total: number;
@@ -48,6 +50,7 @@ export declare class ProductService {
     update(id: number, dto: UpdateProductDto): Promise<ProductEntity>;
     remove(id: number): Promise<void>;
     adjustStock(id: number, dto: StockAdjustmentDto, type: MovementType, performedBy?: number): Promise<ProductEntity>;
+    getBatches(id: number): Promise<ProductBatchEntity[]>;
     getLowStockProducts(): Promise<ProductEntity[]>;
     generateExcelTemplate(): Promise<Buffer>;
     importFromExcel(fileBuffer: Buffer): Promise<ImportResult>;

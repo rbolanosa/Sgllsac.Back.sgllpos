@@ -13,6 +13,7 @@ const product_entity_1 = require("../../domain/entities/product.entity");
 const inventory_movement_entity_1 = require("../../domain/entities/inventory-movement.entity");
 const category_entity_1 = require("../../domain/entities/category.entity");
 const supplier_entity_1 = require("../../domain/entities/supplier.entity");
+const product_batch_entity_1 = require("../../domain/entities/product-batch.entity");
 const product_service_1 = require("../../domain/services/product.service");
 const product_controller_1 = require("../controllers/product.controller");
 let ProductModule = class ProductModule {
@@ -20,7 +21,7 @@ let ProductModule = class ProductModule {
 exports.ProductModule = ProductModule;
 exports.ProductModule = ProductModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([product_entity_1.ProductEntity, inventory_movement_entity_1.InventoryMovementEntity, category_entity_1.CategoryEntity, supplier_entity_1.SupplierEntity])],
+        imports: [typeorm_1.TypeOrmModule.forFeature([product_entity_1.ProductEntity, inventory_movement_entity_1.InventoryMovementEntity, category_entity_1.CategoryEntity, supplier_entity_1.SupplierEntity, product_batch_entity_1.ProductBatchEntity])],
         controllers: [product_controller_1.ProductController],
         providers: [product_service_1.ProductService],
         exports: [product_service_1.ProductService, typeorm_1.TypeOrmModule],

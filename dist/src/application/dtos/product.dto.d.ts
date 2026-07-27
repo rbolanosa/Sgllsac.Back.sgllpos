@@ -35,4 +35,7 @@ export declare class UpdateProductDto {
 export declare class StockAdjustmentDto {
     quantity: number;
     notes: string;
+    supplierId?: number;
+    costPrice?: number;
+    expirationDate?: string;
 }

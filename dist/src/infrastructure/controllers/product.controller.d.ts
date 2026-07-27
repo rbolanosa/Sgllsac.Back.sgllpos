@@ -18,6 +18,7 @@ export declare class ProductController {
     create(dto: CreateProductDto): Promise<import("../../domain/entities/product.entity").ProductEntity>;
     update(id: number, dto: UpdateProductDto): Promise<import("../../domain/entities/product.entity").ProductEntity>;
     remove(id: number): Promise<void>;
+    getBatches(id: number): Promise<import("../../domain/entities/product-batch.entity").ProductBatchEntity[]>;
     addStock(id: number, dto: StockAdjustmentDto): Promise<import("../../domain/entities/product.entity").ProductEntity>;
     subtractStock(id: number, dto: StockAdjustmentDto): Promise<import("../../domain/entities/product.entity").ProductEntity>;
 }
