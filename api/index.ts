@@ -2,12 +2,11 @@ import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import express from 'express';
-import { AppModule } from '../src/app.module';
-
 let cachedServer: any;
 
 async function bootstrapServer() {
   if (!cachedServer) {
+    const { AppModule } = await import('../src/app.module');
     const expressApp = express();
     const app = await NestFactory.create(
       AppModule,

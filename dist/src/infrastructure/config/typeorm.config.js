@@ -95,8 +95,7 @@ exports.AppDataSource = new typeorm_1.DataSource({
     database: process.env.DATABASE_NAME || 'devpro_db',
     synchronize: false,
     logging: process.env.NODE_ENV === 'development',
-    entities: [path.join(__dirname, '../../**/*.entity{.ts,.js}')],
-    migrations: [path.join(__dirname, '../database/migrations/*{.ts,.js}')],
+    entities,
     migrationsTableName: 'migrations',
 });
 //# sourceMappingURL=typeorm.config.js.map
