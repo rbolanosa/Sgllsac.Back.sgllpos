@@ -12,17 +12,15 @@ const logFormat = printf(({ level, message, timestamp, stack }) => {
 
 export class WinstonLogger {
   static createLogger(): winston.Logger {
-    return winston.createLogger({
-      level: process.env.LOG_LEVEL || 'info',
-      format: combine(
-        timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-        errors({ stack: true }),
-        logFormat,
-      ),
-      transports: [
-        new winston.transports.Console({
-          format: combine(colorize(), timestamp({ format: 'HH:mm:ss' }), logFormat),
-        }),
+    const isVercel = Boolean(process.env.VERCEL);
+    const transports: winston.transport[] = [
+      new winston.transports.Console({
+        format: combine(colorize(), timestamp({ format: 'HH:mm:ss' }), logFormat),
+      }),
+    ];
+
+    if (!isVercel) {
+      transports.push(
         new winston.transports.Stream({
           stream: rfs.createStream('application-%DATE%.log', {
             interval: '1d',
@@ -38,22 +36,30 @@ export class WinstonLogger {
             path: path.resolve(process.cwd(), 'logs'),
           }),
         }),
-      ],
-    });
-  }
+      );
+    }
 
-  static createNestLogger() {
-    return WinstonModule.createLogger({
+    return winston.createLogger({
       level: process.env.LOG_LEVEL || 'info',
       format: combine(
         timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
         errors({ stack: true }),
         logFormat,
       ),
-      transports: [
-        new winston.transports.Console({
-          format: combine(colorize(), timestamp({ format: 'HH:mm:ss' }), logFormat),
-        }),
+      transports,
+    });
+  }
+
+  static createNestLogger() {
+    const isVercel = Boolean(process.env.VERCEL);
+    const transports: winston.transport[] = [
+      new winston.transports.Console({
+        format: combine(colorize(), timestamp({ format: 'HH:mm:ss' }), logFormat),
+      }),
+    ];
+
+    if (!isVercel) {
+      transports.push(
         new winston.transports.Stream({
           stream: rfs.createStream('application-%DATE%.log', {
             interval: '1d',
@@ -61,7 +67,17 @@ export class WinstonLogger {
             path: path.resolve(process.cwd(), 'logs'),
           }),
         }),
-      ],
+      );
+    }
+
+    return WinstonModule.createLogger({
+      level: process.env.LOG_LEVEL || 'info',
+      format: combine(
+        timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+        errors({ stack: true }),
+        logFormat,
+      ),
+      transports,
     });
   }
 }

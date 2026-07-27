@@ -45,47 +45,54 @@ const logFormat = printf(({ level, message, timestamp, stack }) => {
 });
 class WinstonLogger {
     static createLogger() {
+        const isVercel = Boolean(process.env.VERCEL);
+        const transports = [
+            new winston.transports.Console({
+                format: combine(colorize(), timestamp({ format: 'HH:mm:ss' }), logFormat),
+            }),
+        ];
+        if (!isVercel) {
+            transports.push(new winston.transports.Stream({
+                stream: rfs.createStream('application-%DATE%.log', {
+                    interval: '1d',
+                    maxFiles: 14,
+                    path: path.resolve(process.cwd(), 'logs'),
+                }),
+            }), new winston.transports.Stream({
+                level: 'error',
+                stream: rfs.createStream('error-%DATE%.log', {
+                    interval: '1d',
+                    maxFiles: 30,
+                    path: path.resolve(process.cwd(), 'logs'),
+                }),
+            }));
+        }
         return winston.createLogger({
             level: process.env.LOG_LEVEL || 'info',
             format: combine(timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }), errors({ stack: true }), logFormat),
-            transports: [
-                new winston.transports.Console({
-                    format: combine(colorize(), timestamp({ format: 'HH:mm:ss' }), logFormat),
-                }),
-                new winston.transports.Stream({
-                    stream: rfs.createStream('application-%DATE%.log', {
-                        interval: '1d',
-                        maxFiles: 14,
-                        path: path.resolve(process.cwd(), 'logs'),
-                    }),
-                }),
-                new winston.transports.Stream({
-                    level: 'error',
-                    stream: rfs.createStream('error-%DATE%.log', {
-                        interval: '1d',
-                        maxFiles: 30,
-                        path: path.resolve(process.cwd(), 'logs'),
-                    }),
-                }),
-            ],
+            transports,
         });
     }
     static createNestLogger() {
+        const isVercel = Boolean(process.env.VERCEL);
+        const transports = [
+            new winston.transports.Console({
+                format: combine(colorize(), timestamp({ format: 'HH:mm:ss' }), logFormat),
+            }),
+        ];
+        if (!isVercel) {
+            transports.push(new winston.transports.Stream({
+                stream: rfs.createStream('application-%DATE%.log', {
+                    interval: '1d',
+                    maxFiles: 14,
+                    path: path.resolve(process.cwd(), 'logs'),
+                }),
+            }));
+        }
         return nest_winston_1.WinstonModule.createLogger({
             level: process.env.LOG_LEVEL || 'info',
             format: combine(timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }), errors({ stack: true }), logFormat),
-            transports: [
-                new winston.transports.Console({
-                    format: combine(colorize(), timestamp({ format: 'HH:mm:ss' }), logFormat),
-                }),
-                new winston.transports.Stream({
-                    stream: rfs.createStream('application-%DATE%.log', {
-                        interval: '1d',
-                        maxFiles: 14,
-                        path: path.resolve(process.cwd(), 'logs'),
-                    }),
-                }),
-            ],
+            transports,
         });
     }
 }
