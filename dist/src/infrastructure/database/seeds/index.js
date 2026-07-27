@@ -1,8 +1,59 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_config_1 = require("../../config/typeorm.config");
 const product_entity_1 = require("../../../domain/entities/product.entity");
 const supplier_entity_1 = require("../../../domain/entities/supplier.entity");
+const user_entity_1 = require("../../../domain/entities/user.entity");
+const bcrypt = __importStar(require("bcryptjs"));
+const INITIAL_USERS = [
+    {
+        name: 'Administrador General',
+        email: 'admin@sgll.com',
+        password: 'admin123',
+        role: user_entity_1.UserRole.ADMIN,
+        isActive: true,
+    },
+    {
+        name: 'Cajero Principal',
+        email: 'cajero@sgll.com',
+        password: 'cajero123',
+        role: user_entity_1.UserRole.CASHIER,
+        isActive: true,
+    },
+];
 const PRODUCTS = [
     { barcode: '7401055501016', sku: 'BEV-001', name: 'Coca-Cola 600ml', categoryId: 1, unit: 'piece', costPrice: 5.5, salePrice: 8.0, taxRate: 18, stockQuantity: 120, minStockLevel: 24 },
     { barcode: '7401055502013', sku: 'BEV-002', name: 'Pepsi 600ml', categoryId: 1, unit: 'piece', costPrice: 5.0, salePrice: 7.5, taxRate: 18, stockQuantity: 80, minStockLevel: 20 },
@@ -47,6 +98,24 @@ async function runSeeds() {
         console.log('✅ Conexión establecida');
         const productRepo = typeorm_config_1.AppDataSource.getRepository(product_entity_1.ProductEntity);
         const supplierRepo = typeorm_config_1.AppDataSource.getRepository(supplier_entity_1.SupplierEntity);
+        const userRepo = typeorm_config_1.AppDataSource.getRepository(user_entity_1.UserEntity);
+        let seededUsers = 0;
+        for (const u of INITIAL_USERS) {
+            const exists = await userRepo.findOne({ where: { email: u.email } });
+            if (!exists) {
+                const hashedPassword = await bcrypt.hash(u.password, 10);
+                const user = userRepo.create({
+                    name: u.name,
+                    email: u.email,
+                    password: hashedPassword,
+                    role: u.role,
+                    isActive: u.isActive,
+                });
+                await userRepo.save(user);
+                seededUsers++;
+            }
+        }
+        console.log(`✅ Users: ${seededUsers} nuevos creados`);
         let seededSuppliers = 0;
         for (const s of SUPPLIERS) {
             const exists = await supplierRepo.findOne({ where: { nit: s.nit } });

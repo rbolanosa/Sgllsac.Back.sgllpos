@@ -2,3 +2,4 @@
 /Users/macintosh/Documents/DEVPRO/Back/logs/20260723-0000-01-application-%DATE%.log
 /Users/macintosh/Documents/DEVPRO/Back/logs/20260724-0154-01-application-%DATE%.log
 /Users/macintosh/Documents/DEVPRO/Back/logs/20260725-0000-01-application-%DATE%.log
+/Users/macintosh/Documents/DEVPRO/Back/logs/20260726-0053-01-application-%DATE%.log

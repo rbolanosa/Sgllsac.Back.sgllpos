@@ -1,6 +1,26 @@
 import { AppDataSource } from '../../config/typeorm.config';
 import { ProductEntity } from '../../../domain/entities/product.entity';
 import { SupplierEntity } from '../../../domain/entities/supplier.entity';
+import { UserEntity, UserRole } from '../../../domain/entities/user.entity';
+import * as bcrypt from 'bcryptjs';
+
+// Default Demo Users
+const INITIAL_USERS = [
+  {
+    name: 'Administrador General',
+    email: 'admin@sgll.com',
+    password: 'admin123',
+    role: UserRole.ADMIN,
+    isActive: true,
+  },
+  {
+    name: 'Cajero Principal',
+    email: 'cajero@sgll.com',
+    password: 'cajero123',
+    role: UserRole.CASHIER,
+    isActive: true,
+  },
+];
 
 // Using 'as any' to bypass strict enum type in ts-node context
 // Values match ProductUnit enum values exactly
@@ -61,6 +81,26 @@ async function runSeeds() {
 
     const productRepo  = AppDataSource.getRepository(ProductEntity);
     const supplierRepo = AppDataSource.getRepository(SupplierEntity);
+    const userRepo     = AppDataSource.getRepository(UserEntity);
+
+    // ── Seed users
+    let seededUsers = 0;
+    for (const u of INITIAL_USERS) {
+      const exists = await userRepo.findOne({ where: { email: u.email } });
+      if (!exists) {
+        const hashedPassword = await bcrypt.hash(u.password, 10);
+        const user = userRepo.create({
+          name: u.name,
+          email: u.email,
+          password: hashedPassword,
+          role: u.role,
+          isActive: u.isActive,
+        });
+        await userRepo.save(user);
+        seededUsers++;
+      }
+    }
+    console.log(`✅ Users: ${seededUsers} nuevos creados`);
 
     // ── Seed suppliers
     let seededSuppliers = 0;
