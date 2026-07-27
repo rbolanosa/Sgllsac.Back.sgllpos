@@ -117,27 +117,31 @@ export class SaleService {
         product.stockQuantity = Number(product.stockQuantity) - item.quantity;
         await manager.save(product);
 
-        // 3.1. FIFO Batch Deduction
-        let remainingToDeduct = item.quantity;
-        const activeBatches = await manager.find(ProductBatchEntity, {
-          where: { productId: product.id, isActive: true },
-          order: { createdAt: 'ASC' },
-        });
+        // 3.1. FIFO Batch Deduction (Safely catch if no batches exist)
+        try {
+          let remainingToDeduct = item.quantity;
+          const activeBatches = await manager.find(ProductBatchEntity, {
+            where: { productId: product.id, isActive: true },
+            order: { createdAt: 'ASC' },
+          });
 
-        for (const batch of activeBatches) {
-          if (remainingToDeduct <= 0) break;
-          const availableInBatch = Number(batch.currentQuantity);
-          if (availableInBatch <= 0) continue;
+          for (const batch of activeBatches) {
+            if (remainingToDeduct <= 0) break;
+            const availableInBatch = Number(batch.currentQuantity);
+            if (availableInBatch <= 0) continue;
 
-          if (availableInBatch <= remainingToDeduct) {
-            remainingToDeduct -= availableInBatch;
-            batch.currentQuantity = 0;
-            batch.isActive = false;
-          } else {
-            batch.currentQuantity = availableInBatch - remainingToDeduct;
-            remainingToDeduct = 0;
+            if (availableInBatch <= remainingToDeduct) {
+              remainingToDeduct -= availableInBatch;
+              batch.currentQuantity = 0;
+              batch.isActive = false;
+            } else {
+              batch.currentQuantity = availableInBatch - remainingToDeduct;
+              remainingToDeduct = 0;
+            }
+            await manager.save(batch);
           }
-          await manager.save(batch);
+        } catch (batchErr) {
+          console.warn('Advertencia al descontar de product_batches:', batchErr);
         }
 
         // 4. Record movement

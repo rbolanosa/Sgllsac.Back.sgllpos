@@ -140,27 +140,32 @@ let SaleService = SaleService_1 = class SaleService {
                 });
                 product.stockQuantity = Number(product.stockQuantity) - item.quantity;
                 await manager.save(product);
-                let remainingToDeduct = item.quantity;
-                const activeBatches = await manager.find(product_batch_entity_1.ProductBatchEntity, {
-                    where: { productId: product.id, isActive: true },
-                    order: { createdAt: 'ASC' },
-                });
-                for (const batch of activeBatches) {
-                    if (remainingToDeduct <= 0)
-                        break;
-                    const availableInBatch = Number(batch.currentQuantity);
-                    if (availableInBatch <= 0)
-                        continue;
-                    if (availableInBatch <= remainingToDeduct) {
-                        remainingToDeduct -= availableInBatch;
-                        batch.currentQuantity = 0;
-                        batch.isActive = false;
+                try {
+                    let remainingToDeduct = item.quantity;
+                    const activeBatches = await manager.find(product_batch_entity_1.ProductBatchEntity, {
+                        where: { productId: product.id, isActive: true },
+                        order: { createdAt: 'ASC' },
+                    });
+                    for (const batch of activeBatches) {
+                        if (remainingToDeduct <= 0)
+                            break;
+                        const availableInBatch = Number(batch.currentQuantity);
+                        if (availableInBatch <= 0)
+                            continue;
+                        if (availableInBatch <= remainingToDeduct) {
+                            remainingToDeduct -= availableInBatch;
+                            batch.currentQuantity = 0;
+                            batch.isActive = false;
+                        }
+                        else {
+                            batch.currentQuantity = availableInBatch - remainingToDeduct;
+                            remainingToDeduct = 0;
+                        }
+                        await manager.save(batch);
                     }
-                    else {
-                        batch.currentQuantity = availableInBatch - remainingToDeduct;
-                        remainingToDeduct = 0;
-                    }
-                    await manager.save(batch);
+                }
+                catch (batchErr) {
+                    console.warn('Advertencia al descontar de product_batches:', batchErr);
                 }
                 await manager.save(manager.create(inventory_movement_entity_1.InventoryMovementEntity, {
                     productId: product.id,
