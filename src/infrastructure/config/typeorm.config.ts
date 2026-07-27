@@ -1,3 +1,4 @@
+import 'mysql2';
 import { TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DataSource, DataSourceOptions } from 'typeorm';

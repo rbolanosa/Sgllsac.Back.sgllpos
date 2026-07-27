@@ -36,6 +36,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+require("mysql2");
 const core_1 = require("@nestjs/core");
 const platform_express_1 = require("@nestjs/platform-express");
 const common_1 = require("@nestjs/common");

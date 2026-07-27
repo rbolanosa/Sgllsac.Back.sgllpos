@@ -34,6 +34,7 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppDataSource = exports.typeOrmConfig = void 0;
+require("mysql2");
 const config_1 = require("@nestjs/config");
 const typeorm_1 = require("typeorm");
 const path = __importStar(require("path"));
