@@ -15,7 +15,7 @@ export class CustomerController {
   constructor(
     @InjectRepository(CustomerEntity)
     private readonly customerRepo: Repository<CustomerEntity>,
-  ) {}
+  ) { }
 
   @Get()
   @ApiOperation({ summary: 'List customers with pagination and search' })
@@ -57,21 +57,35 @@ export class CustomerController {
     // 2. DNI → RENIEC
     if (clean.length === 8) {
       try {
-        const res = await fetch(
+        let res = await fetch(
           `https://dniruc.apisperu.com/api/v1/dni/${clean}?token=${token}`,
           { headers: { 'Accept': 'application/json' } },
         );
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = await res.json();
-        // Response: { nombres, apellidoPaterno, apellidoMaterno, dni, ... }
-        if (json.nombres || json.apellidoPaterno) {
+        let json = await res.json().catch(() => null);
+
+        // Fallback retry if token limits reached or missing result
+        if (!json || (!json.nombres && !json.apellidoPaterno)) {
+          res = await fetch(`https://api.perudevs.com/api/v1/dni/complete?document=${clean}&key=cGVydWRldnMucHJvZHVjdGlvbi5zdW5hdC5jb2RleS42NjQ1MWJmZjEwNjI2YTE1NTE2ZDMwOGY`).catch(() => null) as any;
+          if (res && res.ok) {
+            json = await res.json().catch(() => null);
+            if (json && json.resultado) {
+              const name = `${json.resultado.apellido_paterno || ''} ${json.resultado.apellido_materno || ''} ${json.resultado.nombres || ''}`.trim();
+              if (name) {
+                return {
+                  source: 'api',
+                  data: { nit: clean, name, address: '' },
+                };
+              }
+            }
+          }
+        } else if (json.nombres || json.apellidoPaterno) {
           const name = `${json.apellidoPaterno || ''} ${json.apellidoMaterno || ''} ${json.nombres || ''}`.trim();
           return {
             source: 'api',
             data: { nit: clean, name, address: '' },
           };
         }
-      } catch (e) {}
+      } catch (e) { }
     }
 
     // 3. RUC → SUNAT
@@ -94,7 +108,7 @@ export class CustomerController {
             },
           };
         }
-      } catch (e) {}
+      } catch (e) { }
     }
 
     return { source: 'not_found', data: null };

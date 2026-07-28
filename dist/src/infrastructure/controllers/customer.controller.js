@@ -47,11 +47,24 @@ let CustomerController = class CustomerController {
         const token = process.env.APISPERU_TOKEN || '';
         if (clean.length === 8) {
             try {
-                const res = await fetch(`https://dniruc.apisperu.com/api/v1/dni/${clean}?token=${token}`, { headers: { 'Accept': 'application/json' } });
-                if (!res.ok)
-                    throw new Error(`HTTP ${res.status}`);
-                const json = await res.json();
-                if (json.nombres || json.apellidoPaterno) {
+                let res = await fetch(`https://dniruc.apisperu.com/api/v1/dni/${clean}?token=${token}`, { headers: { 'Accept': 'application/json' } });
+                let json = await res.json().catch(() => null);
+                if (!json || (!json.nombres && !json.apellidoPaterno)) {
+                    res = await fetch(`https://api.perudevs.com/api/v1/dni/complete?document=${clean}&key=cGVydWRldnMucHJvZHVjdGlvbi5zdW5hdC5jb2RleS42NjQ1MWJmZjEwNjI2YTE1NTE2ZDMwOGY`).catch(() => null);
+                    if (res && res.ok) {
+                        json = await res.json().catch(() => null);
+                        if (json && json.resultado) {
+                            const name = `${json.resultado.apellido_paterno || ''} ${json.resultado.apellido_materno || ''} ${json.resultado.nombres || ''}`.trim();
+                            if (name) {
+                                return {
+                                    source: 'api',
+                                    data: { nit: clean, name, address: '' },
+                                };
+                            }
+                        }
+                    }
+                }
+                else if (json.nombres || json.apellidoPaterno) {
                     const name = `${json.apellidoPaterno || ''} ${json.apellidoMaterno || ''} ${json.nombres || ''}`.trim();
                     return {
                         source: 'api',

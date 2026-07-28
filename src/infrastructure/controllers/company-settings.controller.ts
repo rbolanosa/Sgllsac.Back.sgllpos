@@ -3,26 +3,15 @@ import {
   UseInterceptors, UploadedFile, BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
+import { memoryStorage, diskStorage } from 'multer';
 import { extname, join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
 import { CompanySettingsService } from '../../domain/services/company-settings.service';
 import { UpdateCompanySettingsDto } from '../../application/dto/company-settings.dto';
 
-const UPLOADS_DIR = join(process.cwd(), 'uploads', 'logos');
+// Certificates still need disk storage (openssl operations require a real file path)
 const CERTS_DIR = join(process.cwd(), 'uploads', 'certificates');
-
-// Ensure directories exist on module load
-if (!existsSync(UPLOADS_DIR)) mkdirSync(UPLOADS_DIR, { recursive: true });
-if (!existsSync(CERTS_DIR)) mkdirSync(CERTS_DIR, { recursive: true });
-
-const logoStorage = diskStorage({
-  destination: (_req, _file, cb) => cb(null, UPLOADS_DIR),
-  filename: (_req, file, cb) => {
-    const unique = `logo-${Date.now()}${extname(file.originalname)}`;
-    cb(null, unique);
-  },
-});
+try { if (!existsSync(CERTS_DIR)) mkdirSync(CERTS_DIR, { recursive: true }); } catch {}
 
 const certStorage = diskStorage({
   destination: (_req, _file, cb) => cb(null, CERTS_DIR),
@@ -38,7 +27,15 @@ export class CompanySettingsController {
 
   @Get()
   async get() {
-    return this.service.get();
+    const settings = await this.service.get();
+    // If logo is still a local /uploads path, fetch the Railway public URL and persist it
+    if (settings.logoUrl?.startsWith('/uploads') && settings.sunatApiKey && settings.sunatApiUrl) {
+      try {
+        const res = await this.service.getEmpresaLogoUrl();
+        if (res) settings.logoUrl = res;
+      } catch {}
+    }
+    return settings;
   }
 
   @Put()
@@ -48,14 +45,16 @@ export class CompanySettingsController {
   }
 
   /**
-   * Upload company logo (PNG/JPG, max 2 MB).
-   * Returns the public URL stored on the server.
+   * Upload company logo (PNG/JPG/WEBP/SVG, max 2 MB).
+   * Uses memoryStorage so it works in serverless environments (Vercel, etc.)
+   * where the filesystem is read-only. The file is sent directly to Railway
+   * from memory, and the resulting public URL is saved as logoUrl.
    */
   @Post('logo')
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: logoStorage,
-      limits: { fileSize: 2 * 1024 * 1024 }, // 2 MB
+      storage: memoryStorage(),           // ← no disk writes
+      limits: { fileSize: 2 * 1024 * 1024 },
       fileFilter: (_req, file, cb) => {
         const allowed = ['.png', '.jpg', '.jpeg', '.webp', '.svg'];
         if (!allowed.includes(extname(file.originalname).toLowerCase())) {
@@ -67,11 +66,18 @@ export class CompanySettingsController {
   )
   async uploadLogo(@UploadedFile() file: Express.Multer.File) {
     if (!file) throw new BadRequestException('No file provided');
-    const logoUrl = `/uploads/logos/${file.filename}`;
-    // Persist local URL in settings and sync file to APISUNAT
-    await this.service.update({ logoUrl } as UpdateCompanySettingsDto);
-    await this.service.syncLogoToApisunat(file);
-    return { logoUrl, message: 'Logo uploaded successfully' };
+
+    // Send the buffer directly to Railway and get the public URL back
+    const publicLogoUrl = await this.service.syncLogoBufferToApisunat(file);
+
+    if (publicLogoUrl) {
+      // Save Railway's public URL — works in both local and production
+      await this.service.update({ logoUrl: publicLogoUrl } as UpdateCompanySettingsDto);
+      return { logoUrl: publicLogoUrl, message: 'Logo uploaded successfully' };
+    }
+
+    // Fallback: if Railway sync not configured, return a placeholder message
+    return { logoUrl: null, message: 'Logo recibido pero no se pudo sincronizar con APISUNAT. Configure las credenciales de facturación primero.' };
   }
 
   /**

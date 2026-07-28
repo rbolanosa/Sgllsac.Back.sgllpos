@@ -7,6 +7,7 @@ export declare class CompanySettingsService {
     private readonly httpService;
     constructor(repo: Repository<CompanySettingsEntity>, httpService: HttpService);
     get(): Promise<CompanySettingsEntity>;
+    getEmpresaLogoUrl(): Promise<string | null>;
     update(dto: UpdateCompanySettingsDto): Promise<CompanySettingsEntity>;
     registerSunatApi(certFile: Express.Multer.File, certPassword?: string): Promise<{
         message: string;
@@ -14,6 +15,7 @@ export declare class CompanySettingsService {
         apiSecret: string;
     }>;
     syncLogoToApisunat(logoFile: Express.Multer.File): Promise<void>;
+    syncLogoBufferToApisunat(file: Express.Multer.File): Promise<string | null>;
     private normalizeCertificatePath;
     nextInvoiceNumber(type: 'factura' | 'boleta' | 'nota_venta', manager?: any): Promise<string>;
 }

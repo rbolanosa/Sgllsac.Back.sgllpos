@@ -29,6 +29,37 @@ export class CompanySettingsService {
     return settings;
   }
 
+  /** Fetches the public logo URL from Railway empresa endpoint and persists it in DB. */
+  async getEmpresaLogoUrl(): Promise<string | null> {
+    const settings = await this.get();
+    if (!settings.sunatApiKey || !settings.sunatApiSecret || !settings.sunatApiUrl) return null;
+    try {
+      const targetUrl = settings.sunatApiUrl.replace(/\/$/, '');
+      const response = await firstValueFrom(
+        this.httpService.get(`${targetUrl}/empresa`, {
+          headers: {
+            'X-Api-Key': settings.sunatApiKey,
+            'X-Api-Secret': settings.sunatApiSecret,
+          },
+          timeout: 8_000,
+        }),
+      );
+      const remoteLogoPath: string | undefined = response.data?.datos?.logo_url;
+      if (remoteLogoPath) {
+        const baseHost = new URL(targetUrl).origin;
+        const publicLogoUrl = remoteLogoPath.startsWith('http')
+          ? remoteLogoPath
+          : `${baseHost}${remoteLogoPath}`;
+        // Persist so next request is instant
+        await this.repo.update(SINGLETON_ID, { logoUrl: publicLogoUrl });
+        return publicLogoUrl;
+      }
+    } catch (err: any) {
+      console.warn('No se pudo obtener logo_url de Railway:', err?.message);
+    }
+    return null;
+  }
+
   /** Upsert — always writes to id=1 and syncs with APISUNAT if API keys are configured. */
   async update(dto: UpdateCompanySettingsDto): Promise<CompanySettingsEntity> {
     // Ensure record exists
@@ -214,7 +245,7 @@ export class CompanySettingsService {
       });
 
       const targetUrl = settings.sunatApiUrl.replace(/\/$/, '');
-      await firstValueFrom(
+      const response = await firstValueFrom(
         this.httpService.post(`${targetUrl}/empresa/logo`, form, {
           headers: {
             ...form.getHeaders(),
@@ -224,9 +255,61 @@ export class CompanySettingsService {
           timeout: 15_000,
         }),
       );
+
+      // Save Railway's public logo URL so it works in production (e.g. Vercel)
+      const remoteLogoPath: string | undefined = response.data?.datos?.logo_url || response.data?.logo_url;
+      if (remoteLogoPath) {
+        const baseHost = new URL(targetUrl).origin;
+        const publicLogoUrl = remoteLogoPath.startsWith('http')
+          ? remoteLogoPath
+          : `${baseHost}${remoteLogoPath}`;
+        await this.repo.update(1, { logoUrl: publicLogoUrl });
+      }
     } catch (err: any) {
       console.warn('Advertencia: No se pudo subir el logo a APISUNAT:', err?.message);
     }
+  }
+
+  /**
+   * Sends logo from memory buffer directly to Railway APISUNAT (works in serverless).
+   * Returns the public Railway logo URL, or null if not configured.
+   */
+  async syncLogoBufferToApisunat(file: Express.Multer.File): Promise<string | null> {
+    const settings = await this.get();
+    if (!settings.sunatApiKey || !settings.sunatApiSecret || !settings.sunatApiUrl) return null;
+
+    try {
+      const form = new FormData();
+      // Use the in-memory buffer directly — no disk write needed
+      form.append('logo', file.buffer, {
+        filename: file.originalname || `logo${file.mimetype?.includes('png') ? '.png' : '.jpg'}`,
+        contentType: file.mimetype,
+        knownLength: file.buffer.length,
+      });
+
+      const targetUrl = settings.sunatApiUrl.replace(/\/$/, '');
+      const response = await firstValueFrom(
+        this.httpService.post(`${targetUrl}/empresa/logo`, form, {
+          headers: {
+            ...form.getHeaders(),
+            'X-Api-Key': settings.sunatApiKey,
+            'X-Api-Secret': settings.sunatApiSecret,
+          },
+          timeout: 15_000,
+        }),
+      );
+
+      const remoteLogoPath: string | undefined = response.data?.datos?.logo_url || response.data?.logo_url;
+      if (remoteLogoPath) {
+        const baseHost = new URL(targetUrl).origin;
+        return remoteLogoPath.startsWith('http')
+          ? remoteLogoPath
+          : `${baseHost}${remoteLogoPath}`;
+      }
+    } catch (err: any) {
+      console.warn('Error al subir logo buffer a APISUNAT:', err?.message);
+    }
+    return null;
   }
 
   /** Converts legacy PFX/P12 certificate encryption to modern PFX format if openssl is available. */

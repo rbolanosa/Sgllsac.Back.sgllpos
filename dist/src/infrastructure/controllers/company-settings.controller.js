@@ -20,19 +20,12 @@ const path_1 = require("path");
 const fs_1 = require("fs");
 const company_settings_service_1 = require("../../domain/services/company-settings.service");
 const company_settings_dto_1 = require("../../application/dto/company-settings.dto");
-const UPLOADS_DIR = (0, path_1.join)(process.cwd(), 'uploads', 'logos');
 const CERTS_DIR = (0, path_1.join)(process.cwd(), 'uploads', 'certificates');
-if (!(0, fs_1.existsSync)(UPLOADS_DIR))
-    (0, fs_1.mkdirSync)(UPLOADS_DIR, { recursive: true });
-if (!(0, fs_1.existsSync)(CERTS_DIR))
-    (0, fs_1.mkdirSync)(CERTS_DIR, { recursive: true });
-const logoStorage = (0, multer_1.diskStorage)({
-    destination: (_req, _file, cb) => cb(null, UPLOADS_DIR),
-    filename: (_req, file, cb) => {
-        const unique = `logo-${Date.now()}${(0, path_1.extname)(file.originalname)}`;
-        cb(null, unique);
-    },
-});
+try {
+    if (!(0, fs_1.existsSync)(CERTS_DIR))
+        (0, fs_1.mkdirSync)(CERTS_DIR, { recursive: true });
+}
+catch { }
 const certStorage = (0, multer_1.diskStorage)({
     destination: (_req, _file, cb) => cb(null, CERTS_DIR),
     filename: (_req, file, cb) => {
@@ -45,7 +38,16 @@ let CompanySettingsController = class CompanySettingsController {
         this.service = service;
     }
     async get() {
-        return this.service.get();
+        const settings = await this.service.get();
+        if (settings.logoUrl?.startsWith('/uploads') && settings.sunatApiKey && settings.sunatApiUrl) {
+            try {
+                const res = await this.service.getEmpresaLogoUrl();
+                if (res)
+                    settings.logoUrl = res;
+            }
+            catch { }
+        }
+        return settings;
     }
     async update(dto) {
         return this.service.update(dto);
@@ -53,10 +55,12 @@ let CompanySettingsController = class CompanySettingsController {
     async uploadLogo(file) {
         if (!file)
             throw new common_1.BadRequestException('No file provided');
-        const logoUrl = `/uploads/logos/${file.filename}`;
-        await this.service.update({ logoUrl });
-        await this.service.syncLogoToApisunat(file);
-        return { logoUrl, message: 'Logo uploaded successfully' };
+        const publicLogoUrl = await this.service.syncLogoBufferToApisunat(file);
+        if (publicLogoUrl) {
+            await this.service.update({ logoUrl: publicLogoUrl });
+            return { logoUrl: publicLogoUrl, message: 'Logo uploaded successfully' };
+        }
+        return { logoUrl: null, message: 'Logo recibido pero no se pudo sincronizar con APISUNAT. Configure las credenciales de facturación primero.' };
     }
     async registerSunatApi(file, contrasenaCertificado) {
         if (!file)
@@ -82,7 +86,7 @@ __decorate([
 __decorate([
     (0, common_1.Post)('logo'),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', {
-        storage: logoStorage,
+        storage: (0, multer_1.memoryStorage)(),
         limits: { fileSize: 2 * 1024 * 1024 },
         fileFilter: (_req, file, cb) => {
             const allowed = ['.png', '.jpg', '.jpeg', '.webp', '.svg'];

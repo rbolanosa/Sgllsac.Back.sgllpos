@@ -72,6 +72,34 @@ let CompanySettingsService = class CompanySettingsService {
         }
         return settings;
     }
+    async getEmpresaLogoUrl() {
+        const settings = await this.get();
+        if (!settings.sunatApiKey || !settings.sunatApiSecret || !settings.sunatApiUrl)
+            return null;
+        try {
+            const targetUrl = settings.sunatApiUrl.replace(/\/$/, '');
+            const response = await (0, rxjs_1.firstValueFrom)(this.httpService.get(`${targetUrl}/empresa`, {
+                headers: {
+                    'X-Api-Key': settings.sunatApiKey,
+                    'X-Api-Secret': settings.sunatApiSecret,
+                },
+                timeout: 8_000,
+            }));
+            const remoteLogoPath = response.data?.datos?.logo_url;
+            if (remoteLogoPath) {
+                const baseHost = new URL(targetUrl).origin;
+                const publicLogoUrl = remoteLogoPath.startsWith('http')
+                    ? remoteLogoPath
+                    : `${baseHost}${remoteLogoPath}`;
+                await this.repo.update(SINGLETON_ID, { logoUrl: publicLogoUrl });
+                return publicLogoUrl;
+            }
+        }
+        catch (err) {
+            console.warn('No se pudo obtener logo_url de Railway:', err?.message);
+        }
+        return null;
+    }
     async update(dto) {
         const current = await this.get();
         await this.repo.update(SINGLETON_ID, {
@@ -231,7 +259,7 @@ let CompanySettingsService = class CompanySettingsService {
                 contentType: logoFile.mimetype,
             });
             const targetUrl = settings.sunatApiUrl.replace(/\/$/, '');
-            await (0, rxjs_1.firstValueFrom)(this.httpService.post(`${targetUrl}/empresa/logo`, form, {
+            const response = await (0, rxjs_1.firstValueFrom)(this.httpService.post(`${targetUrl}/empresa/logo`, form, {
                 headers: {
                     ...form.getHeaders(),
                     'X-Api-Key': settings.sunatApiKey,
@@ -239,10 +267,51 @@ let CompanySettingsService = class CompanySettingsService {
                 },
                 timeout: 15_000,
             }));
+            const remoteLogoPath = response.data?.datos?.logo_url || response.data?.logo_url;
+            if (remoteLogoPath) {
+                const baseHost = new URL(targetUrl).origin;
+                const publicLogoUrl = remoteLogoPath.startsWith('http')
+                    ? remoteLogoPath
+                    : `${baseHost}${remoteLogoPath}`;
+                await this.repo.update(1, { logoUrl: publicLogoUrl });
+            }
         }
         catch (err) {
             console.warn('Advertencia: No se pudo subir el logo a APISUNAT:', err?.message);
         }
+    }
+    async syncLogoBufferToApisunat(file) {
+        const settings = await this.get();
+        if (!settings.sunatApiKey || !settings.sunatApiSecret || !settings.sunatApiUrl)
+            return null;
+        try {
+            const form = new form_data_1.default();
+            form.append('logo', file.buffer, {
+                filename: file.originalname || `logo${file.mimetype?.includes('png') ? '.png' : '.jpg'}`,
+                contentType: file.mimetype,
+                knownLength: file.buffer.length,
+            });
+            const targetUrl = settings.sunatApiUrl.replace(/\/$/, '');
+            const response = await (0, rxjs_1.firstValueFrom)(this.httpService.post(`${targetUrl}/empresa/logo`, form, {
+                headers: {
+                    ...form.getHeaders(),
+                    'X-Api-Key': settings.sunatApiKey,
+                    'X-Api-Secret': settings.sunatApiSecret,
+                },
+                timeout: 15_000,
+            }));
+            const remoteLogoPath = response.data?.datos?.logo_url || response.data?.logo_url;
+            if (remoteLogoPath) {
+                const baseHost = new URL(targetUrl).origin;
+                return remoteLogoPath.startsWith('http')
+                    ? remoteLogoPath
+                    : `${baseHost}${remoteLogoPath}`;
+            }
+        }
+        catch (err) {
+            console.warn('Error al subir logo buffer a APISUNAT:', err?.message);
+        }
+        return null;
     }
     normalizeCertificatePath(filePath, password) {
         if (!password || !fs.existsSync(filePath))
