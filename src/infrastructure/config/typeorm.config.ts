@@ -50,9 +50,10 @@ export const typeOrmConfig: TypeOrmModuleAsyncOptions = {
     username: configService.get<string>('DATABASE_USER') || 'root',
     password: configService.get<string>('DATABASE_PASSWORD') || '',
     database: configService.get<string>('DATABASE_NAME') || 'devpro_db',
-    // synchronize: true creates missing tables/columns automatically on start.
-    // Safe for production since we only ADD columns/tables, never drop.
-    synchronize: true,
+    synchronize: false,
+    // Auto-run pending migrations on every startup (safe: only adds, never drops)
+    migrationsRun: true,
+    migrations: [path.join(__dirname, '../../infrastructure/database/migrations/*.{ts,js}')],
     connectTimeout: 10000,
     ssl: process.env.DATABASE_SSL === 'true'
       ? { rejectUnauthorized: false }
@@ -73,5 +74,6 @@ export const AppDataSource = new DataSource({
   synchronize: false,
   logging: process.env.NODE_ENV === 'development',
   entities,
+  migrations: [path.join(__dirname, '../../infrastructure/database/migrations/*.{ts,js}')],
   migrationsTableName: 'migrations',
 });

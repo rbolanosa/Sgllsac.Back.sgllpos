@@ -80,7 +80,9 @@ exports.typeOrmConfig = {
         username: configService.get('DATABASE_USER') || 'root',
         password: configService.get('DATABASE_PASSWORD') || '',
         database: configService.get('DATABASE_NAME') || 'devpro_db',
-        synchronize: true,
+        synchronize: false,
+        migrationsRun: true,
+        migrations: [path.join(__dirname, '../../infrastructure/database/migrations/*.{ts,js}')],
         connectTimeout: 10000,
         ssl: process.env.DATABASE_SSL === 'true'
             ? { rejectUnauthorized: false }
@@ -99,6 +101,7 @@ exports.AppDataSource = new typeorm_1.DataSource({
     synchronize: false,
     logging: process.env.NODE_ENV === 'development',
     entities,
+    migrations: [path.join(__dirname, '../../infrastructure/database/migrations/*.{ts,js}')],
     migrationsTableName: 'migrations',
 });
 //# sourceMappingURL=typeorm.config.js.map
