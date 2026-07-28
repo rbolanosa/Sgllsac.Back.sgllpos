@@ -1,0 +1,122 @@
+2026-07-28 10:38:19 [info]: Starting Nest application...
+2026-07-28 10:38:19 [info]: AppModule dependencies initialized
+2026-07-28 10:38:19 [info]: TypeOrmModule dependencies initialized
+2026-07-28 10:38:19 [info]: PassportModule dependencies initialized
+2026-07-28 10:38:19 [info]: ConfigHostModule dependencies initialized
+2026-07-28 10:38:19 [info]: WinstonModule dependencies initialized
+2026-07-28 10:38:19 [info]: HealthModule dependencies initialized
+2026-07-28 10:38:19 [info]: HttpModule dependencies initialized
+2026-07-28 10:38:19 [info]: DiscoveryModule dependencies initialized
+2026-07-28 10:38:19 [info]: ConfigModule dependencies initialized
+2026-07-28 10:38:19 [info]: ConfigModule dependencies initialized
+2026-07-28 10:38:19 [info]: EventEmitterModule dependencies initialized
+2026-07-28 10:38:19 [info]: ScheduleModule dependencies initialized
+2026-07-28 10:38:19 [info]: JwtModule dependencies initialized
+2026-07-28 10:38:19 [error]: QueryFailedError: Cannot drop index 'uq_est_company_cod': needed in a foreign key constraint
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async MysqlQueryRunner.executeQueries (/Users/macintosh/Documents/DEVPRO/Back/src/query-runner/BaseQueryRunner.ts:799:13)
+    at async MysqlQueryRunner.dropIndex (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:2440:9)
+    at async <anonymous> (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:452:21)
+    at async Promise.all (index 0)
+    at async RdbmsSchemaBuilder.dropOldIndices (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:455:13)
+    at async RdbmsSchemaBuilder.executeSchemaSyncOperationsInProperOrder (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:230:9)
+    at async RdbmsSchemaBuilder.build (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:106:13)
+    at async DataSource.synchronize (/Users/macintosh/Documents/DEVPRO/Back/src/data-source/DataSource.ts:310:9)
+    at async DataSource.initialize (/Users/macintosh/Documents/DEVPRO/Back/src/data-source/DataSource.ts:272:43)
+2026-07-28 10:38:23 [error]: QueryFailedError: Cannot drop index 'uq_est_company_cod': needed in a foreign key constraint
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async MysqlQueryRunner.executeQueries (/Users/macintosh/Documents/DEVPRO/Back/src/query-runner/BaseQueryRunner.ts:799:13)
+    at async MysqlQueryRunner.dropIndex (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:2440:9)
+    at async <anonymous> (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:452:21)
+    at async Promise.all (index 0)
+    at async RdbmsSchemaBuilder.dropOldIndices (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:455:13)
+    at async RdbmsSchemaBuilder.executeSchemaSyncOperationsInProperOrder (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:230:9)
+    at async RdbmsSchemaBuilder.build (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:106:13)
+    at async DataSource.synchronize (/Users/macintosh/Documents/DEVPRO/Back/src/data-source/DataSource.ts:310:9)
+    at async DataSource.initialize (/Users/macintosh/Documents/DEVPRO/Back/src/data-source/DataSource.ts:272:43)
+2026-07-28 10:38:26 [error]: QueryFailedError: Cannot drop index 'uq_est_company_cod': needed in a foreign key constraint
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async MysqlQueryRunner.executeQueries (/Users/macintosh/Documents/DEVPRO/Back/src/query-runner/BaseQueryRunner.ts:799:13)
+    at async MysqlQueryRunner.dropIndex (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:2440:9)
+    at async <anonymous> (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:452:21)
+    at async Promise.all (index 0)
+    at async RdbmsSchemaBuilder.dropOldIndices (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:455:13)
+    at async RdbmsSchemaBuilder.executeSchemaSyncOperationsInProperOrder (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:230:9)
+    at async RdbmsSchemaBuilder.build (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:106:13)
+    at async DataSource.synchronize (/Users/macintosh/Documents/DEVPRO/Back/src/data-source/DataSource.ts:310:9)
+    at async DataSource.initialize (/Users/macintosh/Documents/DEVPRO/Back/src/data-source/DataSource.ts:272:43)
+2026-07-28 10:38:30 [error]: QueryFailedError: Cannot drop index 'uq_est_company_cod': needed in a foreign key constraint
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async MysqlQueryRunner.executeQueries (/Users/macintosh/Documents/DEVPRO/Back/src/query-runner/BaseQueryRunner.ts:799:13)
+    at async MysqlQueryRunner.dropIndex (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:2440:9)
+    at async <anonymous> (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:452:21)
+    at async Promise.all (index 0)
+    at async RdbmsSchemaBuilder.dropOldIndices (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:455:13)
+    at async RdbmsSchemaBuilder.executeSchemaSyncOperationsInProperOrder (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:230:9)
+    at async RdbmsSchemaBuilder.build (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:106:13)
+    at async DataSource.synchronize (/Users/macintosh/Documents/DEVPRO/Back/src/data-source/DataSource.ts:310:9)
+    at async DataSource.initialize (/Users/macintosh/Documents/DEVPRO/Back/src/data-source/DataSource.ts:272:43)
+2026-07-28 10:38:33 [error]: QueryFailedError: Cannot drop index 'uq_est_company_cod': needed in a foreign key constraint
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async MysqlQueryRunner.executeQueries (/Users/macintosh/Documents/DEVPRO/Back/src/query-runner/BaseQueryRunner.ts:799:13)
+    at async MysqlQueryRunner.dropIndex (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:2440:9)
+    at async <anonymous> (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:452:21)
+    at async Promise.all (index 0)
+    at async RdbmsSchemaBuilder.dropOldIndices (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:455:13)
+    at async RdbmsSchemaBuilder.executeSchemaSyncOperationsInProperOrder (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:230:9)
+    at async RdbmsSchemaBuilder.build (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:106:13)
+    at async DataSource.synchronize (/Users/macintosh/Documents/DEVPRO/Back/src/data-source/DataSource.ts:310:9)
+    at async DataSource.initialize (/Users/macintosh/Documents/DEVPRO/Back/src/data-source/DataSource.ts:272:43)
+2026-07-28 10:38:36 [error]: QueryFailedError: Cannot drop index 'uq_est_company_cod': needed in a foreign key constraint
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async MysqlQueryRunner.executeQueries (/Users/macintosh/Documents/DEVPRO/Back/src/query-runner/BaseQueryRunner.ts:799:13)
+    at async MysqlQueryRunner.dropIndex (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:2440:9)
+    at async <anonymous> (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:452:21)
+    at async Promise.all (index 0)
+    at async RdbmsSchemaBuilder.dropOldIndices (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:455:13)
+    at async RdbmsSchemaBuilder.executeSchemaSyncOperationsInProperOrder (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:230:9)
+    at async RdbmsSchemaBuilder.build (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:106:13)
+    at async DataSource.synchronize (/Users/macintosh/Documents/DEVPRO/Back/src/data-source/DataSource.ts:310:9)
+    at async DataSource.initialize (/Users/macintosh/Documents/DEVPRO/Back/src/data-source/DataSource.ts:272:43)
+2026-07-28 10:38:39 [error]: QueryFailedError: Cannot drop index 'uq_est_company_cod': needed in a foreign key constraint
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async MysqlQueryRunner.executeQueries (/Users/macintosh/Documents/DEVPRO/Back/src/query-runner/BaseQueryRunner.ts:799:13)
+    at async MysqlQueryRunner.dropIndex (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:2440:9)
+    at async <anonymous> (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:452:21)
+    at async Promise.all (index 0)
+    at async RdbmsSchemaBuilder.dropOldIndices (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:455:13)
+    at async RdbmsSchemaBuilder.executeSchemaSyncOperationsInProperOrder (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:230:9)
+    at async RdbmsSchemaBuilder.build (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:106:13)
+    at async DataSource.synchronize (/Users/macintosh/Documents/DEVPRO/Back/src/data-source/DataSource.ts:310:9)
+    at async DataSource.initialize (/Users/macintosh/Documents/DEVPRO/Back/src/data-source/DataSource.ts:272:43)
+2026-07-28 10:38:42 [error]: QueryFailedError: Cannot drop index 'uq_est_company_cod': needed in a foreign key constraint
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async MysqlQueryRunner.executeQueries (/Users/macintosh/Documents/DEVPRO/Back/src/query-runner/BaseQueryRunner.ts:799:13)
+    at async MysqlQueryRunner.dropIndex (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:2440:9)
+    at async <anonymous> (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:452:21)
+    at async Promise.all (index 0)
+    at async RdbmsSchemaBuilder.dropOldIndices (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:455:13)
+    at async RdbmsSchemaBuilder.executeSchemaSyncOperationsInProperOrder (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:230:9)
+    at async RdbmsSchemaBuilder.build (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:106:13)
+    at async DataSource.synchronize (/Users/macintosh/Documents/DEVPRO/Back/src/data-source/DataSource.ts:310:9)
+    at async DataSource.initialize (/Users/macintosh/Documents/DEVPRO/Back/src/data-source/DataSource.ts:272:43)
+2026-07-28 10:38:46 [error]: QueryFailedError: Cannot drop index 'uq_est_company_cod': needed in a foreign key constraint
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async MysqlQueryRunner.executeQueries (/Users/macintosh/Documents/DEVPRO/Back/src/query-runner/BaseQueryRunner.ts:799:13)
+    at async MysqlQueryRunner.dropIndex (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:2440:9)
+    at async <anonymous> (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:452:21)
+    at async Promise.all (index 0)
+    at async RdbmsSchemaBuilder.dropOldIndices (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:455:13)
+    at async RdbmsSchemaBuilder.executeSchemaSyncOperationsInProperOrder (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:230:9)
+    at async RdbmsSchemaBuilder.build (/Users/macintosh/Documents/DEVPRO/Back/src/schema-builder/RdbmsSchemaBuilder.ts:106:13)
+    at async DataSource.synchronize (/Users/macintosh/Documents/DEVPRO/Back/src/data-source/DataSource.ts:310:9)
+    at async DataSource.initialize (/Users/macintosh/Documents/DEVPRO/Back/src/data-source/DataSource.ts:272:43)

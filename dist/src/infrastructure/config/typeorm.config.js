@@ -80,7 +80,7 @@ exports.typeOrmConfig = {
         username: configService.get('DATABASE_USER') || 'root',
         password: configService.get('DATABASE_PASSWORD') || '',
         database: configService.get('DATABASE_NAME') || 'devpro_db',
-        synchronize: false,
+        synchronize: true,
         connectTimeout: 10000,
         ssl: process.env.DATABASE_SSL === 'true'
             ? { rejectUnauthorized: false }
