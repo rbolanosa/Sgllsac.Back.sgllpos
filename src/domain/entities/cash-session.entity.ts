@@ -5,7 +5,6 @@ import {
 } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { EstablishmentEntity } from './establishment.entity';
-import type { CashMovementEntity } from './cash-movement.entity';
 
 export enum CashSessionStatus {
   OPEN   = 'open',
@@ -56,7 +55,7 @@ export class CashSessionEntity {
   closedAt: Date | null;
 
   @OneToMany('CashMovementEntity', 'session')
-  movements: CashMovementEntity[];
+  movements: any[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

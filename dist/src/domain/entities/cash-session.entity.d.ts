@@ -1,6 +1,5 @@
 import { UserEntity } from './user.entity';
 import { EstablishmentEntity } from './establishment.entity';
-import type { CashMovementEntity } from './cash-movement.entity';
 export declare enum CashSessionStatus {
     OPEN = "open",
     CLOSED = "closed"
@@ -19,7 +18,7 @@ export declare class CashSessionEntity {
     closingNotes: string | null;
     openedAt: Date;
     closedAt: Date | null;
-    movements: CashMovementEntity[];
+    movements: any[];
     createdAt: Date;
     updatedAt: Date;
 }
