@@ -304,7 +304,6 @@ let SaleService = SaleService_1 = class SaleService {
         const payload = {
             tipo_documento: sale.documentType === sale_entity_1.DocumentType.FACTURA ? '01' : '03',
             serie,
-            correlativo,
             fecha_emision: fechaEmisionStr,
             tipo_operacion: '0101',
             tipo_moneda: 'PEN',
@@ -334,6 +333,15 @@ let SaleService = SaleService_1 = class SaleService {
                 sunatStatus = 'ACEPTADO';
                 if (!sunatMessage || sunatMessage.includes('encolada') || sunatMessage.includes('registrado') || sunatMessage.includes('Beta')) {
                     sunatMessage = 'Comprobante Aceptado por SUNAT';
+                }
+            }
+            const sunatSerie = datos?.serie || datos?.comprobante?.serie;
+            const sunatCorr = datos?.correlativo || datos?.comprobante?.correlativo;
+            if (sunatSerie && sunatCorr) {
+                const assignedNumber = `${sunatSerie}-${String(sunatCorr).padStart(8, '0')}`;
+                if (assignedNumber !== sale.invoiceNumber) {
+                    await this.saleRepo.update(sale.id, { invoiceNumber: assignedNumber });
+                    sale.invoiceNumber = assignedNumber;
                 }
             }
             await this.saleRepo.update(sale.id, {

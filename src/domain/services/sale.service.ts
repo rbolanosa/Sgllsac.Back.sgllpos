@@ -306,7 +306,7 @@ export class SaleService {
     const payload = {
       tipo_documento: sale.documentType === DocumentType.FACTURA ? '01' : '03',
       serie,
-      correlativo,
+      // Do NOT send correlativo — let the SUNAT API auto-assign it to avoid duplicate errors
       fecha_emision: fechaEmisionStr,
       tipo_operacion: '0101',
       tipo_moneda: 'PEN',
@@ -340,6 +340,17 @@ export class SaleService {
         sunatStatus = 'ACEPTADO';
         if (!sunatMessage || sunatMessage.includes('encolada') || sunatMessage.includes('registrado') || sunatMessage.includes('Beta')) {
           sunatMessage = 'Comprobante Aceptado por SUNAT';
+        }
+      }
+
+      // Sync invoiceNumber with the one assigned by SUNAT API if available
+      const sunatSerie = datos?.serie || datos?.comprobante?.serie;
+      const sunatCorr = datos?.correlativo || datos?.comprobante?.correlativo;
+      if (sunatSerie && sunatCorr) {
+        const assignedNumber = `${sunatSerie}-${String(sunatCorr).padStart(8, '0')}`;
+        if (assignedNumber !== sale.invoiceNumber) {
+          await this.saleRepo.update(sale.id, { invoiceNumber: assignedNumber });
+          sale.invoiceNumber = assignedNumber;
         }
       }
 
