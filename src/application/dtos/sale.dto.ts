@@ -1,6 +1,6 @@
 import {
   IsString, IsOptional, IsBoolean, IsNumber, IsEnum,
-  IsArray, ArrayMinSize, ValidateNested, Min, MaxLength, IsNotEmpty,
+  IsArray, ArrayMinSize, ValidateNested, Min, MaxLength, IsNotEmpty, IsIn,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
@@ -12,11 +12,51 @@ export class SaleItemInputDto {
   @IsNumber()
   productId: number;
 
-  @ApiProperty()
+  /**
+   * Modo de venta: 'unit' (unidades sueltas) o 'box' (cajas completas) o 'mixed' (cajas + sueltas).
+   * 'unit'  → usar quantity
+   * 'box'   → usar boxes (las cajas se convierten a unidades internamente)
+   * 'mixed' → usar boxes + quantity (cajas + unidades sueltas adicionales)
+   */
+  @ApiPropertyOptional({
+    enum: ['unit', 'box', 'mixed'],
+    default: 'unit',
+    description: 'unit=solo unidades | box=solo cajas | mixed=cajas + unidades sueltas',
+  })
+  @IsOptional()
+  @IsIn(['unit', 'box', 'mixed'])
+  sellUnit?: 'unit' | 'box' | 'mixed' = 'unit';
+
+  /**
+   * Cajas completas a vender (cuando sellUnit = 'box' o 'mixed').
+   * El precio se toma de product.boxSalePrice (o unitsPerBox × salePrice si no está definido).
+   */
+  @ApiPropertyOptional({ example: 1, description: 'Cajas a vender' })
+  @IsOptional()
   @Type(() => Number)
   @IsNumber()
-  @Min(0.001)
-  quantity: number;
+  @Min(0)
+  boxes?: number;
+
+  /**
+   * Precio por caja (override opcional; si no viene, se usa product.boxSalePrice).
+   */
+  @ApiPropertyOptional({ example: 58.0 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  boxUnitPrice?: number;
+
+  /**
+   * Unidades sueltas (modo 'unit': todas las unidades; modo 'mixed': unidades EXTRA además de las cajas).
+   */
+  @ApiPropertyOptional({ example: 5 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  quantity?: number;
 
   @ApiPropertyOptional({ default: 0 })
   @IsOptional()
@@ -32,6 +72,7 @@ export class SaleItemInputDto {
   @Min(0)
   unitPrice?: number;
 }
+
 
 export class PaymentItemInputDto {
   @ApiProperty()

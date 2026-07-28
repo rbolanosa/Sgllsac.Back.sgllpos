@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, BadRequestException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { PurchaseOrderEntity, PurchaseOrderStatus } from '../../domain/entities/purchase-order.entity';
-import { PurchaseOrderItemEntity } from '../../domain/entities/purchase-order-item.entity';
+import { PurchaseOrderItemEntity, PurchaseUnit } from '../../domain/entities/purchase-order-item.entity';
 import { ProductEntity } from '../../domain/entities/product.entity';
 import {
   InventoryMovementEntity,
@@ -71,18 +71,58 @@ export class PurchaseOrderService {
 
       for (const item of dto.items) {
         const product = await manager.findOne(ProductEntity, { where: { id: item.productId } });
-        if (!product) throw new NotFoundException(`Product #${item.productId} not found`);
+        if (!product) throw new NotFoundException(`Producto #${item.productId} no encontrado`);
 
-        const subtotal = item.quantityOrdered * item.unitCost;
+        const purchaseUnit = item.purchaseUnit ?? 'unit';
+        let quantityOrdered: number;
+        let unitCost: number;
+        let boxesOrdered: number | null = null;
+        let boxCost: number | null = null;
+
+        if (purchaseUnit === 'box') {
+          // ── Modo Caja ───────────────────────────────────────────────────────
+          if (!product.hasBoxPresentation || !product.unitsPerBox || Number(product.unitsPerBox) <= 0) {
+            throw new BadRequestException(
+              `El producto "${product.name}" no tiene configurada la presentación en caja. ` +
+              `Activa "Presentación en Caja" y define las unidades por caja en el catálogo de productos.`,
+            );
+          }
+          if (!item.boxesOrdered || item.boxesOrdered <= 0) {
+            throw new BadRequestException(`Debe indicar la cantidad de cajas para el producto "${product.name}"`);
+          }
+          if (item.boxCost === undefined || item.boxCost === null) {
+            throw new BadRequestException(`Debe indicar el costo por caja para el producto "${product.name}"`);
+          }
+
+          boxesOrdered = item.boxesOrdered;
+          boxCost = item.boxCost;
+          quantityOrdered = Number(item.boxesOrdered) * Number(product.unitsPerBox);
+          unitCost = Number(item.boxCost) / Number(product.unitsPerBox);
+        } else {
+          // ── Modo Unidad ─────────────────────────────────────────────────────
+          if (!item.quantityOrdered || item.quantityOrdered <= 0) {
+            throw new BadRequestException(`Debe indicar la cantidad para el producto "${product.name}"`);
+          }
+          if (item.unitCost === undefined || item.unitCost === null) {
+            throw new BadRequestException(`Debe indicar el costo unitario para el producto "${product.name}"`);
+          }
+          quantityOrdered = item.quantityOrdered;
+          unitCost = item.unitCost;
+        }
+
+        const subtotal = quantityOrdered * unitCost;
         totalAmount += subtotal;
 
         await manager.save(
           manager.create(PurchaseOrderItemEntity, {
             purchaseOrderId: savedPo.id,
             productId: item.productId,
-            quantityOrdered: item.quantityOrdered,
+            purchaseUnit: purchaseUnit === 'box' ? PurchaseUnit.BOX : PurchaseUnit.UNIT,
+            boxesOrdered,
+            boxCost,
+            quantityOrdered,
             quantityReceived: 0,
-            unitCost: item.unitCost,
+            unitCost,
             subtotal,
           }),
         );
@@ -92,6 +132,7 @@ export class PurchaseOrderService {
       return manager.save(savedPo);
     });
   }
+
 
   async receive(id: number, dto: ReceivePurchaseOrderDto, receivedBy?: number): Promise<PurchaseOrderEntity> {
     return this.dataSource.transaction(async (manager) => {

@@ -1,7 +1,10 @@
 export declare class PurchaseOrderItemInputDto {
     productId: number;
-    quantityOrdered: number;
-    unitCost: number;
+    purchaseUnit?: 'unit' | 'box';
+    quantityOrdered?: number;
+    unitCost?: number;
+    boxesOrdered?: number;
+    boxCost?: number;
 }
 export declare class CreatePurchaseOrderDto {
     supplierId?: number;

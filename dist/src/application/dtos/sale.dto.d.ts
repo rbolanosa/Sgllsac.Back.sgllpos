@@ -1,7 +1,10 @@
 import { PaymentMethod, DocumentType } from '../../domain/entities/sale.entity';
 export declare class SaleItemInputDto {
     productId: number;
-    quantity: number;
+    sellUnit?: 'unit' | 'box' | 'mixed';
+    boxes?: number;
+    boxUnitPrice?: number;
+    quantity?: number;
     discount?: number;
     unitPrice?: number;
 }

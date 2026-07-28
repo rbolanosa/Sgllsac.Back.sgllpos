@@ -9,10 +9,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PurchaseOrderItemEntity = void 0;
+exports.PurchaseOrderItemEntity = exports.PurchaseUnit = void 0;
 const typeorm_1 = require("typeorm");
 const purchase_order_entity_1 = require("./purchase-order.entity");
 const product_entity_1 = require("./product.entity");
+var PurchaseUnit;
+(function (PurchaseUnit) {
+    PurchaseUnit["UNIT"] = "unit";
+    PurchaseUnit["BOX"] = "box";
+})(PurchaseUnit || (exports.PurchaseUnit = PurchaseUnit = {}));
 let PurchaseOrderItemEntity = class PurchaseOrderItemEntity {
 };
 exports.PurchaseOrderItemEntity = PurchaseOrderItemEntity;
@@ -38,6 +43,23 @@ __decorate([
     (0, typeorm_1.JoinColumn)({ name: 'product_id' }),
     __metadata("design:type", product_entity_1.ProductEntity)
 ], PurchaseOrderItemEntity.prototype, "product", void 0);
+__decorate([
+    (0, typeorm_1.Column)({
+        name: 'purchase_unit',
+        type: 'enum',
+        enum: PurchaseUnit,
+        default: PurchaseUnit.UNIT,
+    }),
+    __metadata("design:type", String)
+], PurchaseOrderItemEntity.prototype, "purchaseUnit", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'boxes_ordered', type: 'decimal', precision: 10, scale: 3, nullable: true }),
+    __metadata("design:type", Number)
+], PurchaseOrderItemEntity.prototype, "boxesOrdered", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'box_cost', type: 'decimal', precision: 10, scale: 4, nullable: true }),
+    __metadata("design:type", Number)
+], PurchaseOrderItemEntity.prototype, "boxCost", void 0);
 __decorate([
     (0, typeorm_1.Column)({ name: 'quantity_ordered', type: 'decimal', precision: 10, scale: 3 }),
     __metadata("design:type", Number)

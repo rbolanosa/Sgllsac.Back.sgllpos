@@ -90,38 +90,143 @@ export class SaleService {
 
       for (const item of dto.items) {
         const product = await manager.findOne(ProductEntity, { where: { id: item.productId } });
-        if (!product) throw new NotFoundException(`Product #${item.productId} not found`);
-        if (!product.isActive) throw new BadRequestException(`Product "${product.name}" is inactive`);
-        if (product.stockQuantity < item.quantity) {
-          throw new BadRequestException(
-            `Insufficient stock for "${product.name}". Available: ${product.stockQuantity}`,
-          );
+        if (!product) throw new NotFoundException(`Producto #${item.productId} no encontrado`);
+        if (!product.isActive) throw new BadRequestException(`El producto "${product.name}" está inactivo`);
+
+        const sellUnit   = item.sellUnit ?? 'unit';
+        const disc       = item.discount ?? 0;
+        const stockUnits = Number(product.stockQuantity);
+        const upb        = product.hasBoxPresentation && product.unitsPerBox ? Number(product.unitsPerBox) : null;
+
+        // ── Calcular unidades totales y subtotal según modo ─────────────────
+        let totalUnitsToDeduct = 0;
+        let lineTotal          = 0;
+        let displayQty         = 0;
+        let displayPrice       = 0;
+
+        if (sellUnit === 'box') {
+          // ── Modo Caja ─────────────────────────────────────────────────────
+          if (!upb) {
+            throw new BadRequestException(
+              `El producto "${product.name}" no tiene configuración de caja. ` +
+              `Usa el modo de venta por unidad o configura el producto.`,
+            );
+          }
+          const boxesToSell = Number(item.boxes ?? 0);
+          if (boxesToSell <= 0) {
+            throw new BadRequestException(`Debe indicar cuántas cajas vender de "${product.name}"`);
+          }
+          const unitsNeeded     = boxesToSell * upb;
+          const availableBoxes  = Math.floor(stockUnits / upb);
+
+          if (boxesToSell > availableBoxes) {
+            throw new BadRequestException(
+              `Stock insuficiente para "${product.name}" (modo caja). ` +
+              `Disponibles: ${availableBoxes} caja(s) completa(s) (${stockUnits} und en total). ` +
+              `Solicitadas: ${boxesToSell} caja(s).`,
+            );
+          }
+          const boxPrice = (item.boxUnitPrice != null && Number(item.boxUnitPrice) > 0)
+            ? Number(item.boxUnitPrice)
+            : (product.boxSalePrice ? Number(product.boxSalePrice) : upb * Number(product.salePrice));
+
+          totalUnitsToDeduct = unitsNeeded;
+          lineTotal          = boxesToSell * boxPrice - disc;
+          displayQty         = boxesToSell;
+          displayPrice       = boxPrice;
+
+        } else if (sellUnit === 'mixed') {
+          // ── Modo Mixto: Cajas + Unidades sueltas ──────────────────────────
+          if (!upb) {
+            throw new BadRequestException(
+              `El producto "${product.name}" no tiene configuración de caja. ` +
+              `Usa el modo de venta por unidad.`,
+            );
+          }
+          const boxesToSell  = Number(item.boxes ?? 0);
+          const looseUnits   = Number(item.quantity ?? 0);
+
+          if (boxesToSell <= 0 && looseUnits <= 0) {
+            throw new BadRequestException(`Debe indicar cajas y/o unidades para "${product.name}"`);
+          }
+
+          const unitsFromBoxes  = boxesToSell * upb;
+          const totalUnitsNeeded = unitsFromBoxes + looseUnits;
+
+          // Validar cajas completas disponibles
+          const availableBoxes = Math.floor(stockUnits / upb);
+          if (boxesToSell > availableBoxes) {
+            throw new BadRequestException(
+              `Stock insuficiente de cajas para "${product.name}". ` +
+              `Disponibles: ${availableBoxes} caja(s). Solicitadas: ${boxesToSell} caja(s).`,
+            );
+          }
+          // Validar unidades totales disponibles
+          if (totalUnitsNeeded > stockUnits) {
+            const remainUnits = stockUnits - unitsFromBoxes;
+            throw new BadRequestException(
+              `Stock insuficiente de unidades para "${product.name}". ` +
+              `Después de descontar ${boxesToSell} caja(s), quedan ${remainUnits} und disponibles. ` +
+              `Solicitaste ${looseUnits} und sueltas.`,
+            );
+          }
+
+          const boxPrice = (item.boxUnitPrice != null && Number(item.boxUnitPrice) > 0)
+            ? Number(item.boxUnitPrice)
+            : (product.boxSalePrice ? Number(product.boxSalePrice) : upb * Number(product.salePrice));
+          const unitPrice = (item.unitPrice != null && Number(item.unitPrice) > 0)
+            ? Number(item.unitPrice)
+            : Number(product.salePrice);
+
+          totalUnitsToDeduct = totalUnitsNeeded;
+          lineTotal          = (boxesToSell * boxPrice) + (looseUnits * unitPrice) - disc;
+          displayQty         = totalUnitsNeeded; // guardamos total en und para el registro
+          displayPrice       = lineTotal / displayQty;
+
+        } else {
+          // ── Modo Unidad (por defecto) ─────────────────────────────────────
+          const unitsToSell = Number(item.quantity ?? 0);
+          if (unitsToSell <= 0) {
+            throw new BadRequestException(`Debe indicar la cantidad de unidades para "${product.name}"`);
+          }
+          if (unitsToSell > stockUnits) {
+            const stockMsg = upb
+              ? `${Math.floor(stockUnits / upb)} caja(s) + ${stockUnits % upb} und sueltas (${stockUnits} und en total)`
+              : `${stockUnits} unidades`;
+            throw new BadRequestException(
+              `Stock insuficiente para "${product.name}". ` +
+              `Disponible: ${stockMsg}. Solicitado: ${unitsToSell} und.`,
+            );
+          }
+          const unitPrice = (item.unitPrice != null && Number(item.unitPrice) > 0)
+            ? Number(item.unitPrice)
+            : Number(product.salePrice);
+
+          totalUnitsToDeduct = unitsToSell;
+          lineTotal          = unitPrice * unitsToSell - disc;
+          displayQty         = unitsToSell;
+          displayPrice       = unitPrice;
         }
 
-        const disc = item.discount ?? 0;
-        const priceToUse = (item.unitPrice != null && Number(item.unitPrice) > 0)
-          ? Number(item.unitPrice)
-          : Number(product.salePrice);
-        const lineTotal = priceToUse * item.quantity - disc;
         totalItemsSum += lineTotal;
 
         saleItems.push({
           productId: product.id,
           productName: product.name,
-          quantity: item.quantity,
-          unitPrice: priceToUse,
+          quantity: displayQty,
+          unitPrice: displayPrice,
           taxRate: Number(product.taxRate),
           discount: disc,
           subtotal: lineTotal,
         });
 
-        // 3. Decrement stock
-        product.stockQuantity = Number(product.stockQuantity) - item.quantity;
+        // 3. Descontar stock en UNIDADES
+        product.stockQuantity = stockUnits - totalUnitsToDeduct;
         await manager.save(product);
 
         // 3.1. FIFO Batch Deduction (Safely catch if no batches exist)
         try {
-          let remainingToDeduct = item.quantity;
+          let remainingToDeduct = totalUnitsToDeduct;
           const activeBatches = await manager.find(ProductBatchEntity, {
             where: { productId: product.id, isActive: true },
             order: { createdAt: 'ASC' },
@@ -151,13 +256,14 @@ export class SaleService {
           manager.create(InventoryMovementEntity, {
             productId: product.id,
             movementType: MovementType.OUT,
-            quantity: item.quantity,
+            quantity: totalUnitsToDeduct,
             referenceType: MovementReferenceType.SALE,
-            notes: 'Sale',
+            notes: `Venta ${sellUnit !== 'unit' ? `(modo: ${sellUnit})` : ''}`,
             performedBy: cashierId,
           }),
         );
       }
+
 
       const discountAmount = dto.discountAmount ?? 0;
       const totalAmount = totalItemsSum - discountAmount;

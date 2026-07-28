@@ -64,6 +64,9 @@ export declare class ProductEntity {
     minStockLevel: number;
     maxStockLevel: number | null;
     imageUrl: string | null;
+    hasBoxPresentation: boolean;
+    unitsPerBox: number | null;
+    boxSalePrice: number | null;
     isActive: boolean;
     createdAt: Date;
     updatedAt: Date;

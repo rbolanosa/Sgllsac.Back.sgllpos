@@ -21,6 +21,7 @@ class CreateProductDto {
         this.taxRate = 18;
         this.stockQuantity = 0;
         this.minStockLevel = 0;
+        this.hasBoxPresentation = false;
     }
 }
 exports.CreateProductDto = CreateProductDto;
@@ -132,6 +133,37 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateProductDto.prototype, "imageUrl", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        default: false,
+        description: 'Si true, el producto maneja presentación dual caja + unidad',
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], CreateProductDto.prototype, "hasBoxPresentation", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        example: 24,
+        description: 'Unidades que contiene una caja. Requerido si hasBoxPresentation=true',
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.Min)(1),
+    __metadata("design:type", Number)
+], CreateProductDto.prototype, "unitsPerBox", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        example: 58.0,
+        description: 'Precio de venta de una caja completa (independiente del precio unitario)',
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.Min)(0),
+    __metadata("design:type", Number)
+], CreateProductDto.prototype, "boxSalePrice", void 0);
 class UpdateProductDto {
 }
 exports.UpdateProductDto = UpdateProductDto;
@@ -243,6 +275,36 @@ __decorate([
     (0, class_validator_1.IsBoolean)(),
     __metadata("design:type", Boolean)
 ], UpdateProductDto.prototype, "isActive", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Si true, el producto maneja presentación dual caja + unidad',
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], UpdateProductDto.prototype, "hasBoxPresentation", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        example: 24,
+        description: 'Unidades que contiene una caja',
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.Min)(1),
+    __metadata("design:type", Number)
+], UpdateProductDto.prototype, "unitsPerBox", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        example: 58.0,
+        description: 'Precio de venta de una caja completa',
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.Min)(0),
+    __metadata("design:type", Number)
+], UpdateProductDto.prototype, "boxSalePrice", void 0);
 class StockAdjustmentDto {
 }
 exports.StockAdjustmentDto = StockAdjustmentDto;

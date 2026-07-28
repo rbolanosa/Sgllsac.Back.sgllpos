@@ -149,6 +149,18 @@ __decorate([
     __metadata("design:type", String)
 ], ProductEntity.prototype, "imageUrl", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ name: 'has_box_presentation', type: 'boolean', default: false }),
+    __metadata("design:type", Boolean)
+], ProductEntity.prototype, "hasBoxPresentation", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'units_per_box', type: 'decimal', precision: 10, scale: 3, nullable: true }),
+    __metadata("design:type", Number)
+], ProductEntity.prototype, "unitsPerBox", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'box_sale_price', type: 'decimal', precision: 10, scale: 4, nullable: true }),
+    __metadata("design:type", Number)
+], ProductEntity.prototype, "boxSalePrice", void 0);
+__decorate([
     (0, typeorm_1.Column)({ name: 'is_active', type: 'boolean', default: true }),
     __metadata("design:type", Boolean)
 ], ProductEntity.prototype, "isActive", void 0);

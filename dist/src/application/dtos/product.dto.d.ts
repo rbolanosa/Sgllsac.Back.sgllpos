@@ -14,6 +14,9 @@ export declare class CreateProductDto {
     minStockLevel?: number;
     maxStockLevel?: number;
     imageUrl?: string;
+    hasBoxPresentation?: boolean;
+    unitsPerBox?: number;
+    boxSalePrice?: number;
 }
 export declare class UpdateProductDto {
     barcode?: string;
@@ -31,6 +34,9 @@ export declare class UpdateProductDto {
     maxStockLevel?: number;
     imageUrl?: string;
     isActive?: boolean;
+    hasBoxPresentation?: boolean;
+    unitsPerBox?: number;
+    boxSalePrice?: number;
 }
 export declare class StockAdjustmentDto {
     quantity: number;

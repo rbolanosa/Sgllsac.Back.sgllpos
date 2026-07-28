@@ -16,6 +16,7 @@ const swagger_1 = require("@nestjs/swagger");
 const sale_entity_1 = require("../../domain/entities/sale.entity");
 class SaleItemInputDto {
     constructor() {
+        this.sellUnit = 'unit';
         this.discount = 0;
     }
 }
@@ -27,10 +28,37 @@ __decorate([
     __metadata("design:type", Number)
 ], SaleItemInputDto.prototype, "productId", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)(),
+    (0, swagger_1.ApiPropertyOptional)({
+        enum: ['unit', 'box', 'mixed'],
+        default: 'unit',
+        description: 'unit=solo unidades | box=solo cajas | mixed=cajas + unidades sueltas',
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsIn)(['unit', 'box', 'mixed']),
+    __metadata("design:type", String)
+], SaleItemInputDto.prototype, "sellUnit", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ example: 1, description: 'Cajas a vender' }),
+    (0, class_validator_1.IsOptional)(),
     (0, class_transformer_1.Type)(() => Number),
     (0, class_validator_1.IsNumber)(),
-    (0, class_validator_1.Min)(0.001),
+    (0, class_validator_1.Min)(0),
+    __metadata("design:type", Number)
+], SaleItemInputDto.prototype, "boxes", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ example: 58.0 }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.Min)(0),
+    __metadata("design:type", Number)
+], SaleItemInputDto.prototype, "boxUnitPrice", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ example: 5 }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.Min)(0),
     __metadata("design:type", Number)
 ], SaleItemInputDto.prototype, "quantity", void 0);
 __decorate([

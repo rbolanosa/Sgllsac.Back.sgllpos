@@ -152,6 +152,30 @@ export class ProductEntity {
   @Column({ name: 'image_url', type: 'varchar', length: 500, nullable: true })
   imageUrl: string | null;
 
+  // ─── Presentación en Caja ─────────────────────────────────────────────────
+  /**
+   * Indica si el producto maneja presentación dual (caja + unidades sueltas).
+   * Cuando es true, se habilita la lógica de cajas en compras y ventas.
+   */
+  @Column({ name: 'has_box_presentation', type: 'boolean', default: false })
+  hasBoxPresentation: boolean;
+
+  /**
+   * Cantidad de unidades que contiene una caja.
+   * Ej: Leche Gloria → 24 unidades por caja.
+   * Solo aplica cuando hasBoxPresentation = true.
+   */
+  @Column({ name: 'units_per_box', type: 'decimal', precision: 10, scale: 3, nullable: true })
+  unitsPerBox: number | null;
+
+  /**
+   * Precio de venta de UNA CAJA COMPLETA (independiente del precio unitario).
+   * Ej: Una caja de 24 unidades puede venderse a S/.58 (más barato que 24×S/.2.80=S/.67.20)
+   * Si es null, se calcula como (unitsPerBox × salePrice).
+   */
+  @Column({ name: 'box_sale_price', type: 'decimal', precision: 10, scale: 4, nullable: true })
+  boxSalePrice: number | null;
+
   @Column({ name: 'is_active', type: 'boolean', default: true })
   isActive: boolean;
 

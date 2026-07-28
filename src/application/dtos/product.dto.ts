@@ -107,6 +107,36 @@ export class CreateProductDto {
   @IsOptional()
   @IsString()
   imageUrl?: string;
+
+  // ─── Presentación en Caja ─────────────────────────────────────────────────
+
+  @ApiPropertyOptional({
+    default: false,
+    description: 'Si true, el producto maneja presentación dual caja + unidad',
+  })
+  @IsOptional()
+  @IsBoolean()
+  hasBoxPresentation?: boolean = false;
+
+  @ApiPropertyOptional({
+    example: 24,
+    description: 'Unidades que contiene una caja. Requerido si hasBoxPresentation=true',
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1)
+  unitsPerBox?: number;
+
+  @ApiPropertyOptional({
+    example: 58.0,
+    description: 'Precio de venta de una caja completa (independiente del precio unitario)',
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  boxSalePrice?: number;
 }
 
 export class UpdateProductDto {
@@ -202,6 +232,35 @@ export class UpdateProductDto {
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;
+
+  // ─── Presentación en Caja ─────────────────────────────────────────────────
+
+  @ApiPropertyOptional({
+    description: 'Si true, el producto maneja presentación dual caja + unidad',
+  })
+  @IsOptional()
+  @IsBoolean()
+  hasBoxPresentation?: boolean;
+
+  @ApiPropertyOptional({
+    example: 24,
+    description: 'Unidades que contiene una caja',
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1)
+  unitsPerBox?: number;
+
+  @ApiPropertyOptional({
+    example: 58.0,
+    description: 'Precio de venta de una caja completa',
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  boxSalePrice?: number;
 }
 
 export class StockAdjustmentDto {

@@ -14,6 +14,9 @@ const class_validator_1 = require("class-validator");
 const class_transformer_1 = require("class-transformer");
 const swagger_1 = require("@nestjs/swagger");
 class PurchaseOrderItemInputDto {
+    constructor() {
+        this.purchaseUnit = 'unit';
+    }
 }
 exports.PurchaseOrderItemInputDto = PurchaseOrderItemInputDto;
 __decorate([
@@ -23,19 +26,47 @@ __decorate([
     __metadata("design:type", Number)
 ], PurchaseOrderItemInputDto.prototype, "productId", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)(),
+    (0, swagger_1.ApiPropertyOptional)({
+        enum: ['unit', 'box'],
+        default: 'unit',
+        description: 'unit = compra por unidad | box = compra por caja',
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsIn)(['unit', 'box']),
+    __metadata("design:type", String)
+], PurchaseOrderItemInputDto.prototype, "purchaseUnit", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ example: 48, description: 'Cantidad en unidades (modo unidad)' }),
+    (0, class_validator_1.IsOptional)(),
     (0, class_transformer_1.Type)(() => Number),
     (0, class_validator_1.IsNumber)(),
     (0, class_validator_1.Min)(0.001),
     __metadata("design:type", Number)
 ], PurchaseOrderItemInputDto.prototype, "quantityOrdered", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)(),
+    (0, swagger_1.ApiPropertyOptional)({ example: 2.5, description: 'Costo por unidad (modo unidad)' }),
+    (0, class_validator_1.IsOptional)(),
     (0, class_transformer_1.Type)(() => Number),
     (0, class_validator_1.IsNumber)(),
     (0, class_validator_1.Min)(0),
     __metadata("design:type", Number)
 ], PurchaseOrderItemInputDto.prototype, "unitCost", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ example: 2, description: 'Cajas pedidas al proveedor (modo caja)' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.Min)(0.001),
+    __metadata("design:type", Number)
+], PurchaseOrderItemInputDto.prototype, "boxesOrdered", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ example: 54.0, description: 'Costo por caja (modo caja)' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.Min)(0),
+    __metadata("design:type", Number)
+], PurchaseOrderItemInputDto.prototype, "boxCost", void 0);
 class CreatePurchaseOrderDto {
 }
 exports.CreatePurchaseOrderDto = CreatePurchaseOrderDto;

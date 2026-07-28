@@ -70,15 +70,49 @@ let PurchaseOrderService = class PurchaseOrderService {
             for (const item of dto.items) {
                 const product = await manager.findOne(product_entity_1.ProductEntity, { where: { id: item.productId } });
                 if (!product)
-                    throw new common_1.NotFoundException(`Product #${item.productId} not found`);
-                const subtotal = item.quantityOrdered * item.unitCost;
+                    throw new common_1.NotFoundException(`Producto #${item.productId} no encontrado`);
+                const purchaseUnit = item.purchaseUnit ?? 'unit';
+                let quantityOrdered;
+                let unitCost;
+                let boxesOrdered = null;
+                let boxCost = null;
+                if (purchaseUnit === 'box') {
+                    if (!product.hasBoxPresentation || !product.unitsPerBox || Number(product.unitsPerBox) <= 0) {
+                        throw new common_1.BadRequestException(`El producto "${product.name}" no tiene configurada la presentación en caja. ` +
+                            `Activa "Presentación en Caja" y define las unidades por caja en el catálogo de productos.`);
+                    }
+                    if (!item.boxesOrdered || item.boxesOrdered <= 0) {
+                        throw new common_1.BadRequestException(`Debe indicar la cantidad de cajas para el producto "${product.name}"`);
+                    }
+                    if (item.boxCost === undefined || item.boxCost === null) {
+                        throw new common_1.BadRequestException(`Debe indicar el costo por caja para el producto "${product.name}"`);
+                    }
+                    boxesOrdered = item.boxesOrdered;
+                    boxCost = item.boxCost;
+                    quantityOrdered = Number(item.boxesOrdered) * Number(product.unitsPerBox);
+                    unitCost = Number(item.boxCost) / Number(product.unitsPerBox);
+                }
+                else {
+                    if (!item.quantityOrdered || item.quantityOrdered <= 0) {
+                        throw new common_1.BadRequestException(`Debe indicar la cantidad para el producto "${product.name}"`);
+                    }
+                    if (item.unitCost === undefined || item.unitCost === null) {
+                        throw new common_1.BadRequestException(`Debe indicar el costo unitario para el producto "${product.name}"`);
+                    }
+                    quantityOrdered = item.quantityOrdered;
+                    unitCost = item.unitCost;
+                }
+                const subtotal = quantityOrdered * unitCost;
                 totalAmount += subtotal;
                 await manager.save(manager.create(purchase_order_item_entity_1.PurchaseOrderItemEntity, {
                     purchaseOrderId: savedPo.id,
                     productId: item.productId,
-                    quantityOrdered: item.quantityOrdered,
+                    purchaseUnit: purchaseUnit === 'box' ? purchase_order_item_entity_1.PurchaseUnit.BOX : purchase_order_item_entity_1.PurchaseUnit.UNIT,
+                    boxesOrdered,
+                    boxCost,
+                    quantityOrdered,
                     quantityReceived: 0,
-                    unitCost: item.unitCost,
+                    unitCost,
                     subtotal,
                 }));
             }
