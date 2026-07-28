@@ -20,6 +20,7 @@ import { PurchaseOrderModule } from './infrastructure/modules/purchase-order.mod
 import { CompanySettingsModule } from './infrastructure/modules/company-settings.module';
 import { UserModule } from './infrastructure/modules/user.module';
 import { EstablishmentsModule } from './infrastructure/modules/establishments.module';
+import { CashModule } from './infrastructure/modules/cash.module';
 
 @Module({
   imports: [
@@ -78,6 +79,7 @@ import { EstablishmentsModule } from './infrastructure/modules/establishments.mo
     PurchaseOrderModule,
     CompanySettingsModule,
     EstablishmentsModule,
+    CashModule,
   ],
 })
 export class AppModule {}

@@ -22,6 +22,7 @@ import { CreateSaleDto, VoidSaleDto } from '../../application/dtos/sale.dto';
 import { CompanySettingsService } from './company-settings.service';
 import { FacturacionAdapter } from '../../infrastructure/adapters/facturacion.adapter';
 import { WhatsappAdapter } from '../../infrastructure/adapters/whatsapp.adapter';
+import { CashService } from './cash.service';
 
 @Injectable()
 export class SaleService {
@@ -41,6 +42,7 @@ export class SaleService {
     private readonly companySettings: CompanySettingsService,
     private readonly facturacionAdapter: FacturacionAdapter,
     private readonly whatsappAdapter: WhatsappAdapter,
+    private readonly cashService: CashService,
   ) {}
 
   async findAll(filters: { page?: number; limit?: number; status?: SaleStatus; from?: string; to?: string; documentType?: string } = {}) {
@@ -227,6 +229,18 @@ export class SaleService {
       this.whatsappAdapter.sendInvoiceMessage(result, phoneToNotify).catch((e) => {
         console.warn('Advertencia WhatsApp:', e.message);
       });
+    }
+
+    // Register movement in active cash session (if cashier has one open)
+    if (result && cashierId) {
+      const description = `Venta ${result.invoiceNumber} — ${result.documentType.toUpperCase()}`;
+      this.cashService.registerSaleMovement(
+        cashierId,
+        result.id,
+        Number(result.totalAmount),
+        result.paymentMethod,
+        description,
+      ).catch((e) => console.warn('Advertencia caja:', e.message));
     }
 
     return result;

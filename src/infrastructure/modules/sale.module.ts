@@ -10,6 +10,7 @@ import { UserEntity } from '../../domain/entities/user.entity';
 import { SaleService } from '../../domain/services/sale.service';
 import { SaleController } from '../controllers/sale.controller';
 import { CompanySettingsModule } from './company-settings.module';
+import { CashModule } from './cash.module';
 
 import { WhatsappAdapter } from '../adapters/whatsapp.adapter';
 
@@ -25,6 +26,7 @@ import { WhatsappAdapter } from '../adapters/whatsapp.adapter';
       UserEntity,
     ]),
     CompanySettingsModule,
+    CashModule,
   ],
   controllers: [SaleController],
   providers: [SaleService, WhatsappAdapter],

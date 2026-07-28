@@ -19,6 +19,7 @@ const user_entity_1 = require("../../domain/entities/user.entity");
 const sale_service_1 = require("../../domain/services/sale.service");
 const sale_controller_1 = require("../controllers/sale.controller");
 const company_settings_module_1 = require("./company-settings.module");
+const cash_module_1 = require("./cash.module");
 const whatsapp_adapter_1 = require("../adapters/whatsapp.adapter");
 let SaleModule = class SaleModule {
 };
@@ -36,6 +37,7 @@ exports.SaleModule = SaleModule = __decorate([
                 user_entity_1.UserEntity,
             ]),
             company_settings_module_1.CompanySettingsModule,
+            cash_module_1.CashModule,
         ],
         controllers: [sale_controller_1.SaleController],
         providers: [sale_service_1.SaleService, whatsapp_adapter_1.WhatsappAdapter],

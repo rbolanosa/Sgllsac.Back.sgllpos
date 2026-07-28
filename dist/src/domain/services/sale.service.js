@@ -61,8 +61,9 @@ const crypto = __importStar(require("crypto"));
 const company_settings_service_1 = require("./company-settings.service");
 const facturacion_adapter_1 = require("../../infrastructure/adapters/facturacion.adapter");
 const whatsapp_adapter_1 = require("../../infrastructure/adapters/whatsapp.adapter");
+const cash_service_1 = require("./cash.service");
 let SaleService = SaleService_1 = class SaleService {
-    constructor(saleRepo, saleItemRepo, productRepo, customerRepo, movementRepo, dataSource, companySettings, facturacionAdapter, whatsappAdapter) {
+    constructor(saleRepo, saleItemRepo, productRepo, customerRepo, movementRepo, dataSource, companySettings, facturacionAdapter, whatsappAdapter, cashService) {
         this.saleRepo = saleRepo;
         this.saleItemRepo = saleItemRepo;
         this.productRepo = productRepo;
@@ -72,6 +73,7 @@ let SaleService = SaleService_1 = class SaleService {
         this.companySettings = companySettings;
         this.facturacionAdapter = facturacionAdapter;
         this.whatsappAdapter = whatsappAdapter;
+        this.cashService = cashService;
         this.logger = new common_1.Logger(SaleService_1.name);
     }
     async findAll(filters = {}) {
@@ -236,6 +238,10 @@ let SaleService = SaleService_1 = class SaleService {
             this.whatsappAdapter.sendInvoiceMessage(result, phoneToNotify).catch((e) => {
                 console.warn('Advertencia WhatsApp:', e.message);
             });
+        }
+        if (result && cashierId) {
+            const description = `Venta ${result.invoiceNumber} — ${result.documentType.toUpperCase()}`;
+            this.cashService.registerSaleMovement(cashierId, result.id, Number(result.totalAmount), result.paymentMethod, description).catch((e) => console.warn('Advertencia caja:', e.message));
         }
         return result;
     }
@@ -853,6 +859,7 @@ exports.SaleService = SaleService = SaleService_1 = __decorate([
         typeorm_2.DataSource,
         company_settings_service_1.CompanySettingsService,
         facturacion_adapter_1.FacturacionAdapter,
-        whatsapp_adapter_1.WhatsappAdapter])
+        whatsapp_adapter_1.WhatsappAdapter,
+        cash_service_1.CashService])
 ], SaleService);
 //# sourceMappingURL=sale.service.js.map

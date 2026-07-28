@@ -8,6 +8,7 @@ import { CreateSaleDto, VoidSaleDto } from '../../application/dtos/sale.dto';
 import { CompanySettingsService } from './company-settings.service';
 import { FacturacionAdapter } from '../../infrastructure/adapters/facturacion.adapter';
 import { WhatsappAdapter } from '../../infrastructure/adapters/whatsapp.adapter';
+import { CashService } from './cash.service';
 export declare class SaleService {
     private readonly saleRepo;
     private readonly saleItemRepo;
@@ -18,8 +19,9 @@ export declare class SaleService {
     private readonly companySettings;
     private readonly facturacionAdapter;
     private readonly whatsappAdapter;
+    private readonly cashService;
     private readonly logger;
-    constructor(saleRepo: Repository<SaleEntity>, saleItemRepo: Repository<SaleItemEntity>, productRepo: Repository<ProductEntity>, customerRepo: Repository<CustomerEntity>, movementRepo: Repository<InventoryMovementEntity>, dataSource: DataSource, companySettings: CompanySettingsService, facturacionAdapter: FacturacionAdapter, whatsappAdapter: WhatsappAdapter);
+    constructor(saleRepo: Repository<SaleEntity>, saleItemRepo: Repository<SaleItemEntity>, productRepo: Repository<ProductEntity>, customerRepo: Repository<CustomerEntity>, movementRepo: Repository<InventoryMovementEntity>, dataSource: DataSource, companySettings: CompanySettingsService, facturacionAdapter: FacturacionAdapter, whatsappAdapter: WhatsappAdapter, cashService: CashService);
     findAll(filters?: {
         page?: number;
         limit?: number;
