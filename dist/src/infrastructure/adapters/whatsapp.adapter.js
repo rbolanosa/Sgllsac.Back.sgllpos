@@ -232,7 +232,7 @@ let WhatsappAdapter = WhatsappAdapter_1 = class WhatsappAdapter {
             doc.font('Helvetica-Bold').text('PAGOS:', textLeftMargin, bottomBlockY + 12);
             doc.font('Helvetica').text(`- Efectivo - S/ ${totalAmtStr}`, textLeftMargin, bottomBlockY + 23);
             doc.font('Helvetica-Bold').text('VENDEDOR:', textLeftMargin, bottomBlockY + 38);
-            doc.font('Helvetica').text('Administrador', textLeftMargin + 52, bottomBlockY + 38);
+            doc.font('Helvetica').text(sale.cashier?.name || sale.cashierName || 'Administrador', textLeftMargin + 52, bottomBlockY + 38);
             doc.y = Math.max(doc.y, bottomBlockY + 90);
             doc.moveDown(0.5);
             doc.font('Helvetica').fontSize(8).text('Para consultar el comprobante ingresar a', margin, doc.y, { width: printWidth, align: 'center' });

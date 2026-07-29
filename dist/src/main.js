@@ -6,6 +6,7 @@ const swagger_1 = require("@nestjs/swagger");
 const nestjs_api_reference_1 = require("@scalar/nestjs-api-reference");
 const app_module_1 = require("./app.module");
 const winston_logger_1 = require("./shared/logger/winston.logger");
+const jwt_auth_guard_1 = require("./infrastructure/guards/jwt-auth.guard");
 const path_1 = require("path");
 async function bootstrap() {
     const logger = winston_logger_1.WinstonLogger.createLogger();
@@ -36,6 +37,8 @@ async function bootstrap() {
         transform: true,
         transformOptions: { enableImplicitConversion: true },
     }));
+    const reflector = app.get(core_1.Reflector);
+    app.useGlobalGuards(new jwt_auth_guard_1.JwtAuthGuard(reflector));
     const config = new swagger_1.DocumentBuilder()
         .setTitle('Sistema DEVPRO API')
         .setDescription('Documentación de la API del Sistema DEVPRO')

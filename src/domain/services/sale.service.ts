@@ -70,7 +70,7 @@ export class SaleService {
   async findById(id: number): Promise<SaleEntity> {
     const sale = await this.saleRepo.findOne({
       where: { id },
-      relations: { customer: true, items: { product: true } },
+      relations: { customer: true, items: { product: true }, cashier: true },
     });
     if (!sale) throw new NotFoundException(`Sale #${id} not found`);
     return sale;
@@ -924,6 +924,7 @@ export class SaleService {
   /**
    * Generates the next SUNAT-compliant invoice number.
    * Resolves establishment-specific series if cashier has an assigned establishmentId.
+   * Uses pessimistic_write lock on establishment_series to avoid duplicate-entry race conditions.
    * Format: {series}-{8-digit sequence number}
    */
   private async generateInvoiceNumber(manager: any, docType: DocumentType = DocumentType.BOLETA, cashierId?: number): Promise<string> {
@@ -932,44 +933,22 @@ export class SaleService {
         const cashier = await manager.findOne(UserEntity, { where: { id: cashierId } });
         if (cashier?.establishmentId) {
           let targetType = 'boleta';
-          if (docType === DocumentType.FACTURA) targetType = 'factura';
+          if (docType === DocumentType.FACTURA)    targetType = 'factura';
           if (docType === DocumentType.NOTA_VENTA) targetType = 'nota_venta';
 
-          let serieFound: string | null = null;
+          // Buscar y bloquear el registro de series para este establecimiento
+          const localSeries = await manager.findOne(EstablishmentSeriesEntity, {
+            where: { establishmentId: cashier.establishmentId, tipo: targetType, activo: true },
+            lock: { mode: 'pessimistic_write' },
+          });
 
-          // 1. Intentar obtener la serie desde la API externa de SUNAT
-          try {
-            const seriesRes = await this.facturacionAdapter.get<any>(`/series?sucursal_id=${cashier.establishmentId}`).catch(() => null);
-            const seriesList = Array.isArray(seriesRes?.datos) ? seriesRes.datos : Array.isArray(seriesRes) ? seriesRes : [];
-            const matchingSeries = seriesList.find((s: any) => s.tipo === targetType);
-            if (matchingSeries?.serie) {
-              serieFound = matchingSeries.serie.toUpperCase();
-            }
-          } catch {}
-
-          // 2. Si no se encontró en la API externa, buscar en la BD local (establishment_series)
-          if (!serieFound) {
-            const localSeries = await manager.findOne(EstablishmentSeriesEntity, {
-              where: { establishmentId: cashier.establishmentId, tipo: targetType, activo: true },
-            });
-            if (localSeries?.serie) {
-              serieFound = localSeries.serie.toUpperCase();
-            }
-          }
-
-          if (serieFound) {
-            const serie = serieFound;
-            const lastSale = await manager.createQueryBuilder(SaleEntity, 's')
-              .where('s.invoiceNumber LIKE :pattern', { pattern: `${serie}-%` })
-              .orderBy('s.id', 'DESC')
-              .getOne();
-
-            let nextNum = 1;
-            if (lastSale?.invoiceNumber) {
-              const parts = lastSale.invoiceNumber.split('-');
-              if (parts[1]) nextNum = parseInt(parts[1], 10) + 1;
-            }
-            return `${serie}-${String(nextNum).padStart(8, '0')}`;
+          if (localSeries?.serie) {
+            // Usar correlativo_actual como el número a emitir
+            const nextNum = Number(localSeries.correlativoActual ?? 1);
+            // Incrementar para el próximo uso (atómico dentro de la transacción)
+            localSeries.correlativoActual = nextNum + 1;
+            await manager.save(localSeries);
+            return `${localSeries.serie.toUpperCase()}-${String(nextNum).padStart(8, '0')}`;
           }
         }
       } catch (err: any) {
@@ -977,7 +956,7 @@ export class SaleService {
       }
     }
 
-    if (docType === DocumentType.FACTURA) return this.companySettings.nextInvoiceNumber('factura', manager);
+    if (docType === DocumentType.FACTURA)    return this.companySettings.nextInvoiceNumber('factura', manager);
     if (docType === DocumentType.NOTA_VENTA) return this.companySettings.nextInvoiceNumber('nota_venta', manager);
     return this.companySettings.nextInvoiceNumber('boleta', manager);
   }

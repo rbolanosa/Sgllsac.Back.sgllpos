@@ -1,10 +1,11 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { apiReference } from '@scalar/nestjs-api-reference';
 import { AppModule } from './app.module';
 import { WinstonLogger } from './shared/logger/winston.logger';
+import { JwtAuthGuard } from './infrastructure/guards/jwt-auth.guard';
 import { join } from 'path';
 
 async function bootstrap() {
@@ -49,6 +50,11 @@ async function bootstrap() {
       transformOptions: { enableImplicitConversion: true },
     }),
   );
+
+  // ─── Global JWT Auth Guard ─────────────────────────────────────────────────────
+  // Protege todos los endpoints por defecto. Usar @Public() para rutas sin auth.
+  const reflector = app.get(Reflector);
+  app.useGlobalGuards(new JwtAuthGuard(reflector));
 
   // ─── Swagger ─────────────────────────────────────────────────────────────────
   const config = new DocumentBuilder()

@@ -18,6 +18,7 @@ const swagger_1 = require("@nestjs/swagger");
 const sale_service_1 = require("../../domain/services/sale.service");
 const sale_dto_1 = require("../../application/dtos/sale.dto");
 const sale_entity_1 = require("../../domain/entities/sale.entity");
+const public_decorator_1 = require("../decorators/public.decorator");
 let SaleController = class SaleController {
     constructor(saleService) {
         this.saleService = saleService;
@@ -52,7 +53,8 @@ let SaleController = class SaleController {
         return this.saleService.findById(id);
     }
     create(dto, req) {
-        const cashierId = req.user?.sub || req.user?.id || 1;
+        const rawId = req.user?.sub ?? req.user?.id;
+        const cashierId = rawId ? parseInt(String(rawId), 10) : 1;
         return this.saleService.create(dto, cashierId);
     }
     createCreditNote(dto) {
@@ -92,6 +94,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], SaleController.prototype, "getSummary", null);
 __decorate([
+    (0, public_decorator_1.Public)(),
     (0, common_1.Get)('comprobante/pdf/:token'),
     (0, swagger_1.ApiOperation)({ summary: 'Secure public PDF download via HMAC signed token' }),
     __param(0, (0, common_1.Param)('token')),

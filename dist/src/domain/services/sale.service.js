@@ -101,7 +101,7 @@ let SaleService = SaleService_1 = class SaleService {
     async findById(id) {
         const sale = await this.saleRepo.findOne({
             where: { id },
-            relations: { customer: true, items: { product: true } },
+            relations: { customer: true, items: { product: true }, cashier: true },
         });
         if (!sale)
             throw new common_1.NotFoundException(`Sale #${id} not found`);
@@ -849,37 +849,15 @@ let SaleService = SaleService_1 = class SaleService {
                         targetType = 'factura';
                     if (docType === sale_entity_1.DocumentType.NOTA_VENTA)
                         targetType = 'nota_venta';
-                    let serieFound = null;
-                    try {
-                        const seriesRes = await this.facturacionAdapter.get(`/series?sucursal_id=${cashier.establishmentId}`).catch(() => null);
-                        const seriesList = Array.isArray(seriesRes?.datos) ? seriesRes.datos : Array.isArray(seriesRes) ? seriesRes : [];
-                        const matchingSeries = seriesList.find((s) => s.tipo === targetType);
-                        if (matchingSeries?.serie) {
-                            serieFound = matchingSeries.serie.toUpperCase();
-                        }
-                    }
-                    catch { }
-                    if (!serieFound) {
-                        const localSeries = await manager.findOne(establishment_series_entity_1.EstablishmentSeriesEntity, {
-                            where: { establishmentId: cashier.establishmentId, tipo: targetType, activo: true },
-                        });
-                        if (localSeries?.serie) {
-                            serieFound = localSeries.serie.toUpperCase();
-                        }
-                    }
-                    if (serieFound) {
-                        const serie = serieFound;
-                        const lastSale = await manager.createQueryBuilder(sale_entity_1.SaleEntity, 's')
-                            .where('s.invoiceNumber LIKE :pattern', { pattern: `${serie}-%` })
-                            .orderBy('s.id', 'DESC')
-                            .getOne();
-                        let nextNum = 1;
-                        if (lastSale?.invoiceNumber) {
-                            const parts = lastSale.invoiceNumber.split('-');
-                            if (parts[1])
-                                nextNum = parseInt(parts[1], 10) + 1;
-                        }
-                        return `${serie}-${String(nextNum).padStart(8, '0')}`;
+                    const localSeries = await manager.findOne(establishment_series_entity_1.EstablishmentSeriesEntity, {
+                        where: { establishmentId: cashier.establishmentId, tipo: targetType, activo: true },
+                        lock: { mode: 'pessimistic_write' },
+                    });
+                    if (localSeries?.serie) {
+                        const nextNum = Number(localSeries.correlativoActual ?? 1);
+                        localSeries.correlativoActual = nextNum + 1;
+                        await manager.save(localSeries);
+                        return `${localSeries.serie.toUpperCase()}-${String(nextNum).padStart(8, '0')}`;
                     }
                 }
             }

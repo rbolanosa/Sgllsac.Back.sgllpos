@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { CustomerEntity } from './customer.entity';
 import { SaleItemEntity } from './sale-item.entity';
+import { UserEntity } from './user.entity';
 
 export enum PaymentMethod {
   CASH = 'cash',
@@ -60,6 +61,10 @@ export class SaleEntity {
 
   @Column({ name: 'cashier_id', nullable: true })
   cashierId: number | null;
+
+  @ManyToOne(() => UserEntity, { nullable: true, onDelete: 'SET NULL', eager: false })
+  @JoinColumn({ name: 'cashier_id' })
+  cashier: UserEntity;
 
   @Column({ name: 'sale_date', type: 'timestamp' })
   saleDate: Date;

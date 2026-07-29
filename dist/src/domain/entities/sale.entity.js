@@ -13,6 +13,7 @@ exports.SaleEntity = exports.DocumentType = exports.SaleStatus = exports.Payment
 const typeorm_1 = require("typeorm");
 const customer_entity_1 = require("./customer.entity");
 const sale_item_entity_1 = require("./sale-item.entity");
+const user_entity_1 = require("./user.entity");
 var PaymentMethod;
 (function (PaymentMethod) {
     PaymentMethod["CASH"] = "cash";
@@ -70,6 +71,11 @@ __decorate([
     (0, typeorm_1.Column)({ name: 'cashier_id', nullable: true }),
     __metadata("design:type", Number)
 ], SaleEntity.prototype, "cashierId", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => user_entity_1.UserEntity, { nullable: true, onDelete: 'SET NULL', eager: false }),
+    (0, typeorm_1.JoinColumn)({ name: 'cashier_id' }),
+    __metadata("design:type", user_entity_1.UserEntity)
+], SaleEntity.prototype, "cashier", void 0);
 __decorate([
     (0, typeorm_1.Column)({ name: 'sale_date', type: 'timestamp' }),
     __metadata("design:type", Date)

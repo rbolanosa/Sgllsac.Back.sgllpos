@@ -225,7 +225,7 @@ export class WhatsappAdapter {
       doc.font('Helvetica').text(`- Efectivo - S/ ${totalAmtStr}`, textLeftMargin, bottomBlockY + 23);
 
       doc.font('Helvetica-Bold').text('VENDEDOR:', textLeftMargin, bottomBlockY + 38);
-      doc.font('Helvetica').text('Administrador', textLeftMargin + 52, bottomBlockY + 38);
+      doc.font('Helvetica').text(sale.cashier?.name || sale.cashierName || 'Administrador', textLeftMargin + 52, bottomBlockY + 38);
 
       doc.y = Math.max(doc.y, bottomBlockY + 90);
       doc.moveDown(0.5);

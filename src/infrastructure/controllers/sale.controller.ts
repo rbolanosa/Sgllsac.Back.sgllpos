@@ -6,6 +6,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { SaleService } from '../../domain/services/sale.service';
 import { CreateSaleDto, VoidSaleDto, CreateCreditNoteDto } from '../../application/dtos/sale.dto';
 import { SaleStatus } from '../../domain/entities/sale.entity';
+import { Public } from '../decorators/public.decorator';
 
 @ApiTags('Sales')
 @ApiBearerAuth('JWT-auth')
@@ -32,6 +33,7 @@ export class SaleController {
     return this.saleService.getSalesSummary(from, to);
   }
 
+  @Public()
   @Get('comprobante/pdf/:token')
   @ApiOperation({ summary: 'Secure public PDF download via HMAC signed token' })
   async getPdfByToken(@Param('token') token: string, @Res() res: Response) {
@@ -70,7 +72,8 @@ export class SaleController {
   @Post()
   @ApiOperation({ summary: 'Create a new sale (POS checkout)' })
   create(@Body() dto: CreateSaleDto, @Req() req: any) {
-    const cashierId = req.user?.sub || req.user?.id || 1;
+    const rawId = req.user?.sub ?? req.user?.id;
+    const cashierId = rawId ? parseInt(String(rawId), 10) : 1;
     return this.saleService.create(dto, cashierId);
   }
 

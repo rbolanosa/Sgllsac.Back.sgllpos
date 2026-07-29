@@ -1,5 +1,6 @@
 import { CustomerEntity } from './customer.entity';
 import { SaleItemEntity } from './sale-item.entity';
+import { UserEntity } from './user.entity';
 export declare enum PaymentMethod {
     CASH = "cash",
     CARD = "card",
@@ -27,6 +28,7 @@ export declare class SaleEntity {
     customerId: number | null;
     customer: CustomerEntity;
     cashierId: number | null;
+    cashier: UserEntity;
     saleDate: Date;
     subtotal: number;
     taxAmount: number;
