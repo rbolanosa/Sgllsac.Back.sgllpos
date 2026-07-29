@@ -5,7 +5,10 @@ export declare enum PaymentMethod {
     CASH = "cash",
     CARD = "card",
     TRANSFER = "transfer",
-    MIXED = "mixed"
+    MIXED = "mixed",
+    YAPE = "yape",
+    PLIN = "plin",
+    DEPOSIT = "deposit"
 }
 export declare enum SaleStatus {
     COMPLETED = "completed",

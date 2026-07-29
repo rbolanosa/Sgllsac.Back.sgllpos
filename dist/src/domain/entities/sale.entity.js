@@ -20,6 +20,9 @@ var PaymentMethod;
     PaymentMethod["CARD"] = "card";
     PaymentMethod["TRANSFER"] = "transfer";
     PaymentMethod["MIXED"] = "mixed";
+    PaymentMethod["YAPE"] = "yape";
+    PaymentMethod["PLIN"] = "plin";
+    PaymentMethod["DEPOSIT"] = "deposit";
 })(PaymentMethod || (exports.PaymentMethod = PaymentMethod = {}));
 var SaleStatus;
 (function (SaleStatus) {

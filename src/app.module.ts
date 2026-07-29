@@ -21,6 +21,7 @@ import { CompanySettingsModule } from './infrastructure/modules/company-settings
 import { UserModule } from './infrastructure/modules/user.module';
 import { EstablishmentsModule } from './infrastructure/modules/establishments.module';
 import { CashModule } from './infrastructure/modules/cash.module';
+import { GuiaRemisionModule } from './infrastructure/modules/guia-remision.module';
 
 @Module({
   imports: [
@@ -80,6 +81,7 @@ import { CashModule } from './infrastructure/modules/cash.module';
     CompanySettingsModule,
     EstablishmentsModule,
     CashModule,
+    GuiaRemisionModule,
   ],
 })
 export class AppModule {}

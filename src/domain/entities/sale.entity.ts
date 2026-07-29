@@ -14,10 +14,13 @@ import { SaleItemEntity } from './sale-item.entity';
 import { UserEntity } from './user.entity';
 
 export enum PaymentMethod {
-  CASH = 'cash',
-  CARD = 'card',
+  CASH     = 'cash',
+  CARD     = 'card',
   TRANSFER = 'transfer',
-  MIXED = 'mixed',
+  MIXED    = 'mixed',
+  YAPE     = 'yape',
+  PLIN     = 'plin',
+  DEPOSIT  = 'deposit',
 }
 
 export enum SaleStatus {

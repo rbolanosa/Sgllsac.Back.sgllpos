@@ -55,6 +55,7 @@ const establishment_series_entity_1 = require("../../domain/entities/establishme
 const product_batch_entity_1 = require("../../domain/entities/product-batch.entity");
 const cash_session_entity_1 = require("../../domain/entities/cash-session.entity");
 const cash_movement_entity_1 = require("../../domain/entities/cash-movement.entity");
+const guia_remision_entity_1 = require("../../domain/entities/guia-remision.entity");
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 const entities = [
     user_entity_1.UserEntity,
@@ -73,6 +74,7 @@ const entities = [
     product_batch_entity_1.ProductBatchEntity,
     cash_session_entity_1.CashSessionEntity,
     cash_movement_entity_1.CashMovementEntity,
+    guia_remision_entity_1.GuiaRemisionEntity,
 ];
 exports.typeOrmConfig = {
     imports: [config_1.ConfigModule],

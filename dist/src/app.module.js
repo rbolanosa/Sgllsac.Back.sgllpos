@@ -63,6 +63,7 @@ const company_settings_module_1 = require("./infrastructure/modules/company-sett
 const user_module_1 = require("./infrastructure/modules/user.module");
 const establishments_module_1 = require("./infrastructure/modules/establishments.module");
 const cash_module_1 = require("./infrastructure/modules/cash.module");
+const guia_remision_module_1 = require("./infrastructure/modules/guia-remision.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -107,6 +108,7 @@ exports.AppModule = AppModule = __decorate([
             company_settings_module_1.CompanySettingsModule,
             establishments_module_1.EstablishmentsModule,
             cash_module_1.CashModule,
+            guia_remision_module_1.GuiaRemisionModule,
         ],
     })
 ], AppModule);
