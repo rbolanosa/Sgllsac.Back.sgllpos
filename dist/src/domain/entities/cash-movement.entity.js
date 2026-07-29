@@ -20,6 +20,7 @@ var CashMovementType;
     CashMovementType["SALE_CARD"] = "sale_card";
     CashMovementType["SALE_TRANSFER"] = "sale_transfer";
     CashMovementType["SALE_YAPE"] = "sale_yape";
+    CashMovementType["SALE_PLIN"] = "sale_plin";
     CashMovementType["SALE_MIXED"] = "sale_mixed";
     CashMovementType["WITHDRAWAL"] = "withdrawal";
     CashMovementType["DEPOSIT"] = "deposit";

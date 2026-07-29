@@ -10,7 +10,8 @@ export enum CashMovementType {
   SALE_CASH      = 'sale_cash',      // Ingreso por venta en efectivo
   SALE_CARD      = 'sale_card',      // Venta con tarjeta (referencial)
   SALE_TRANSFER  = 'sale_transfer',  // Venta con transferencia (referencial)
-  SALE_YAPE      = 'sale_yape',      // Venta con Yape/Plin
+  SALE_YAPE      = 'sale_yape',      // Venta con Yape
+  SALE_PLIN      = 'sale_plin',      // Venta con Plin
   SALE_MIXED     = 'sale_mixed',     // Venta mixta
   WITHDRAWAL     = 'withdrawal',     // Retiro de efectivo (para depósito)
   DEPOSIT        = 'deposit',        // Depósito/ingreso adicional

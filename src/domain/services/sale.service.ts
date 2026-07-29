@@ -346,7 +346,14 @@ export class SaleService {
 
     // Register movement in active cash session (if cashier has one open)
     if (result && cashierId) {
-      const description = `Venta ${result.invoiceNumber} — ${result.documentType.toUpperCase()}`;
+      // Format: F001-26 (strip leading zeros from correlativo)
+      const [serie, corr] = (result.invoiceNumber || '').split('-');
+      const shortNum = corr ? `${serie}-${parseInt(corr, 10)}` : (result.invoiceNumber || '');
+      const customerName = result.customer?.name || '';
+      const docLabel = result.documentType.toUpperCase().replace('_', ' ');
+      const description = customerName
+        ? `Venta ${shortNum} — ${docLabel} (${customerName})`
+        : `Venta ${shortNum} — ${docLabel}`;
       this.cashService.registerSaleMovement(
         cashierId,
         result.id,

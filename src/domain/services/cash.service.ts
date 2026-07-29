@@ -93,6 +93,8 @@ export class CashService {
                                      .reduce((s, m) => s + Number(m.amount), 0);
     const totalYape       = movements.filter(m => m.type === CashMovementType.SALE_YAPE)
                                      .reduce((s, m) => s + Number(m.amount), 0);
+    const totalPlin       = movements.filter(m => m.type === CashMovementType.SALE_PLIN)
+                                     .reduce((s, m) => s + Number(m.amount), 0);
     const totalMixed      = movements.filter(m => m.type === CashMovementType.SALE_MIXED)
                                      .reduce((s, m) => s + Number(m.amount), 0);
     const totalWithdrawals= movements.filter(m => m.type === CashMovementType.WITHDRAWAL)
@@ -103,11 +105,11 @@ export class CashService {
                                      .reduce((s, m) => s + Number(m.amount), 0);
     const totalRefunds    = movements.filter(m => m.type === CashMovementType.REFUND)
                                      .reduce((s, m) => s + Number(m.amount), 0);
-    const totalSales      = totalCash + totalCard + totalTransfer + totalYape + totalMixed;
+    const totalSales      = totalCash + totalCard + totalTransfer + totalYape + totalPlin + totalMixed;
     const totalSaleCount  = movements.filter(m =>
       [CashMovementType.SALE_CASH, CashMovementType.SALE_CARD,
        CashMovementType.SALE_TRANSFER, CashMovementType.SALE_YAPE,
-       CashMovementType.SALE_MIXED].includes(m.type)
+       CashMovementType.SALE_PLIN, CashMovementType.SALE_MIXED].includes(m.type)
     ).length;
 
     // Expected cash in drawer
@@ -137,6 +139,7 @@ export class CashService {
         totalCard:        Number(totalCard.toFixed(2)),
         totalTransfer:    Number(totalTransfer.toFixed(2)),
         totalYape:        Number(totalYape.toFixed(2)),
+        totalPlin:        Number(totalPlin.toFixed(2)),
         totalMixed:       Number(totalMixed.toFixed(2)),
         totalWithdrawals: Number(totalWithdrawals.toFixed(2)),
         totalDeposits:    Number(totalDeposits.toFixed(2)),
@@ -186,7 +189,7 @@ export class CashService {
       card:     CashMovementType.SALE_CARD,
       transfer: CashMovementType.SALE_TRANSFER,
       yape:     CashMovementType.SALE_YAPE,
-      plin:     CashMovementType.SALE_YAPE,
+      plin:     CashMovementType.SALE_PLIN,
       deposit:  CashMovementType.SALE_TRANSFER,
       mixed:    CashMovementType.SALE_MIXED,
     };

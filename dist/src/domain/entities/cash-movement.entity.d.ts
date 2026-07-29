@@ -6,6 +6,7 @@ export declare enum CashMovementType {
     SALE_CARD = "sale_card",
     SALE_TRANSFER = "sale_transfer",
     SALE_YAPE = "sale_yape",
+    SALE_PLIN = "sale_plin",
     SALE_MIXED = "sale_mixed",
     WITHDRAWAL = "withdrawal",
     DEPOSIT = "deposit",

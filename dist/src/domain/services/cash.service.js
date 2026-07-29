@@ -83,6 +83,8 @@ let CashService = CashService_1 = class CashService {
             .reduce((s, m) => s + Number(m.amount), 0);
         const totalYape = movements.filter(m => m.type === cash_movement_entity_1.CashMovementType.SALE_YAPE)
             .reduce((s, m) => s + Number(m.amount), 0);
+        const totalPlin = movements.filter(m => m.type === cash_movement_entity_1.CashMovementType.SALE_PLIN)
+            .reduce((s, m) => s + Number(m.amount), 0);
         const totalMixed = movements.filter(m => m.type === cash_movement_entity_1.CashMovementType.SALE_MIXED)
             .reduce((s, m) => s + Number(m.amount), 0);
         const totalWithdrawals = movements.filter(m => m.type === cash_movement_entity_1.CashMovementType.WITHDRAWAL)
@@ -93,10 +95,10 @@ let CashService = CashService_1 = class CashService {
             .reduce((s, m) => s + Number(m.amount), 0);
         const totalRefunds = movements.filter(m => m.type === cash_movement_entity_1.CashMovementType.REFUND)
             .reduce((s, m) => s + Number(m.amount), 0);
-        const totalSales = totalCash + totalCard + totalTransfer + totalYape + totalMixed;
+        const totalSales = totalCash + totalCard + totalTransfer + totalYape + totalPlin + totalMixed;
         const totalSaleCount = movements.filter(m => [cash_movement_entity_1.CashMovementType.SALE_CASH, cash_movement_entity_1.CashMovementType.SALE_CARD,
             cash_movement_entity_1.CashMovementType.SALE_TRANSFER, cash_movement_entity_1.CashMovementType.SALE_YAPE,
-            cash_movement_entity_1.CashMovementType.SALE_MIXED].includes(m.type)).length;
+            cash_movement_entity_1.CashMovementType.SALE_PLIN, cash_movement_entity_1.CashMovementType.SALE_MIXED].includes(m.type)).length;
         const expectedInDrawer = Number(session.openingAmount)
             + totalCash
             + totalDeposits
@@ -119,6 +121,7 @@ let CashService = CashService_1 = class CashService {
                 totalCard: Number(totalCard.toFixed(2)),
                 totalTransfer: Number(totalTransfer.toFixed(2)),
                 totalYape: Number(totalYape.toFixed(2)),
+                totalPlin: Number(totalPlin.toFixed(2)),
                 totalMixed: Number(totalMixed.toFixed(2)),
                 totalWithdrawals: Number(totalWithdrawals.toFixed(2)),
                 totalDeposits: Number(totalDeposits.toFixed(2)),
@@ -155,7 +158,7 @@ let CashService = CashService_1 = class CashService {
             card: cash_movement_entity_1.CashMovementType.SALE_CARD,
             transfer: cash_movement_entity_1.CashMovementType.SALE_TRANSFER,
             yape: cash_movement_entity_1.CashMovementType.SALE_YAPE,
-            plin: cash_movement_entity_1.CashMovementType.SALE_YAPE,
+            plin: cash_movement_entity_1.CashMovementType.SALE_PLIN,
             deposit: cash_movement_entity_1.CashMovementType.SALE_TRANSFER,
             mixed: cash_movement_entity_1.CashMovementType.SALE_MIXED,
         };

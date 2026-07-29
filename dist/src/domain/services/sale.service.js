@@ -323,7 +323,13 @@ let SaleService = SaleService_1 = class SaleService {
             });
         }
         if (result && cashierId) {
-            const description = `Venta ${result.invoiceNumber} — ${result.documentType.toUpperCase()}`;
+            const [serie, corr] = (result.invoiceNumber || '').split('-');
+            const shortNum = corr ? `${serie}-${parseInt(corr, 10)}` : (result.invoiceNumber || '');
+            const customerName = result.customer?.name || '';
+            const docLabel = result.documentType.toUpperCase().replace('_', ' ');
+            const description = customerName
+                ? `Venta ${shortNum} — ${docLabel} (${customerName})`
+                : `Venta ${shortNum} — ${docLabel}`;
             this.cashService.registerSaleMovement(cashierId, result.id, Number(result.totalAmount), result.paymentMethod, description).catch((e) => console.warn('Advertencia caja:', e.message));
         }
         return result;
