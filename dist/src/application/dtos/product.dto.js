@@ -22,6 +22,7 @@ class CreateProductDto {
         this.stockQuantity = 0;
         this.minStockLevel = 0;
         this.hasBoxPresentation = false;
+        this.boxUnitName = 'Caja';
     }
 }
 exports.CreateProductDto = CreateProductDto;
@@ -164,6 +165,16 @@ __decorate([
     (0, class_validator_1.Min)(0),
     __metadata("design:type", Number)
 ], CreateProductDto.prototype, "boxSalePrice", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        example: 'Caja',
+        description: 'Nombre de la presentación mayorista (Caja, Paquete, Tira, Blíster, Saco, Fardo, Palet, etc.)',
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MaxLength)(50),
+    __metadata("design:type", String)
+], CreateProductDto.prototype, "boxUnitName", void 0);
 class UpdateProductDto {
 }
 exports.UpdateProductDto = UpdateProductDto;

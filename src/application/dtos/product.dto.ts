@@ -137,6 +137,15 @@ export class CreateProductDto {
   @IsNumber()
   @Min(0)
   boxSalePrice?: number;
+
+  @ApiPropertyOptional({
+    example: 'Caja',
+    description: 'Nombre de la presentación mayorista (Caja, Paquete, Tira, Blíster, Saco, Fardo, Palet, etc.)',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(50)
+  boxUnitName?: string = 'Caja';
 }
 
 export class UpdateProductDto {

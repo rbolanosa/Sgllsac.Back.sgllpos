@@ -12,6 +12,7 @@ import { ProductEntity } from '../../domain/entities/product.entity';
 import { ProductBatchEntity } from '../../domain/entities/product-batch.entity';
 import { CustomerEntity } from '../../domain/entities/customer.entity';
 import { UserEntity } from '../../domain/entities/user.entity';
+import { EstablishmentSeriesEntity } from '../../domain/entities/establishment-series.entity';
 import {
   InventoryMovementEntity,
   MovementType,
@@ -930,16 +931,34 @@ export class SaleService {
       try {
         const cashier = await manager.findOne(UserEntity, { where: { id: cashierId } });
         if (cashier?.establishmentId) {
-          const seriesRes = await this.facturacionAdapter.get<any>(`/series?sucursal_id=${cashier.establishmentId}`).catch(() => null);
-          const seriesList = Array.isArray(seriesRes?.datos) ? seriesRes.datos : Array.isArray(seriesRes) ? seriesRes : [];
-
           let targetType = 'boleta';
           if (docType === DocumentType.FACTURA) targetType = 'factura';
           if (docType === DocumentType.NOTA_VENTA) targetType = 'nota_venta';
 
-          const matchingSeries = seriesList.find((s: any) => s.tipo === targetType);
-          if (matchingSeries?.serie) {
-            const serie = matchingSeries.serie.toUpperCase();
+          let serieFound: string | null = null;
+
+          // 1. Intentar obtener la serie desde la API externa de SUNAT
+          try {
+            const seriesRes = await this.facturacionAdapter.get<any>(`/series?sucursal_id=${cashier.establishmentId}`).catch(() => null);
+            const seriesList = Array.isArray(seriesRes?.datos) ? seriesRes.datos : Array.isArray(seriesRes) ? seriesRes : [];
+            const matchingSeries = seriesList.find((s: any) => s.tipo === targetType);
+            if (matchingSeries?.serie) {
+              serieFound = matchingSeries.serie.toUpperCase();
+            }
+          } catch {}
+
+          // 2. Si no se encontró en la API externa, buscar en la BD local (establishment_series)
+          if (!serieFound) {
+            const localSeries = await manager.findOne(EstablishmentSeriesEntity, {
+              where: { establishmentId: cashier.establishmentId, tipo: targetType, activo: true },
+            });
+            if (localSeries?.serie) {
+              serieFound = localSeries.serie.toUpperCase();
+            }
+          }
+
+          if (serieFound) {
+            const serie = serieFound;
             const lastSale = await manager.createQueryBuilder(SaleEntity, 's')
               .where('s.invoiceNumber LIKE :pattern', { pattern: `${serie}-%` })
               .orderBy('s.id', 'DESC')

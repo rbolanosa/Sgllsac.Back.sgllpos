@@ -13,7 +13,9 @@ class AddBoxPresentation1785000000000 {
         ADD COLUMN \`units_per_box\` DECIMAL(10,3) NULL
           COMMENT 'Unidades que contiene una caja. Ej: 24 para Leche Gloria',
         ADD COLUMN \`box_sale_price\` DECIMAL(10,4) NULL
-          COMMENT 'Precio de venta de una caja completa (independiente del precio unitario)'
+          COMMENT 'Precio de venta de una caja completa (independiente del precio unitario)',
+        ADD COLUMN \`box_unit_name\` VARCHAR(50) NULL DEFAULT 'Caja'
+          COMMENT 'Nombre del empaque mayorista: Caja, Paquete, Tira, Blíster, Saco, Fardo, Palet, etc.'
     `);
         await queryRunner.query(`
       ALTER TABLE \`purchase_order_items\`
@@ -34,6 +36,7 @@ class AddBoxPresentation1785000000000 {
     `);
         await queryRunner.query(`
       ALTER TABLE \`products\`
+        DROP COLUMN \`box_unit_name\`,
         DROP COLUMN \`box_sale_price\`,
         DROP COLUMN \`units_per_box\`,
         DROP COLUMN \`has_box_presentation\`

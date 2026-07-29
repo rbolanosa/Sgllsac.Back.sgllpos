@@ -161,6 +161,10 @@ __decorate([
     __metadata("design:type", Number)
 ], ProductEntity.prototype, "boxSalePrice", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ name: 'box_unit_name', type: 'varchar', length: 50, nullable: true, default: 'Caja' }),
+    __metadata("design:type", String)
+], ProductEntity.prototype, "boxUnitName", void 0);
+__decorate([
     (0, typeorm_1.Column)({ name: 'is_active', type: 'boolean', default: true }),
     __metadata("design:type", Boolean)
 ], ProductEntity.prototype, "isActive", void 0);

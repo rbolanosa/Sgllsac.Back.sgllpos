@@ -17,6 +17,7 @@ export declare class CreateProductDto {
     hasBoxPresentation?: boolean;
     unitsPerBox?: number;
     boxSalePrice?: number;
+    boxUnitName?: string;
 }
 export declare class UpdateProductDto {
     barcode?: string;

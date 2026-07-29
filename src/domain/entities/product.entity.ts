@@ -176,6 +176,14 @@ export class ProductEntity {
   @Column({ name: 'box_sale_price', type: 'decimal', precision: 10, scale: 4, nullable: true })
   boxSalePrice: number | null;
 
+  /**
+   * Nombre de la presentación mayorista / empaque.
+   * Ej: 'Caja', 'Paquete', 'Tira', 'Blíster', 'Saco', 'Fardo', 'Palet', etc.
+   * Por defecto: 'Caja'.
+   */
+  @Column({ name: 'box_unit_name', type: 'varchar', length: 50, nullable: true, default: 'Caja' })
+  boxUnitName: string | null;
+
   @Column({ name: 'is_active', type: 'boolean', default: true })
   isActive: boolean;
 

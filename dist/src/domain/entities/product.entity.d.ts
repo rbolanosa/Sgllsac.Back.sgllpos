@@ -67,6 +67,7 @@ export declare class ProductEntity {
     hasBoxPresentation: boolean;
     unitsPerBox: number | null;
     boxSalePrice: number | null;
+    boxUnitName: string | null;
     isActive: boolean;
     createdAt: Date;
     updatedAt: Date;

@@ -56,6 +56,7 @@ const product_entity_1 = require("../../domain/entities/product.entity");
 const product_batch_entity_1 = require("../../domain/entities/product-batch.entity");
 const customer_entity_1 = require("../../domain/entities/customer.entity");
 const user_entity_1 = require("../../domain/entities/user.entity");
+const establishment_series_entity_1 = require("../../domain/entities/establishment-series.entity");
 const inventory_movement_entity_1 = require("../../domain/entities/inventory-movement.entity");
 const crypto = __importStar(require("crypto"));
 const company_settings_service_1 = require("./company-settings.service");
@@ -843,16 +844,31 @@ let SaleService = SaleService_1 = class SaleService {
             try {
                 const cashier = await manager.findOne(user_entity_1.UserEntity, { where: { id: cashierId } });
                 if (cashier?.establishmentId) {
-                    const seriesRes = await this.facturacionAdapter.get(`/series?sucursal_id=${cashier.establishmentId}`).catch(() => null);
-                    const seriesList = Array.isArray(seriesRes?.datos) ? seriesRes.datos : Array.isArray(seriesRes) ? seriesRes : [];
                     let targetType = 'boleta';
                     if (docType === sale_entity_1.DocumentType.FACTURA)
                         targetType = 'factura';
                     if (docType === sale_entity_1.DocumentType.NOTA_VENTA)
                         targetType = 'nota_venta';
-                    const matchingSeries = seriesList.find((s) => s.tipo === targetType);
-                    if (matchingSeries?.serie) {
-                        const serie = matchingSeries.serie.toUpperCase();
+                    let serieFound = null;
+                    try {
+                        const seriesRes = await this.facturacionAdapter.get(`/series?sucursal_id=${cashier.establishmentId}`).catch(() => null);
+                        const seriesList = Array.isArray(seriesRes?.datos) ? seriesRes.datos : Array.isArray(seriesRes) ? seriesRes : [];
+                        const matchingSeries = seriesList.find((s) => s.tipo === targetType);
+                        if (matchingSeries?.serie) {
+                            serieFound = matchingSeries.serie.toUpperCase();
+                        }
+                    }
+                    catch { }
+                    if (!serieFound) {
+                        const localSeries = await manager.findOne(establishment_series_entity_1.EstablishmentSeriesEntity, {
+                            where: { establishmentId: cashier.establishmentId, tipo: targetType, activo: true },
+                        });
+                        if (localSeries?.serie) {
+                            serieFound = localSeries.serie.toUpperCase();
+                        }
+                    }
+                    if (serieFound) {
+                        const serie = serieFound;
                         const lastSale = await manager.createQueryBuilder(sale_entity_1.SaleEntity, 's')
                             .where('s.invoiceNumber LIKE :pattern', { pattern: `${serie}-%` })
                             .orderBy('s.id', 'DESC')
