@@ -154,13 +154,27 @@ export class CreateCreditNoteDto {
   @IsNumber()
   originalSaleId: number;
 
-  @ApiProperty({ example: '02' })
+  /**
+   * Código del motivo según Catálogo 09 SUNAT:
+   * 01=Anulación | 02=Error RUC | 03=Corrección descripción | 04=Descuento global
+   * 05=Descuento por ítem | 06=Devolución total | 07=Devolución parcial
+   * 08=Bonificación | 09=Ajuste precio | 10=Otros
+   */
+  @ApiProperty({
+    example: '01',
+    description: 'Código motivo Catálogo 09 SUNAT (01–10)',
+    enum: ['01','02','03','04','05','06','07','08','09','10'],
+  })
   @IsString()
   @IsNotEmpty()
+  @IsIn(['01','02','03','04','05','06','07','08','09','10'], {
+    message: 'motivo debe ser un código válido del Catálogo 09 SUNAT: 01 al 10',
+  })
   motivo: string;
 
   @ApiPropertyOptional({ example: 'Anulación por error en el RUC' })
   @IsOptional()
   @IsString()
+  @MaxLength(200)
   descripcion?: string;
 }

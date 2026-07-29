@@ -179,15 +179,23 @@ __decorate([
     __metadata("design:type", Number)
 ], CreateCreditNoteDto.prototype, "originalSaleId", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: '02' }),
+    (0, swagger_1.ApiProperty)({
+        example: '01',
+        description: 'Código motivo Catálogo 09 SUNAT (01–10)',
+        enum: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'],
+    }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsIn)(['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'], {
+        message: 'motivo debe ser un código válido del Catálogo 09 SUNAT: 01 al 10',
+    }),
     __metadata("design:type", String)
 ], CreateCreditNoteDto.prototype, "motivo", void 0);
 __decorate([
     (0, swagger_1.ApiPropertyOptional)({ example: 'Anulación por error en el RUC' }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MaxLength)(200),
     __metadata("design:type", String)
 ], CreateCreditNoteDto.prototype, "descripcion", void 0);
 //# sourceMappingURL=sale.dto.js.map

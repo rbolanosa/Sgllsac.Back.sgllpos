@@ -24,6 +24,7 @@ import { CompanySettingsService } from './company-settings.service';
 import { FacturacionAdapter } from '../../infrastructure/adapters/facturacion.adapter';
 import { WhatsappAdapter } from '../../infrastructure/adapters/whatsapp.adapter';
 import { CashService } from './cash.service';
+import { resolveSunatUnit, stripBoxSuffix } from '../constants/sunat-units';
 
 @Injectable()
 export class SaleService {
@@ -105,8 +106,10 @@ export class SaleService {
         let displayQty         = 0;
         let displayPrice       = 0;
 
+        let itemProductName = product.name;
+
         if (sellUnit === 'box') {
-          // ── Modo Caja ─────────────────────────────────────────────────────
+          // ── Modo Caja / Saco ──────────────────────────────────────────────
           if (!upb) {
             throw new BadRequestException(
               `El producto "${product.name}" no tiene configuración de caja. ` +
@@ -135,6 +138,9 @@ export class SaleService {
           lineTotal          = boxesToSell * boxPrice - disc;
           displayQty         = boxesToSell;
           displayPrice       = boxPrice;
+
+          const boxLabel = product.boxUnitName || 'Caja';
+          itemProductName = `${product.name} (${boxLabel})`;
 
         } else if (sellUnit === 'mixed') {
           // ── Modo Mixto: Cajas + Unidades sueltas ──────────────────────────
@@ -213,7 +219,7 @@ export class SaleService {
 
         saleItems.push({
           productId: product.id,
-          productName: product.name,
+          productName: itemProductName,
           quantity: displayQty,
           unitPrice: displayPrice,
           taxRate: Number(product.taxRate),
@@ -388,7 +394,14 @@ export class SaleService {
       const totalItem = Number(item.subtotal);
 
       // Use product's SUNAT fields (Catalogo 3 unit, Catalogo 7 IGV type)
-      const sunatUnit = item.product?.unit || 'NIU';
+      // resolveSunatUnit maps product.boxUnitName → Catálogo 03 code when the
+      // item was sold in "box" mode (name contains the boxUnitName in parentheses).
+      const sunatUnit = resolveSunatUnit(
+        item.product?.unit,
+        item.product?.boxUnitName,
+        item.productName,
+      );
+
       const tipAfeIgv = item.product?.tipAfeIgv || '10';
       const taxRate = Number(item.product?.taxRate ?? 18);
 
@@ -402,9 +415,13 @@ export class SaleService {
       const porcentajeIgv = isGravado ? taxRate : 0;
       const valorUnitario = isGravado ? unitPrice * taxFactor : unitPrice;
 
+      const cleanName = stripBoxSuffix(item.productName, item.product?.boxUnitName)
+        || item.product?.name
+        || 'Producto';
+
       return {
         codigo: item.product?.sku || item.product?.barcode || `PROD-${item.productId || 1}`,
-        descripcion: item.productName || item.product?.name || 'Producto',
+        descripcion: cleanName,
         unidad: sunatUnit,
         cantidad: qty,
         precio_unitario: Number(unitPrice.toFixed(4)),
@@ -529,46 +546,57 @@ export class SaleService {
 
       originalDoc = original;
 
-      // Generate NC invoice number (FC01-XXXXXXXX or BC01-XXXXXXXX) independently per series using latest correlativo
+      // Serie según tipo de documento original
       const serie = original.documentType === 'factura' ? 'FC01' : 'BC01';
-      const lastDoc = await manager
-        .createQueryBuilder(SaleEntity, 's')
-        .where('s.documentType = :docType', { docType: DocumentType.NOTA_CREDITO })
-        .andWhere('s.invoiceNumber LIKE :seriePattern', { seriePattern: `${serie}-%` })
-        .orderBy('s.id', 'DESC')
-        .getOne();
+      // Número temporal — SUNAT auto-asigna el correlativo real; se actualiza en la respuesta de la API.
+      // Formato: FC01-P{8 hex chars}  →  14 chars (límite de la columna: 20).
+      // Usa crypto.randomBytes para garantizar unicidad sin colisiones de timestamp.
+      const ncNumber = `${serie}-P${crypto.randomBytes(4).toString('hex')}`;
 
-      let nextNum = 1;
-      if (lastDoc && lastDoc.invoiceNumber) {
-        const parts = lastDoc.invoiceNumber.split('-');
-        if (parts[1]) {
-          const parsed = parseInt(parts[1], 10);
-          if (!isNaN(parsed)) nextNum = parsed + 1;
+      // El original permanece COMPLETED hasta que SUNAT acepte la NC.
+
+      /**
+       * Movimiento de inventario según Catálogo 09 SUNAT:
+       *
+       * CON devolución física (restaurar stock completo):
+       *   01 = Anulación total de la operación
+       *   02 = Anulación por error en el RUC (cancela la venta entera)
+       *   06 = Devolución total de bienes
+       *
+       * SIN movimiento de stock (ajustes económicos o descriptivos):
+       *   03 = Corrección en la descripción
+       *   04 = Descuento global
+       *   05 = Descuento por ítem
+       *   07 = Devolución parcial de bienes  ← el sistema aún no soporta cantidades parciales
+       *   08 = Bonificación (bienes adicionales ya entregados)
+       *   09 = Ajuste de precio / disminución en el valor
+       *   10 = Otros conceptos
+       */
+      const MOTIVOS_CON_DEVOLUCION_TOTAL = ['01', '02', '06'];
+      const restoreStock = MOTIVOS_CON_DEVOLUCION_TOTAL.includes(reason);
+
+      if (restoreStock) {
+        for (const item of original.items) {
+          if (!item.productId) continue;
+          const product = await manager.findOne(ProductEntity, { where: { id: item.productId } });
+          if (product) {
+            product.stockQuantity = Number(product.stockQuantity) + Number(item.quantity);
+            await manager.save(product);
+            await manager.save(
+              manager.create(InventoryMovementEntity, {
+                productId: product.id,
+                movementType: MovementType.IN,
+                quantity: item.quantity,
+                referenceType: MovementReferenceType.SALE,
+                notes: `NC ${ncNumber} — motivo ${reason} — doc. orig. ${original.invoiceNumber}`,
+              }),
+            );
+          }
         }
-      }
-      const correlativo = String(nextNum).padStart(8, '0');
-      const ncNumber = `${serie}-${correlativo}`;
-
-      // Do not mark original as refunded yet until Credit Note is accepted by SUNAT
-      // (Original remains COMPLETED until SUNAT accepts the credit note)
-
-      // Restore stock for each item
-      for (const item of original.items) {
-        if (!item.productId) continue;
-        const product = await manager.findOne(ProductEntity, { where: { id: item.productId } });
-        if (product) {
-          product.stockQuantity = Number(product.stockQuantity) + Number(item.quantity);
-          await manager.save(product);
-          await manager.save(
-            manager.create(InventoryMovementEntity, {
-              productId: product.id,
-              movementType: MovementType.IN,
-              quantity: item.quantity,
-              referenceType: MovementReferenceType.SALE,
-              notes: `Credit note ${ncNumber} for ${original.invoiceNumber}: ${reason}`,
-            }),
-          );
-        }
+      } else {
+        this.logger.log(
+          `NC ${ncNumber}: motivo ${reason} — sin movimiento de inventario (ajuste económico/descriptivo)`,
+        );
       }
 
       // Create the credit note record
@@ -576,7 +604,7 @@ export class SaleService {
         invoiceNumber:     ncNumber,
         documentType:      DocumentType.NOTA_CREDITO,
         relatedDocumentId: original.id,
-        creditNoteReason:  `${reason} | ${description}`,
+        creditNoteReason:  `${reason}|${description}`,  // format: 'CODE|description' for reliable parsing on resend
         customerId:        original.customerId,
         cashierId:         null,
         saleDate:          new Date(),
@@ -662,10 +690,17 @@ export class SaleService {
 
     const items = (original.items || []).map((item) => {
       const unitPrice = Number(item.unitPrice || 0);
-      const sunatUnit = item.product?.unit || 'NIU';
+      const sunatUnit = resolveSunatUnit(
+        item.product?.unit,
+        item.product?.boxUnitName,
+        item.productName,
+      );
       const tipAfeIgv = item.product?.tipAfeIgv || '10';
+      const cleanName = stripBoxSuffix(item.productName, item.product?.boxUnitName)
+        || item.product?.name
+        || 'Producto';
       return {
-        descripcion: item.productName || item.product?.name || 'Producto',
+        descripcion: cleanName,
         unidad: sunatUnit,
         cantidad: Number(item.quantity || 0),
         precio_unitario: Number(unitPrice.toFixed(4)),
@@ -679,11 +714,11 @@ export class SaleService {
     const day = String(localDate.getDate()).padStart(2, '0');
     const fechaEmisionStr = `${year}-${month}-${day}`;
 
-    const cleanCodMotivo = String(reasonCode || '01').split('-')[0].trim().padStart(2, '0');
-    const rawReasonLabel = String(reasonCode).includes('-') ? String(reasonCode).split('-').slice(1).join('-').trim() : '';
+    // reasonCode always arrives as clean code ('01'..'10') from the validated DTO
+    const cleanCodMotivo = String(reasonCode || '01').padStart(2, '0');
     const cleanDesMotivo = description
-      ? (rawReasonLabel ? `${rawReasonLabel.toUpperCase()} | ${description.toUpperCase()}` : description.toUpperCase())
-      : (rawReasonLabel ? rawReasonLabel.toUpperCase() : 'ANULACIÓN DE LA OPERACIÓN');
+      ? description.toUpperCase()
+      : 'ANULACIÓN DE LA OPERACIÓN';
 
     const ncSerie = original.documentType === DocumentType.FACTURA ? 'FC01' : 'BC01';
 
@@ -841,8 +876,10 @@ export class SaleService {
         throw new BadRequestException('No se encontró el comprobante original de referencia');
       }
 
-      const reason = sale.creditNoteReason || '01 - Anulación de la operación';
-      return this.sendCreditNoteToApisunat(sale, original, reason, sale.notes || '');
+      // creditNoteReason stored as 'CODE|description' — extract each part separately
+      const [storedCode, ...descParts] = (sale.creditNoteReason || '01|Anulación de la operación').split('|');
+      const storedDesc = descParts.join('|').trim() || sale.notes || 'Anulación de la operación';
+      return this.sendCreditNoteToApisunat(sale, original, storedCode.trim(), storedDesc);
     } else {
       return this.sendToApisunat(sale);
     }

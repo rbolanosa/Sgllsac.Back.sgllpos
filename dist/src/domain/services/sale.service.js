@@ -63,6 +63,7 @@ const company_settings_service_1 = require("./company-settings.service");
 const facturacion_adapter_1 = require("../../infrastructure/adapters/facturacion.adapter");
 const whatsapp_adapter_1 = require("../../infrastructure/adapters/whatsapp.adapter");
 const cash_service_1 = require("./cash.service");
+const sunat_units_1 = require("../constants/sunat-units");
 let SaleService = SaleService_1 = class SaleService {
     constructor(saleRepo, saleItemRepo, productRepo, customerRepo, movementRepo, dataSource, companySettings, facturacionAdapter, whatsappAdapter, cashService) {
         this.saleRepo = saleRepo;
@@ -131,6 +132,7 @@ let SaleService = SaleService_1 = class SaleService {
                 let lineTotal = 0;
                 let displayQty = 0;
                 let displayPrice = 0;
+                let itemProductName = product.name;
                 if (sellUnit === 'box') {
                     if (!upb) {
                         throw new common_1.BadRequestException(`El producto "${product.name}" no tiene configuración de caja. ` +
@@ -154,6 +156,8 @@ let SaleService = SaleService_1 = class SaleService {
                     lineTotal = boxesToSell * boxPrice - disc;
                     displayQty = boxesToSell;
                     displayPrice = boxPrice;
+                    const boxLabel = product.boxUnitName || 'Caja';
+                    itemProductName = `${product.name} (${boxLabel})`;
                 }
                 else if (sellUnit === 'mixed') {
                     if (!upb) {
@@ -212,7 +216,7 @@ let SaleService = SaleService_1 = class SaleService {
                 totalItemsSum += lineTotal;
                 saleItems.push({
                     productId: product.id,
-                    productName: product.name,
+                    productName: itemProductName,
                     quantity: displayQty,
                     unitPrice: displayPrice,
                     taxRate: Number(product.taxRate),
@@ -356,7 +360,7 @@ let SaleService = SaleService_1 = class SaleService {
             const unitPrice = Number(item.unitPrice);
             const qty = Number(item.quantity);
             const totalItem = Number(item.subtotal);
-            const sunatUnit = item.product?.unit || 'NIU';
+            const sunatUnit = (0, sunat_units_1.resolveSunatUnit)(item.product?.unit, item.product?.boxUnitName, item.productName);
             const tipAfeIgv = item.product?.tipAfeIgv || '10';
             const taxRate = Number(item.product?.taxRate ?? 18);
             const tipCode = parseInt(tipAfeIgv, 10);
@@ -366,9 +370,12 @@ let SaleService = SaleService_1 = class SaleService {
             const igvAmount = isGravado ? totalItem - baseIgv : 0;
             const porcentajeIgv = isGravado ? taxRate : 0;
             const valorUnitario = isGravado ? unitPrice * taxFactor : unitPrice;
+            const cleanName = (0, sunat_units_1.stripBoxSuffix)(item.productName, item.product?.boxUnitName)
+                || item.product?.name
+                || 'Producto';
             return {
                 codigo: item.product?.sku || item.product?.barcode || `PROD-${item.productId || 1}`,
-                descripcion: item.productName || item.product?.name || 'Producto',
+                descripcion: cleanName,
                 unidad: sunatUnit,
                 cantidad: qty,
                 precio_unitario: Number(unitPrice.toFixed(4)),
@@ -481,44 +488,35 @@ let SaleService = SaleService_1 = class SaleService {
             }
             originalDoc = original;
             const serie = original.documentType === 'factura' ? 'FC01' : 'BC01';
-            const lastDoc = await manager
-                .createQueryBuilder(sale_entity_1.SaleEntity, 's')
-                .where('s.documentType = :docType', { docType: sale_entity_1.DocumentType.NOTA_CREDITO })
-                .andWhere('s.invoiceNumber LIKE :seriePattern', { seriePattern: `${serie}-%` })
-                .orderBy('s.id', 'DESC')
-                .getOne();
-            let nextNum = 1;
-            if (lastDoc && lastDoc.invoiceNumber) {
-                const parts = lastDoc.invoiceNumber.split('-');
-                if (parts[1]) {
-                    const parsed = parseInt(parts[1], 10);
-                    if (!isNaN(parsed))
-                        nextNum = parsed + 1;
+            const ncNumber = `${serie}-P${crypto.randomBytes(4).toString('hex')}`;
+            const MOTIVOS_CON_DEVOLUCION_TOTAL = ['01', '02', '06'];
+            const restoreStock = MOTIVOS_CON_DEVOLUCION_TOTAL.includes(reason);
+            if (restoreStock) {
+                for (const item of original.items) {
+                    if (!item.productId)
+                        continue;
+                    const product = await manager.findOne(product_entity_1.ProductEntity, { where: { id: item.productId } });
+                    if (product) {
+                        product.stockQuantity = Number(product.stockQuantity) + Number(item.quantity);
+                        await manager.save(product);
+                        await manager.save(manager.create(inventory_movement_entity_1.InventoryMovementEntity, {
+                            productId: product.id,
+                            movementType: inventory_movement_entity_1.MovementType.IN,
+                            quantity: item.quantity,
+                            referenceType: inventory_movement_entity_1.MovementReferenceType.SALE,
+                            notes: `NC ${ncNumber} — motivo ${reason} — doc. orig. ${original.invoiceNumber}`,
+                        }));
+                    }
                 }
             }
-            const correlativo = String(nextNum).padStart(8, '0');
-            const ncNumber = `${serie}-${correlativo}`;
-            for (const item of original.items) {
-                if (!item.productId)
-                    continue;
-                const product = await manager.findOne(product_entity_1.ProductEntity, { where: { id: item.productId } });
-                if (product) {
-                    product.stockQuantity = Number(product.stockQuantity) + Number(item.quantity);
-                    await manager.save(product);
-                    await manager.save(manager.create(inventory_movement_entity_1.InventoryMovementEntity, {
-                        productId: product.id,
-                        movementType: inventory_movement_entity_1.MovementType.IN,
-                        quantity: item.quantity,
-                        referenceType: inventory_movement_entity_1.MovementReferenceType.SALE,
-                        notes: `Credit note ${ncNumber} for ${original.invoiceNumber}: ${reason}`,
-                    }));
-                }
+            else {
+                this.logger.log(`NC ${ncNumber}: motivo ${reason} — sin movimiento de inventario (ajuste económico/descriptivo)`);
             }
             const nc = manager.create(sale_entity_1.SaleEntity, {
                 invoiceNumber: ncNumber,
                 documentType: sale_entity_1.DocumentType.NOTA_CREDITO,
                 relatedDocumentId: original.id,
-                creditNoteReason: `${reason} | ${description}`,
+                creditNoteReason: `${reason}|${description}`,
                 customerId: original.customerId,
                 cashierId: null,
                 saleDate: new Date(),
@@ -597,10 +595,13 @@ let SaleService = SaleService_1 = class SaleService {
         }
         const items = (original.items || []).map((item) => {
             const unitPrice = Number(item.unitPrice || 0);
-            const sunatUnit = item.product?.unit || 'NIU';
+            const sunatUnit = (0, sunat_units_1.resolveSunatUnit)(item.product?.unit, item.product?.boxUnitName, item.productName);
             const tipAfeIgv = item.product?.tipAfeIgv || '10';
+            const cleanName = (0, sunat_units_1.stripBoxSuffix)(item.productName, item.product?.boxUnitName)
+                || item.product?.name
+                || 'Producto';
             return {
-                descripcion: item.productName || item.product?.name || 'Producto',
+                descripcion: cleanName,
                 unidad: sunatUnit,
                 cantidad: Number(item.quantity || 0),
                 precio_unitario: Number(unitPrice.toFixed(4)),
@@ -612,11 +613,10 @@ let SaleService = SaleService_1 = class SaleService {
         const month = String(localDate.getMonth() + 1).padStart(2, '0');
         const day = String(localDate.getDate()).padStart(2, '0');
         const fechaEmisionStr = `${year}-${month}-${day}`;
-        const cleanCodMotivo = String(reasonCode || '01').split('-')[0].trim().padStart(2, '0');
-        const rawReasonLabel = String(reasonCode).includes('-') ? String(reasonCode).split('-').slice(1).join('-').trim() : '';
+        const cleanCodMotivo = String(reasonCode || '01').padStart(2, '0');
         const cleanDesMotivo = description
-            ? (rawReasonLabel ? `${rawReasonLabel.toUpperCase()} | ${description.toUpperCase()}` : description.toUpperCase())
-            : (rawReasonLabel ? rawReasonLabel.toUpperCase() : 'ANULACIÓN DE LA OPERACIÓN');
+            ? description.toUpperCase()
+            : 'ANULACIÓN DE LA OPERACIÓN';
         const ncSerie = original.documentType === sale_entity_1.DocumentType.FACTURA ? 'FC01' : 'BC01';
         const payload = {
             serie: ncSerie,
@@ -764,8 +764,9 @@ let SaleService = SaleService_1 = class SaleService {
             if (!original) {
                 throw new common_1.BadRequestException('No se encontró el comprobante original de referencia');
             }
-            const reason = sale.creditNoteReason || '01 - Anulación de la operación';
-            return this.sendCreditNoteToApisunat(sale, original, reason, sale.notes || '');
+            const [storedCode, ...descParts] = (sale.creditNoteReason || '01|Anulación de la operación').split('|');
+            const storedDesc = descParts.join('|').trim() || sale.notes || 'Anulación de la operación';
+            return this.sendCreditNoteToApisunat(sale, original, storedCode.trim(), storedDesc);
         }
         else {
             return this.sendToApisunat(sale);

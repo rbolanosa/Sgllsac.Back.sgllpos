@@ -5,6 +5,7 @@ import PDFDocument from 'pdfkit';
 import * as QRCode from 'qrcode';
 import * as fs from 'fs';
 import * as path from 'path';
+import { resolvePdfUnit, stripBoxSuffix } from '../../domain/constants/sunat-units';
 
 @Injectable()
 export class WhatsappAdapter {
@@ -181,13 +182,21 @@ export class WhatsappAdapter {
       doc.font('Helvetica').fontSize(7.5);
       (sale?.items || []).forEach((item: any) => {
         const qty = Number(item.quantity).toFixed(3);
-        const name = String(item.productName || item.product?.name || 'Producto').substring(0, 20);
+        const name = stripBoxSuffix(
+          item.productName || item.product?.name,
+          item.product?.boxUnitName,
+        ).substring(0, 20) || 'Producto';
         const price = Number(item.unitPrice).toFixed(2);
         const lineTotal = Number(item.subtotal || item.quantity * item.unitPrice).toFixed(2);
+        const pdfUnit = resolvePdfUnit(
+          item.product?.unit,
+          item.product?.boxUnitName,
+          item.productName,
+        );
 
         const currentY = doc.y;
         doc.text(qty, margin, currentY, { width: 34 });
-        doc.text('NIU', margin + 34, currentY, { width: 36 });
+        doc.text(pdfUnit, margin + 34, currentY, { width: 36 });
         doc.text(name, margin + 70, currentY, { width: 85 });
         doc.text(price, margin + 155, currentY, { width: 30, align: 'right' });
         doc.font('Helvetica-Bold').text(lineTotal, margin + 185, currentY, { width: 35, align: 'right' });
