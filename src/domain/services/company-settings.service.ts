@@ -113,8 +113,8 @@ export class CompanySettingsService {
 
     // Sync with APISUNAT if API key and secret are present
     if (updated.sunatApiKey && updated.sunatApiSecret && updated.sunatApiUrl) {
-      await this.syncFromApisunat(updated.sunatApiKey, updated.sunatApiSecret, updated.sunatApiUrl);
       try {
+        await this.syncFromApisunat(updated.sunatApiKey, updated.sunatApiSecret, updated.sunatApiUrl);
         const targetUrl = updated.sunatApiUrl.replace(/\/$/, '');
         const payload: Record<string, any> = {};
         if (dto.ruc) payload.ruc = dto.ruc;

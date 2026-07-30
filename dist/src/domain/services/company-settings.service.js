@@ -142,8 +142,8 @@ let CompanySettingsService = class CompanySettingsService {
         });
         const updated = await this.get();
         if (updated.sunatApiKey && updated.sunatApiSecret && updated.sunatApiUrl) {
-            await this.syncFromApisunat(updated.sunatApiKey, updated.sunatApiSecret, updated.sunatApiUrl);
             try {
+                await this.syncFromApisunat(updated.sunatApiKey, updated.sunatApiSecret, updated.sunatApiUrl);
                 const targetUrl = updated.sunatApiUrl.replace(/\/$/, '');
                 const payload = {};
                 if (dto.ruc)
