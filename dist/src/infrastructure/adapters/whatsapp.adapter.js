@@ -189,11 +189,7 @@ let WhatsappAdapter = WhatsappAdapter_1 = class WhatsappAdapter {
                 }
             }
             const tradeName = (companyInfo?.nombreComercial || companyInfo?.razonSocial || 'COMERCIAL PADRE ETERNO').toUpperCase();
-            const legalName = companyInfo?.nombreComercial && companyInfo?.razonSocial ? companyInfo.razonSocial.toUpperCase() : null;
             doc.font('Helvetica-Bold').fontSize(12).text(tradeName, margin, doc.y, { width: printWidth, align: 'center' });
-            if (legalName) {
-                doc.font('Helvetica').fontSize(8).text(legalName, margin, doc.y, { width: printWidth, align: 'center' });
-            }
             doc.font('Helvetica').fontSize(8.5).text(`RUC: ${companyRuc}`, margin, doc.y, { width: printWidth, align: 'center' });
             doc.text(`D. Comercial: ${companyAddr}`, margin, doc.y, { width: printWidth, align: 'center' });
             doc.moveDown(0.4);
