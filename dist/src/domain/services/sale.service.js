@@ -850,6 +850,8 @@ let SaleService = SaleService_1 = class SaleService {
         });
     }
     async getSalesSummary(from, to) {
+        const fromDate = `${from} 00:00:00`;
+        const toDate = `${to} 23:59:59`;
         const result = await this.saleRepo
             .createQueryBuilder('s')
             .select([
@@ -859,7 +861,7 @@ let SaleService = SaleService_1 = class SaleService {
             'COALESCE(AVG(s.totalAmount), 0) AS avgTicket',
         ])
             .where('s.status = :status', { status: sale_entity_1.SaleStatus.COMPLETED })
-            .andWhere('s.saleDate BETWEEN :from AND :to', { from, to })
+            .andWhere('s.saleDate >= :fromDate AND s.saleDate <= :toDate', { fromDate, toDate })
             .getRawOne();
         return {
             totalSales: Number(result?.totalSales ?? 0),

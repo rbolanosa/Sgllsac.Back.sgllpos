@@ -131,6 +131,7 @@ let WhatsappAdapter = WhatsappAdapter_1 = class WhatsappAdapter {
         const companyAddr = companyInfo?.direccion || 'JR. CHEPEN 404';
         const customerName = sale?.customer?.name || 'Consumidor Final';
         const customerNit = sale?.customer?.nit || 'CF';
+        const customerAddr = sale?.customer?.address || null;
         const numTotal = Number(sale?.totalAmount || 0);
         const totalAmtStr = numTotal.toFixed(2);
         const igvAmtNum = Number(sale?.taxAmount || (numTotal * 18 / 118));
@@ -201,6 +202,9 @@ let WhatsappAdapter = WhatsappAdapter_1 = class WhatsappAdapter {
             doc.text(`H. Emisión:       ${timeStr}`, margin, doc.y, { width: printWidth });
             doc.font('Helvetica-Bold').text(`Cliente:            ${customerName}`, margin, doc.y, { width: printWidth });
             doc.font('Helvetica').text(`DNI/RUC:          ${customerNit}`, margin, doc.y, { width: printWidth });
+            if (customerAddr) {
+                doc.font('Helvetica').text(`Dirección:        ${customerAddr.toUpperCase()}`, margin, doc.y, { width: printWidth });
+            }
             doc.moveDown(0.4);
             const headerY = doc.y;
             doc.moveTo(margin, headerY).lineTo(pageWidth - margin, headerY).lineWidth(1.2).strokeColor('#000').stroke();
