@@ -8,6 +8,7 @@ import { extname, join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
 import { CompanySettingsService } from '../../domain/services/company-settings.service';
 import { UpdateCompanySettingsDto } from '../../application/dto/company-settings.dto';
+import { Public } from '../decorators/public.decorator';
 
 // Certificates still need disk storage (openssl operations require a real file path)
 const CERTS_DIR = join(process.cwd(), 'uploads', 'certificates');
@@ -25,6 +26,7 @@ const certStorage = diskStorage({
 export class CompanySettingsController {
   constructor(private readonly service: CompanySettingsService) {}
 
+  @Public()
   @Get()
   async get() {
     const settings = await this.service.get();

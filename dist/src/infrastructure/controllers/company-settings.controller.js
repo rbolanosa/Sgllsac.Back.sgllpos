@@ -20,6 +20,7 @@ const path_1 = require("path");
 const fs_1 = require("fs");
 const company_settings_service_1 = require("../../domain/services/company-settings.service");
 const company_settings_dto_1 = require("../../application/dto/company-settings.dto");
+const public_decorator_1 = require("../decorators/public.decorator");
 const CERTS_DIR = (0, path_1.join)(process.cwd(), 'uploads', 'certificates');
 try {
     if (!(0, fs_1.existsSync)(CERTS_DIR))
@@ -70,6 +71,7 @@ let CompanySettingsController = class CompanySettingsController {
 };
 exports.CompanySettingsController = CompanySettingsController;
 __decorate([
+    (0, public_decorator_1.Public)(),
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
