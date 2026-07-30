@@ -34,23 +34,37 @@ export class WhatsappAdapter {
     const entero = parseInt(parts[0], 10);
     const dec = parts[1] || '00';
 
-    const UNIDADES = ['', 'un', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez', 'once', 'doce', 'trece', 'catorce', 'quince', 'dieciséis', 'diecisiete', 'dieciocho', 'diecinueve', 'veinte', 'veintiuno', 'veintidós', 'veintitrés', 'veinticinco', 'veintisiete', 'veintiocho', 'veintinueve'];
+    const UNIDADES = ['', 'un', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez', 'once', 'doce', 'trece', 'catorce', 'quince', 'dieciséis', 'diecisiete', 'dieciocho', 'diecinueve', 'veinte', 'veintiuno', 'veintidós', 'veintitrés', 'veinticuatro', 'veinticinco', 'veintiséis', 'veintisiete', 'veintiocho', 'veintinueve'];
     const DECENAS = ['', 'diez', 'veinte', 'treinta', 'cuarenta', 'cincuenta', 'sesenta', 'setenta', 'ochenta', 'noventa'];
     const CIENTOS = ['', 'ciento', 'doscientos', 'trescientos', 'cuatrocientos', 'quinientos', 'seiscientos', 'setecientos', 'ochocientos', 'novecientos'];
 
-    let s = '';
-    if (entero === 0) s = 'cero';
-    else if (entero === 100) s = 'cien';
-    else {
-      const c = Math.floor(entero / 100);
-      const restC = entero % 100;
+    const convertirMenorMil = (n: number): string => {
+      if (n === 0) return '';
+      if (n === 100) return 'cien';
+      let s = '';
+      const c = Math.floor(n / 100);
+      const restC = n % 100;
       const d = Math.floor(restC / 10);
       const u = restC % 10;
-
       if (c > 0) s += CIENTOS[c] + ' ';
       if (restC > 0 && restC < 30) s += UNIDADES[restC];
       else if (restC >= 30) s += DECENAS[d] + (u ? ' y ' + UNIDADES[u] : '');
+      return s.trim();
+    };
+
+    let s = '';
+    if (entero === 0) {
+      s = 'cero';
+    } else if (entero < 1000) {
+      s = convertirMenorMil(entero);
+    } else {
+      const miles = Math.floor(entero / 1000);
+      const resto = entero % 1000;
+      const strMiles = miles === 1 ? 'mil' : `${convertirMenorMil(miles)} mil`;
+      const strResto = convertirMenorMil(resto);
+      s = `${strMiles} ${strResto}`.trim();
     }
+
     return `${s.trim()} con ${dec}/100 Soles`;
   }
 
@@ -178,14 +192,14 @@ export class WhatsappAdapter {
       doc.moveTo(margin, headerBottomY).lineTo(pageWidth - margin, headerBottomY).lineWidth(1.2).strokeColor('#000').stroke();
       doc.y = headerBottomY + 5;
 
-      // 6. Lista de Productos
+      // 6. Lista de Productos (Calculo de altura dinamica para evitar sobreposición)
       doc.font('Helvetica').fontSize(7.5);
       (sale?.items || []).forEach((item: any) => {
         const qty = Number(item.quantity).toFixed(3);
-        const name = stripBoxSuffix(
+        const rawName = stripBoxSuffix(
           item.productName || item.product?.name,
           item.product?.boxUnitName,
-        ).substring(0, 20) || 'Producto';
+        ) || 'Producto';
         const price = Number(item.unitPrice).toFixed(2);
         const lineTotal = Number(item.subtotal || item.quantity * item.unitPrice).toFixed(2);
         const pdfUnit = resolvePdfUnit(
@@ -197,11 +211,17 @@ export class WhatsappAdapter {
         const currentY = doc.y;
         doc.text(qty, margin, currentY, { width: 34 });
         doc.text(pdfUnit, margin + 34, currentY, { width: 36 });
-        doc.text(name, margin + 70, currentY, { width: 85 });
+        
+        // Calcula la altura real ocupada por la descripción del producto al ajustarse al ancho
+        const nameHeight = doc.heightOfString(rawName, { width: 83 });
+        doc.text(rawName, margin + 70, currentY, { width: 83 });
+
         doc.text(price, margin + 155, currentY, { width: 30, align: 'right' });
         doc.font('Helvetica-Bold').text(lineTotal, margin + 185, currentY, { width: 35, align: 'right' });
         doc.font('Helvetica');
-        doc.y = currentY + 11;
+
+        // Avanza el cursor doc.y considerando la altura de la descripcion + espacio de padding
+        doc.y = currentY + Math.max(nameHeight, 11) + 2;
       });
 
       doc.moveDown(0.3);
