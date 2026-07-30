@@ -72,6 +72,41 @@ let CompanySettingsService = class CompanySettingsService {
         }
         return settings;
     }
+    async syncFromApisunat(apiKey, apiSecret, apiUrl) {
+        const settings = await this.get();
+        const key = apiKey || settings.sunatApiKey;
+        const secret = apiSecret || settings.sunatApiSecret;
+        const url = (apiUrl || settings.sunatApiUrl || '').replace(/\/$/, '');
+        if (!key || !secret || !url)
+            return false;
+        try {
+            const res = await (0, rxjs_1.firstValueFrom)(this.httpService.get(`${url}/empresa`, {
+                headers: { 'X-Api-Key': key, 'X-Api-Secret': secret },
+                timeout: 10_000,
+            }));
+            const emp = res.data?.datos || res.data;
+            if (emp) {
+                await this.repo.update(SINGLETON_ID, {
+                    ruc: emp.ruc || settings.ruc,
+                    razonSocial: emp.razon_social || settings.razonSocial,
+                    nombreComercial: emp.nombre_comercial || settings.nombreComercial,
+                    direccion: emp.direccion || settings.direccion,
+                    ubigeo: emp.ubigeo || settings.ubigeo,
+                    departamento: emp.departamento || settings.departamento,
+                    provincia: emp.provincia || settings.provincia,
+                    distrito: emp.distrito || settings.distrito,
+                    logoUrl: emp.logo_url ? (emp.logo_url.startsWith('http') ? emp.logo_url : `${new URL(url).origin}${emp.logo_url}`) : settings.logoUrl,
+                    regimenTributario: emp.tax_regime || settings.regimenTributario,
+                    productionMode: emp.entorno === 'production',
+                });
+                return true;
+            }
+        }
+        catch (err) {
+            console.warn('No se pudo auto-sincronizar datos desde APISUNAT:', err?.message);
+        }
+        return false;
+    }
     async getEmpresaLogoUrl() {
         const settings = await this.get();
         if (!settings.sunatApiKey || !settings.sunatApiSecret || !settings.sunatApiUrl)
@@ -107,6 +142,7 @@ let CompanySettingsService = class CompanySettingsService {
         });
         const updated = await this.get();
         if (updated.sunatApiKey && updated.sunatApiSecret && updated.sunatApiUrl) {
+            await this.syncFromApisunat(updated.sunatApiKey, updated.sunatApiSecret, updated.sunatApiUrl);
             try {
                 const targetUrl = updated.sunatApiUrl.replace(/\/$/, '');
                 const payload = {};

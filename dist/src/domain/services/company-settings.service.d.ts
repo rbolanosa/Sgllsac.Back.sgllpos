@@ -7,6 +7,7 @@ export declare class CompanySettingsService {
     private readonly httpService;
     constructor(repo: Repository<CompanySettingsEntity>, httpService: HttpService);
     get(): Promise<CompanySettingsEntity>;
+    syncFromApisunat(apiKey?: string, apiSecret?: string, apiUrl?: string): Promise<boolean>;
     getEmpresaLogoUrl(): Promise<string | null>;
     update(dto: UpdateCompanySettingsDto): Promise<CompanySettingsEntity>;
     registerSunatApi(certFile: Express.Multer.File, certPassword?: string): Promise<{
