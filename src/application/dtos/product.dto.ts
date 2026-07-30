@@ -281,6 +281,19 @@ export class UpdateProductDto {
   @Min(0)
   boxSalePrice?: number;
 
+  @ApiPropertyOptional()
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  stockQuantity?: number;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  @MaxLength(50)
+  boxUnitName?: string;
+
   @ApiPropertyOptional({
     example: 0.6,
     description: 'Peso unitario en kg. Para calcular el peso total en la Guía de Remisión.',

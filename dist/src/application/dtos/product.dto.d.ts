@@ -39,6 +39,8 @@ export declare class UpdateProductDto {
     hasBoxPresentation?: boolean;
     unitsPerBox?: number;
     boxSalePrice?: number;
+    stockQuantity?: number;
+    boxUnitName?: string;
     pesoUnitario?: number;
 }
 export declare class StockAdjustmentDto {
