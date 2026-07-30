@@ -4,7 +4,11 @@ export declare class CompanySettingsController {
     private readonly service;
     constructor(service: CompanySettingsService);
     get(): Promise<import("../../domain/entities/company-settings.entity").CompanySettingsEntity>;
-    syncFromApisunat(): Promise<{
+    syncFromApisunat(dto: {
+        apiKey?: string;
+        apiSecret?: string;
+        apiUrl?: string;
+    }): Promise<{
         success: boolean;
         message: string;
     }>;

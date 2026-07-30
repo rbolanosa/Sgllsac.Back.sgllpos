@@ -2,23 +2,26 @@ import { IsString, IsOptional, IsEnum, IsBoolean, IsNumber, MaxLength, MinLength
 import { TaxRegime } from '../../domain/entities/company-settings.entity';
 
 export class UpdateCompanySettingsDto {
+  @IsOptional()
   @IsString()
   @MinLength(11)
   @MaxLength(11)
   @Matches(/^\d{11}$/, { message: 'El RUC debe tener exactamente 11 dígitos numéricos' })
-  ruc: string;
+  ruc?: string;
 
+  @IsOptional()
   @IsString()
   @MaxLength(200)
-  razonSocial: string;
+  razonSocial?: string;
 
   @IsOptional()
   @IsString()
   @MaxLength(200)
   nombreComercial?: string;
 
+  @IsOptional()
   @IsString()
-  direccion: string;
+  direccion?: string;
 
   @IsOptional()
   @IsString()

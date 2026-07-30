@@ -50,8 +50,8 @@ let CompanySettingsController = class CompanySettingsController {
         }
         return settings;
     }
-    async syncFromApisunat() {
-        const success = await this.service.syncFromApisunat();
+    async syncFromApisunat(dto) {
+        const success = await this.service.syncFromApisunat(dto.apiKey, dto.apiSecret, dto.apiUrl);
         return { success, message: success ? 'Datos sincronizados desde APISUNAT' : 'No se pudo sincronizar. Verifique sus credenciales.' };
     }
     async update(dto) {
@@ -85,8 +85,9 @@ __decorate([
     (0, public_decorator_1.Public)(),
     (0, common_1.Post)('sync'),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], CompanySettingsController.prototype, "syncFromApisunat", null);
 __decorate([

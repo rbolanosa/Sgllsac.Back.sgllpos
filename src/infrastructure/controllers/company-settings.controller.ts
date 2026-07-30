@@ -43,8 +43,8 @@ export class CompanySettingsController {
   @Public()
   @Post('sync')
   @HttpCode(HttpStatus.OK)
-  async syncFromApisunat() {
-    const success = await this.service.syncFromApisunat();
+  async syncFromApisunat(@Body() dto: { apiKey?: string; apiSecret?: string; apiUrl?: string }) {
+    const success = await this.service.syncFromApisunat(dto.apiKey, dto.apiSecret, dto.apiUrl);
     return { success, message: success ? 'Datos sincronizados desde APISUNAT' : 'No se pudo sincronizar. Verifique sus credenciales.' };
   }
 

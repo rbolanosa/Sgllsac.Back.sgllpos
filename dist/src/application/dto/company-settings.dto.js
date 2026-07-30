@@ -16,6 +16,7 @@ class UpdateCompanySettingsDto {
 }
 exports.UpdateCompanySettingsDto = UpdateCompanySettingsDto;
 __decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.MinLength)(11),
     (0, class_validator_1.MaxLength)(11),
@@ -23,6 +24,7 @@ __decorate([
     __metadata("design:type", String)
 ], UpdateCompanySettingsDto.prototype, "ruc", void 0);
 __decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.MaxLength)(200),
     __metadata("design:type", String)
@@ -34,6 +36,7 @@ __decorate([
     __metadata("design:type", String)
 ], UpdateCompanySettingsDto.prototype, "nombreComercial", void 0);
 __decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateCompanySettingsDto.prototype, "direccion", void 0);

@@ -1,9 +1,9 @@
 import { TaxRegime } from '../../domain/entities/company-settings.entity';
 export declare class UpdateCompanySettingsDto {
-    ruc: string;
-    razonSocial: string;
+    ruc?: string;
+    razonSocial?: string;
     nombreComercial?: string;
-    direccion: string;
+    direccion?: string;
     ubigeo?: string;
     distrito?: string;
     provincia?: string;
