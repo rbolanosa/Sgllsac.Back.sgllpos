@@ -184,6 +184,14 @@ export class ProductEntity {
   @Column({ name: 'box_unit_name', type: 'varchar', length: 50, nullable: true, default: 'Caja' })
   boxUnitName: string | null;
 
+  /**
+   * Peso unitario del producto en kilogramos (KGM).
+   * Se usa para calcular automáticamente el peso total en la Guía de Remisión.
+   * Ej: 1 botella de agua = 0.600 kg
+   */
+  @Column({ name: 'peso_unitario', type: 'decimal', precision: 10, scale: 3, nullable: true })
+  pesoUnitario: number | null;
+
   @Column({ name: 'is_active', type: 'boolean', default: true })
   isActive: boolean;
 

@@ -1,3 +1,4 @@
+import { Response } from 'express';
 import { GuiaRemisionService } from '../../domain/services/guia-remision.service';
 import { CreateGuiaRemisionDto } from '../../application/dtos/guia-remision.dto';
 export declare class GuiaRemisionController {
@@ -45,6 +46,7 @@ export declare class GuiaRemisionController {
         page: number;
         limit: number;
     }>;
+    getPdf(id: number, res: Response): Promise<void>;
     findOne(id: number): Promise<{
         transportista: any;
         vehiculo: any;

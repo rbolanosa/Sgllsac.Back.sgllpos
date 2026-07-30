@@ -165,6 +165,10 @@ __decorate([
     __metadata("design:type", String)
 ], ProductEntity.prototype, "boxUnitName", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ name: 'peso_unitario', type: 'decimal', precision: 10, scale: 3, nullable: true }),
+    __metadata("design:type", Number)
+], ProductEntity.prototype, "pesoUnitario", void 0);
+__decorate([
     (0, typeorm_1.Column)({ name: 'is_active', type: 'boolean', default: true }),
     __metadata("design:type", Boolean)
 ], ProductEntity.prototype, "isActive", void 0);

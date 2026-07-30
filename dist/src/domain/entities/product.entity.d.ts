@@ -68,6 +68,7 @@ export declare class ProductEntity {
     unitsPerBox: number | null;
     boxSalePrice: number | null;
     boxUnitName: string | null;
+    pesoUnitario: number | null;
     isActive: boolean;
     createdAt: Date;
     updatedAt: Date;

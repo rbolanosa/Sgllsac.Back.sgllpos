@@ -175,6 +175,17 @@ __decorate([
     (0, class_validator_1.MaxLength)(50),
     __metadata("design:type", String)
 ], CreateProductDto.prototype, "boxUnitName", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        example: 0.6,
+        description: 'Peso unitario en kg (KGM). Para calcular el peso total en la Guía de Remisión automáticamente.',
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.Min)(0),
+    __metadata("design:type", Number)
+], CreateProductDto.prototype, "pesoUnitario", void 0);
 class UpdateProductDto {
 }
 exports.UpdateProductDto = UpdateProductDto;
@@ -316,6 +327,17 @@ __decorate([
     (0, class_validator_1.Min)(0),
     __metadata("design:type", Number)
 ], UpdateProductDto.prototype, "boxSalePrice", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        example: 0.6,
+        description: 'Peso unitario en kg. Para calcular el peso total en la Guía de Remisión.',
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.Min)(0),
+    __metadata("design:type", Number)
+], UpdateProductDto.prototype, "pesoUnitario", void 0);
 class StockAdjustmentDto {
 }
 exports.StockAdjustmentDto = StockAdjustmentDto;

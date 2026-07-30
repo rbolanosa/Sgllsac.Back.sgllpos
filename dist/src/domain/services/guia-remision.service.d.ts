@@ -2,11 +2,13 @@ import { Repository } from 'typeorm';
 import { GuiaRemisionEntity } from '../entities/guia-remision.entity';
 import { CreateGuiaRemisionDto } from '../../application/dtos/guia-remision.dto';
 import { FacturacionAdapter } from '../../infrastructure/adapters/facturacion.adapter';
+import { CompanySettingsEntity } from '../entities/company-settings.entity';
 export declare class GuiaRemisionService {
     private readonly repo;
+    private readonly companyRepo;
     private readonly facturacion;
     private readonly logger;
-    constructor(repo: Repository<GuiaRemisionEntity>, facturacion: FacturacionAdapter);
+    constructor(repo: Repository<GuiaRemisionEntity>, companyRepo: Repository<CompanySettingsEntity>, facturacion: FacturacionAdapter);
     create(dto: CreateGuiaRemisionDto): Promise<GuiaRemisionEntity>;
     findAll(params: {
         page?: number;
@@ -97,4 +99,8 @@ export declare class GuiaRemisionService {
     private sendToApisunat;
     private serialize;
     private deserializeToDto;
+    generatePdfBuffer(id: number): Promise<{
+        buffer: Buffer;
+        fileName: string;
+    }>;
 }

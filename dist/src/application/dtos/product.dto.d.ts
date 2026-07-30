@@ -18,6 +18,7 @@ export declare class CreateProductDto {
     unitsPerBox?: number;
     boxSalePrice?: number;
     boxUnitName?: string;
+    pesoUnitario?: number;
 }
 export declare class UpdateProductDto {
     barcode?: string;
@@ -38,6 +39,7 @@ export declare class UpdateProductDto {
     hasBoxPresentation?: boolean;
     unitsPerBox?: number;
     boxSalePrice?: number;
+    pesoUnitario?: number;
 }
 export declare class StockAdjustmentDto {
     quantity: number;

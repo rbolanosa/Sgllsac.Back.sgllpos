@@ -1,9 +1,11 @@
 import {
-  Controller, Get, Post, Param, Body, Query, ParseIntPipe,
+  Controller, Get, Post, Param, Body, Query, ParseIntPipe, Res,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { GuiaRemisionService } from '../../domain/services/guia-remision.service';
 import { CreateGuiaRemisionDto } from '../../application/dtos/guia-remision.dto';
+import { Public } from '../decorators/public.decorator';
 
 @ApiTags('Guías de Remisión')
 @ApiBearerAuth('JWT-auth')
@@ -21,6 +23,21 @@ export class GuiaRemisionController {
     @Query('to')          to?:          string,
   ) {
     return this.service.findAll({ page: +page, limit: +limit, sunatStatus, from, to });
+  }
+
+  @Public()
+  @Get(':id/pdf')
+  @ApiOperation({ summary: 'Descargar o ver la Guía de Remisión en PDF 80mm' })
+  async getPdf(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
+    try {
+      const { buffer, fileName } = await this.service.generatePdfBuffer(id);
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `inline; filename="${fileName}"`);
+      res.send(buffer);
+    } catch (err) {
+      console.error('ERROR GENERATING GUIA PDF:', err);
+      res.status(500).json({ statusCode: 500, message: err?.message || 'Error al generar PDF' });
+    }
   }
 
   @Get(':id')

@@ -4,6 +4,11 @@ import { Repository } from 'typeorm';
 import { GuiaRemisionEntity } from '../entities/guia-remision.entity';
 import { CreateGuiaRemisionDto } from '../../application/dtos/guia-remision.dto';
 import { FacturacionAdapter } from '../../infrastructure/adapters/facturacion.adapter';
+import { CompanySettingsEntity } from '../entities/company-settings.entity';
+import PDFDocument from 'pdfkit';
+import * as QRCode from 'qrcode';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class GuiaRemisionService {
@@ -12,6 +17,8 @@ export class GuiaRemisionService {
   constructor(
     @InjectRepository(GuiaRemisionEntity)
     private readonly repo: Repository<GuiaRemisionEntity>,
+    @InjectRepository(CompanySettingsEntity)
+    private readonly companyRepo: Repository<CompanySettingsEntity>,
     private readonly facturacion: FacturacionAdapter,
   ) {}
 
@@ -306,5 +313,210 @@ export class GuiaRemisionService {
     }
     dto.fecha_de_entrega_al_transportista = entity.fechaEntregaTransportista ?? undefined;
     return dto;
+  }
+
+  // ── PDF Generation (80mm ticket) ────────────────────────────────────────
+
+  async generatePdfBuffer(id: number): Promise<{ buffer: Buffer; fileName: string }> {
+    const guia = await this.findById(id);
+    const company = await this.companyRepo.findOne({ where: {} }).catch(() => null);
+
+    const pageWidth  = 240;   // 80mm ≈ 227pt, usamos 240 igual que comprobante
+    const margin     = 10;
+    const printWidth = pageWidth - margin * 2;
+
+    // Logo
+    let logoBuffer: Buffer | null = null;
+    const logoUrl = (company as any)?.logoUrl || null;
+    if (logoUrl) {
+      try {
+        if (logoUrl.startsWith('http')) {
+          const axios = await import('axios');
+          const r = await axios.default.get(logoUrl, { responseType: 'arraybuffer', timeout: 5000 });
+          logoBuffer = Buffer.from(r.data);
+        } else {
+          const rel  = logoUrl.startsWith('/') ? logoUrl.substring(1) : logoUrl;
+          const full = path.join(process.cwd(), rel);
+          if (fs.existsSync(full)) logoBuffer = fs.readFileSync(full);
+        }
+      } catch { /* skip logo */ }
+    }
+
+    // QR: apunta al pdfUrl de SUNAT si existe
+    const backendBase = process.env.BACKEND_URL || 'http://localhost:3000';
+    const fullPdfUrl = guia.pdfUrl
+      ? (guia.pdfUrl.startsWith('http') ? guia.pdfUrl : `${backendBase}${guia.pdfUrl}`)
+      : null;
+    const ruc = (company as any)?.ruc || '';
+    const parts = (guia.numeroCompleto || guia.serie || 'T001-0').split('-');
+    const serie  = parts[0] || 'T001';
+    const numero = parts[1] || '0';
+    const fechaIso = guia.fechaEmision
+      ? new Date(guia.fechaEmision).toISOString().split('T')[0]
+      : '';
+    const qrText = fullPdfUrl
+      ? fullPdfUrl
+      : `${ruc}|09|${serie}|${numero}|${fechaIso}|${guia.destTipoDoc || '6'}|${guia.destNumDoc || ''}|`;
+    let qrBuffer: Buffer | null = null;
+    try { qrBuffer = await QRCode.toBuffer(qrText, { margin: 1, width: 100 }); } catch { /* skip */ }
+
+    // Items
+    const items: any[] = (() => {
+      try { return JSON.parse(guia.itemsJson || '[]'); } catch { return []; }
+    })();
+
+    // Transportista / Conductor
+    const trans = guia.transportistaJson ? (() => { try { return JSON.parse(guia.transportistaJson); } catch { return {}; } })() : null;
+    const vehi  = guia.vehiculoJson      ? (() => { try { return JSON.parse(guia.vehiculoJson);      } catch { return {}; } })() : null;
+    const cond  = guia.conductorJson     ? (() => { try { return JSON.parse(guia.conductorJson);     } catch { return {}; } })() : null;
+
+    const COD_LABEL: Record<string, string> = {
+      '01': '01 - Venta', '02': '02 - Compra',
+      '04': '04 - Traslado entre establecimientos',
+      '08': '08 - Importacion', '09': '09 - Exportacion', '13': '13 - Otros',
+    };
+    const motivoLabel = COD_LABEL[guia.codTraslado] || guia.codTraslado;
+    const modLabel    = guia.modTraslado === '01' ? 'Transporte Publico' : 'Transporte Privado';
+    const fechaEmision  = guia.fechaEmision  ? new Date(guia.fechaEmision).toLocaleDateString('es-PE')  : '';
+    const fechaTraslado = guia.fechaTraslado ? new Date(guia.fechaTraslado).toLocaleDateString('es-PE') : '';
+    const numDisplay    = guia.numeroCompleto || `${guia.serie}-PENDIENTE`;
+    const tradeName     = ((company as any)?.nombreComercial || (company as any)?.razonSocial || '').toUpperCase();
+    const addr          = (company as any)?.direccion || '';
+
+    const buffer = await new Promise<Buffer>((resolve, reject) => {
+      const doc = new PDFDocument({ size: [pageWidth, 900], margin });
+      const chunks: Buffer[] = [];
+      doc.on('data', (c: Buffer) => chunks.push(c));
+      doc.on('end', () => resolve(Buffer.concat(chunks)));
+      doc.on('error', reject);
+
+      const drawLabelVal = (label: string, val: string, fontBoldVal = false) => {
+        const currentY = doc.y;
+        doc.font('Helvetica').fontSize(8).text(label, margin, currentY, { width: 75 });
+        if (fontBoldVal) doc.font('Helvetica-Bold'); else doc.font('Helvetica');
+        doc.fontSize(8).text(val || '—', margin + 75, currentY, { width: printWidth - 75 });
+        doc.y = currentY + 11;
+      };
+
+      // 1. Logo
+      if (logoBuffer) {
+        try {
+          doc.image(logoBuffer, (pageWidth - 90) / 2, doc.y, { fit: [90, 55], align: 'center' });
+          doc.y += 60;
+        } catch { /* skip */ }
+      }
+
+      // 2. Empresa Header
+      doc.font('Helvetica-Bold').fontSize(11).text(tradeName, margin, doc.y, { width: printWidth, align: 'center' });
+      doc.font('Helvetica').fontSize(8).text(`RUC: ${ruc}`, margin, doc.y, { width: printWidth, align: 'center' });
+      if (addr) doc.text(`D. Comercial: ${addr}`, margin, doc.y, { width: printWidth, align: 'center' });
+      doc.moveDown(0.4);
+
+      // 3. Titulo Comprobante
+      doc.font('Helvetica-Bold').fontSize(10).text('GUÍA DE REMISIÓN REMITENTE', margin, doc.y, { width: printWidth, align: 'center' });
+      doc.fontSize(12).text(numDisplay, margin, doc.y, { width: printWidth, align: 'center' });
+      doc.moveDown(0.4);
+
+      // 4. Datos generales
+      drawLabelVal('F. Emisión:', fechaEmision);
+      drawLabelVal('F. Traslado:', fechaTraslado);
+      drawLabelVal('Motivo:', motivoLabel);
+      drawLabelVal('Modalidad:', modLabel);
+      doc.moveDown(0.3);
+
+      // 5. Destinatario
+      doc.font('Helvetica-Bold').fontSize(8.5).text('DESTINATARIO', margin, doc.y, { width: printWidth });
+      doc.moveDown(0.15);
+      drawLabelVal('Razón Social:', (guia.destRazonSocial || '').toUpperCase(), true);
+      drawLabelVal('RUC / DNI:', guia.destNumDoc || '');
+      doc.moveDown(0.3);
+
+      // 6. Puntos de traslado
+      doc.font('Helvetica-Bold').fontSize(8.5).text('PUNTO DE PARTIDA', margin, doc.y);
+      doc.moveDown(0.15);
+      drawLabelVal('Ubigeo:', guia.partidaUbigeo || '');
+      drawLabelVal('Dirección:', (guia.partidaDireccion || '').toUpperCase());
+      doc.moveDown(0.3);
+
+      doc.font('Helvetica-Bold').fontSize(8.5).text('PUNTO DE LLEGADA', margin, doc.y);
+      doc.moveDown(0.15);
+      drawLabelVal('Ubigeo:', guia.llegadaUbigeo || '');
+      drawLabelVal('Dirección:', (guia.llegadaDireccion || '').toUpperCase());
+      doc.moveDown(0.3);
+
+      // 7. Datos de carga
+      doc.font('Helvetica-Bold').fontSize(8.5).text('DATOS DE CARGA', margin, doc.y);
+      doc.moveDown(0.15);
+      drawLabelVal('Peso Total:', `${Number(guia.pesoTotal || 0).toFixed(3)} ${guia.undPesoTotal || 'KGM'}`);
+      if (guia.numBultos) drawLabelVal('N° Bultos:', String(guia.numBultos));
+      if ((guia as any).comprobanteRef) drawLabelVal('Comprobante:', (guia as any).comprobanteRef);
+      doc.moveDown(0.3);
+
+      // 8. Transportista / Conductor
+      if (guia.modTraslado === '01' && trans) {
+        doc.font('Helvetica-Bold').fontSize(8.5).text('TRANSPORTISTA', margin, doc.y);
+        doc.moveDown(0.15);
+        drawLabelVal('Razón Social:', (trans.razon_social || '').toUpperCase());
+        drawLabelVal('RUC:', trans.num_doc || '');
+        if (trans.nro_mtc) drawLabelVal('N° MTC:', trans.nro_mtc);
+        if (guia.fechaEntregaTransportista) drawLabelVal('F. Entrega:', guia.fechaEntregaTransportista);
+      } else if (guia.modTraslado === '02') {
+        doc.font('Helvetica-Bold').fontSize(8.5).text('VEHÍCULO Y CONDUCTOR', margin, doc.y);
+        doc.moveDown(0.15);
+        if (vehi?.placa) drawLabelVal('Placa:', vehi.placa.toUpperCase());
+        if (cond?.num_doc) drawLabelVal('DNI:', cond.num_doc);
+        if (cond?.nombres || cond?.apellidos)
+          drawLabelVal('Conductor:', [cond.apellidos, cond.nombres].filter(Boolean).join(' ').toUpperCase());
+        if (cond?.licencia) drawLabelVal('Licencia:', cond.licencia);
+      }
+      doc.moveDown(0.3);
+
+      // 9. Tabla de Productos Header
+      const headerY = doc.y;
+      doc.moveTo(margin, headerY).lineTo(pageWidth - margin, headerY).lineWidth(1.2).strokeColor('#000').stroke();
+      doc.font('Helvetica-Bold').fontSize(7.5).text('CANT.', margin, headerY + 4, { width: 32 });
+      doc.text('UNIDAD', margin + 32, headerY + 4, { width: 36 });
+      doc.text('DESCRIPCIÓN', margin + 68, headerY + 4, { width: printWidth - 68 });
+      const headerBottomY = headerY + 16;
+      doc.moveTo(margin, headerBottomY).lineTo(pageWidth - margin, headerBottomY).lineWidth(1.2).strokeColor('#000').stroke();
+      doc.y = headerBottomY + 5;
+
+      // 10. Items
+      doc.font('Helvetica').fontSize(7.5);
+      items.forEach((it: any) => {
+        const rowY = doc.y;
+        doc.text(String(it.cantidad || 1), margin, rowY, { width: 32 });
+        doc.text(it.unidad || 'NIU', margin + 32, rowY, { width: 36 });
+        doc.text((it.descripcion || it.codigo || 'Producto').toUpperCase(), margin + 68, rowY, { width: printWidth - 68 });
+        doc.y = rowY + 11;
+      });
+
+      doc.moveDown(0.3);
+      const totalsLineY = doc.y;
+      doc.moveTo(margin, totalsLineY).lineTo(pageWidth - margin, totalsLineY).lineWidth(1.2).strokeColor('#000').stroke();
+      doc.y = totalsLineY + 8;
+
+      // 11. Bloque QR + Pie
+      const qrY = doc.y;
+      if (qrBuffer) {
+        doc.image(qrBuffer, margin, qrY, { width: 85, height: 85 });
+      }
+
+      const textLeftMargin = margin + 92;
+      doc.font('Helvetica-Bold').fontSize(8).text('GUÍA DE REMISIÓN', textLeftMargin, qrY);
+      doc.font('Helvetica').fontSize(7.5).text('Representación impresa de la Guía de Remisión Electrónica', textLeftMargin, qrY + 12, { width: printWidth - 92 });
+      doc.moveDown(0.4);
+      doc.font('Helvetica-Bold').fontSize(8).text('CONSULTAS:', textLeftMargin, qrY + 38);
+      doc.font('Helvetica').fontSize(7.5).text('www.sunat.gob.pe', textLeftMargin, qrY + 48);
+
+      doc.y = Math.max(doc.y, qrY + 92);
+      doc.moveDown(0.5);
+
+      doc.font('Helvetica').fontSize(7.5).text('Generado por DEVPRO', margin, doc.y, { width: printWidth, align: 'center' });
+
+      doc.end();
+    });
+
+    return { buffer, fileName: `${numDisplay}.pdf` };
   }
 }

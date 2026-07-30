@@ -17,12 +17,25 @@ const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const guia_remision_service_1 = require("../../domain/services/guia-remision.service");
 const guia_remision_dto_1 = require("../../application/dtos/guia-remision.dto");
+const public_decorator_1 = require("../decorators/public.decorator");
 let GuiaRemisionController = class GuiaRemisionController {
     constructor(service) {
         this.service = service;
     }
     findAll(page = 1, limit = 20, sunatStatus, from, to) {
         return this.service.findAll({ page: +page, limit: +limit, sunatStatus, from, to });
+    }
+    async getPdf(id, res) {
+        try {
+            const { buffer, fileName } = await this.service.generatePdfBuffer(id);
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', `inline; filename="${fileName}"`);
+            res.send(buffer);
+        }
+        catch (err) {
+            console.error('ERROR GENERATING GUIA PDF:', err);
+            res.status(500).json({ statusCode: 500, message: err?.message || 'Error al generar PDF' });
+        }
     }
     findOne(id) {
         return this.service.findById(id);
@@ -47,6 +60,16 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object, String, String, String]),
     __metadata("design:returntype", void 0)
 ], GuiaRemisionController.prototype, "findAll", null);
+__decorate([
+    (0, public_decorator_1.Public)(),
+    (0, common_1.Get)(':id/pdf'),
+    (0, swagger_1.ApiOperation)({ summary: 'Descargar o ver la Guía de Remisión en PDF 80mm' }),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:returntype", Promise)
+], GuiaRemisionController.prototype, "getPdf", null);
 __decorate([
     (0, common_1.Get)(':id'),
     (0, swagger_1.ApiOperation)({ summary: 'Obtener una guía de remisión por ID' }),

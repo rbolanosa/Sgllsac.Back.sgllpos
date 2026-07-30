@@ -146,6 +146,16 @@ export class CreateProductDto {
   @IsString()
   @MaxLength(50)
   boxUnitName?: string = 'Caja';
+
+  @ApiPropertyOptional({
+    example: 0.6,
+    description: 'Peso unitario en kg (KGM). Para calcular el peso total en la Guía de Remisión automáticamente.',
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  pesoUnitario?: number;
 }
 
 export class UpdateProductDto {
@@ -270,6 +280,16 @@ export class UpdateProductDto {
   @IsNumber()
   @Min(0)
   boxSalePrice?: number;
+
+  @ApiPropertyOptional({
+    example: 0.6,
+    description: 'Peso unitario en kg. Para calcular el peso total en la Guía de Remisión.',
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  pesoUnitario?: number;
 }
 
 export class StockAdjustmentDto {

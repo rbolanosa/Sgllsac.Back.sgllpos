@@ -4660,3 +4660,1818 @@
 2026-07-29 18:29:27 [info]: Facturación electrónica: Adaptador inicializado.
 2026-07-29 18:29:27 [info]: Facturación electrónica: Adaptador inicializado.
 2026-07-29 18:29:27 [info]: Nest application successfully started
+2026-07-29 18:45:09 [info]: Starting Nest application...
+2026-07-29 18:45:09 [info]: AppModule dependencies initialized
+2026-07-29 18:45:09 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:09 [info]: PassportModule dependencies initialized
+2026-07-29 18:45:09 [info]: ConfigHostModule dependencies initialized
+2026-07-29 18:45:09 [info]: WinstonModule dependencies initialized
+2026-07-29 18:45:09 [info]: HealthModule dependencies initialized
+2026-07-29 18:45:09 [info]: HttpModule dependencies initialized
+2026-07-29 18:45:09 [info]: DiscoveryModule dependencies initialized
+2026-07-29 18:45:09 [info]: ConfigModule dependencies initialized
+2026-07-29 18:45:09 [info]: ConfigModule dependencies initialized
+2026-07-29 18:45:09 [info]: EventEmitterModule dependencies initialized
+2026-07-29 18:45:09 [info]: ScheduleModule dependencies initialized
+2026-07-29 18:45:09 [info]: JwtModule dependencies initialized
+2026-07-29 18:45:09 [info]: TypeOrmCoreModule dependencies initialized
+2026-07-29 18:45:09 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:09 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:09 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:09 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:09 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:09 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:09 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:09 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:09 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:09 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:09 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:09 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:09 [info]: CategoryModule dependencies initialized
+2026-07-29 18:45:09 [info]: SupplierModule dependencies initialized
+2026-07-29 18:45:09 [info]: CustomerModule dependencies initialized
+2026-07-29 18:45:09 [info]: AuthModule dependencies initialized
+2026-07-29 18:45:09 [info]: EstablishmentsModule dependencies initialized
+2026-07-29 18:45:09 [info]: UserModule dependencies initialized
+2026-07-29 18:45:09 [info]: ProductModule dependencies initialized
+2026-07-29 18:45:09 [info]: PurchaseOrderModule dependencies initialized
+2026-07-29 18:45:09 [info]: CompanySettingsModule dependencies initialized
+2026-07-29 18:45:09 [info]: GuiaRemisionModule dependencies initialized
+2026-07-29 18:45:09 [info]: SaleModule dependencies initialized
+2026-07-29 18:45:09 [info]: CashModule dependencies initialized
+2026-07-29 18:45:09 [info]: AuthController {/api/auth} (version: 1):
+2026-07-29 18:45:09 [info]: Mapped {/api/auth/login, POST} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/auth/status, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: UserController {/api/users} (version: 1):
+2026-07-29 18:45:09 [info]: Mapped {/api/users, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/users/:id, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/users, POST} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/users/:id, PUT} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/users/:id, DELETE} (version: 1) route
+2026-07-29 18:45:09 [info]: HealthController {/api/health} (version: 1):
+2026-07-29 18:45:09 [info]: Mapped {/api/health, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: CategoryController {/api/categories} (version: 1):
+2026-07-29 18:45:09 [info]: Mapped {/api/categories, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/categories/:id, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/categories, POST} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/categories/:id, PUT} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/categories/:id, DELETE} (version: 1) route
+2026-07-29 18:45:09 [info]: SupplierController {/api/suppliers} (version: 1):
+2026-07-29 18:45:09 [info]: Mapped {/api/suppliers, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/suppliers/:id, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/suppliers, POST} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/suppliers/:id, PUT} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/suppliers/:id, DELETE} (version: 1) route
+2026-07-29 18:45:09 [info]: ProductController {/api/products} (version: 1):
+2026-07-29 18:45:09 [info]: Mapped {/api/products, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/products/low-stock, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/products/excel/template, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/products/excel/import, POST} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/products/barcode/:barcode, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/products/:id, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/products, POST} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/products/:id, PUT} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/products/:id, DELETE} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/products/:id/batches, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/products/:id/stock/add, PATCH} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/products/:id/stock/subtract, PATCH} (version: 1) route
+2026-07-29 18:45:09 [info]: CustomerController {/api/customers} (version: 1):
+2026-07-29 18:45:09 [info]: Mapped {/api/customers, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/customers/lookup/:doc, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/customers/:id, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/customers, POST} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/customers/:id, PUT} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/customers/:id, DELETE} (version: 1) route
+2026-07-29 18:45:09 [info]: SaleController {/api/sales} (version: 1):
+2026-07-29 18:45:09 [info]: Mapped {/api/sales, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/sales/summary, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/sales/comprobante/pdf/:token, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/sales/:id/pdf-token, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/sales/:id/pdf, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/sales/:id, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/sales, POST} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/sales/credit-note, POST} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/sales/:id/void, PATCH} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/sales/:id/send-whatsapp, POST} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/sales/:id/resend-sunat, POST} (version: 1) route
+2026-07-29 18:45:09 [info]: CompanySettingsController {/api/company-settings} (version: 1):
+2026-07-29 18:45:09 [info]: Mapped {/api/company-settings, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/company-settings, PUT} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/company-settings/logo, POST} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/company-settings/register-sunat-api, POST} (version: 1) route
+2026-07-29 18:45:09 [info]: CashController {/api/caja} (version: 1):
+2026-07-29 18:45:09 [info]: Mapped {/api/caja/abrir, POST} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/caja/activa, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/caja/resumen, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/caja/movimiento, POST} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/caja/cerrar, POST} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/caja/historial, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/caja/sesion/:id, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: PurchaseOrderController {/api/purchase-orders} (version: 1):
+2026-07-29 18:45:09 [info]: Mapped {/api/purchase-orders, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/purchase-orders/:id, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/purchase-orders, POST} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/purchase-orders/:id/receive, PATCH} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/purchase-orders/:id/cancel, PATCH} (version: 1) route
+2026-07-29 18:45:09 [info]: EstablishmentsController {/api/establishments} (version: 1):
+2026-07-29 18:45:09 [info]: Mapped {/api/establishments, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/establishments, POST} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/establishments/series, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/establishments/series, POST} (version: 1) route
+2026-07-29 18:45:09 [info]: GuiaRemisionController {/api/guias-remision} (version: 1):
+2026-07-29 18:45:09 [info]: Mapped {/api/guias-remision, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/guias-remision/:id, GET} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/guias-remision, POST} (version: 1) route
+2026-07-29 18:45:09 [info]: Mapped {/api/guias-remision/:id/resend-sunat, POST} (version: 1) route
+2026-07-29 18:45:09 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 18:45:09 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 18:45:09 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 18:45:09 [info]: Nest application successfully started
+2026-07-29 18:45:20 [info]: Starting Nest application...
+2026-07-29 18:45:20 [info]: AppModule dependencies initialized
+2026-07-29 18:45:20 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:20 [info]: PassportModule dependencies initialized
+2026-07-29 18:45:20 [info]: ConfigHostModule dependencies initialized
+2026-07-29 18:45:20 [info]: WinstonModule dependencies initialized
+2026-07-29 18:45:20 [info]: HealthModule dependencies initialized
+2026-07-29 18:45:20 [info]: HttpModule dependencies initialized
+2026-07-29 18:45:20 [info]: DiscoveryModule dependencies initialized
+2026-07-29 18:45:20 [info]: ConfigModule dependencies initialized
+2026-07-29 18:45:20 [info]: ConfigModule dependencies initialized
+2026-07-29 18:45:20 [info]: EventEmitterModule dependencies initialized
+2026-07-29 18:45:20 [info]: ScheduleModule dependencies initialized
+2026-07-29 18:45:20 [info]: JwtModule dependencies initialized
+2026-07-29 18:45:20 [info]: TypeOrmCoreModule dependencies initialized
+2026-07-29 18:45:20 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:20 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:20 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:20 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:20 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:20 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:20 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:20 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:20 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:20 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:20 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:20 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:20 [info]: CategoryModule dependencies initialized
+2026-07-29 18:45:20 [info]: SupplierModule dependencies initialized
+2026-07-29 18:45:20 [info]: CustomerModule dependencies initialized
+2026-07-29 18:45:20 [info]: AuthModule dependencies initialized
+2026-07-29 18:45:20 [info]: EstablishmentsModule dependencies initialized
+2026-07-29 18:45:20 [info]: UserModule dependencies initialized
+2026-07-29 18:45:20 [info]: ProductModule dependencies initialized
+2026-07-29 18:45:20 [info]: PurchaseOrderModule dependencies initialized
+2026-07-29 18:45:20 [info]: CompanySettingsModule dependencies initialized
+2026-07-29 18:45:20 [info]: GuiaRemisionModule dependencies initialized
+2026-07-29 18:45:20 [info]: SaleModule dependencies initialized
+2026-07-29 18:45:20 [info]: CashModule dependencies initialized
+2026-07-29 18:45:20 [info]: AuthController {/api/auth} (version: 1):
+2026-07-29 18:45:20 [info]: Mapped {/api/auth/login, POST} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/auth/status, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: UserController {/api/users} (version: 1):
+2026-07-29 18:45:20 [info]: Mapped {/api/users, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/users/:id, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/users, POST} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/users/:id, PUT} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/users/:id, DELETE} (version: 1) route
+2026-07-29 18:45:20 [info]: HealthController {/api/health} (version: 1):
+2026-07-29 18:45:20 [info]: Mapped {/api/health, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: CategoryController {/api/categories} (version: 1):
+2026-07-29 18:45:20 [info]: Mapped {/api/categories, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/categories/:id, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/categories, POST} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/categories/:id, PUT} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/categories/:id, DELETE} (version: 1) route
+2026-07-29 18:45:20 [info]: SupplierController {/api/suppliers} (version: 1):
+2026-07-29 18:45:20 [info]: Mapped {/api/suppliers, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/suppliers/:id, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/suppliers, POST} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/suppliers/:id, PUT} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/suppliers/:id, DELETE} (version: 1) route
+2026-07-29 18:45:20 [info]: ProductController {/api/products} (version: 1):
+2026-07-29 18:45:20 [info]: Mapped {/api/products, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/products/low-stock, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/products/excel/template, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/products/excel/import, POST} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/products/barcode/:barcode, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/products/:id, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/products, POST} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/products/:id, PUT} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/products/:id, DELETE} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/products/:id/batches, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/products/:id/stock/add, PATCH} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/products/:id/stock/subtract, PATCH} (version: 1) route
+2026-07-29 18:45:20 [info]: CustomerController {/api/customers} (version: 1):
+2026-07-29 18:45:20 [info]: Mapped {/api/customers, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/customers/lookup/:doc, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/customers/:id, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/customers, POST} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/customers/:id, PUT} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/customers/:id, DELETE} (version: 1) route
+2026-07-29 18:45:20 [info]: SaleController {/api/sales} (version: 1):
+2026-07-29 18:45:20 [info]: Mapped {/api/sales, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/sales/summary, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/sales/comprobante/pdf/:token, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/sales/:id/pdf-token, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/sales/:id/pdf, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/sales/:id, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/sales, POST} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/sales/credit-note, POST} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/sales/:id/void, PATCH} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/sales/:id/send-whatsapp, POST} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/sales/:id/resend-sunat, POST} (version: 1) route
+2026-07-29 18:45:20 [info]: CompanySettingsController {/api/company-settings} (version: 1):
+2026-07-29 18:45:20 [info]: Mapped {/api/company-settings, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/company-settings, PUT} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/company-settings/logo, POST} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/company-settings/register-sunat-api, POST} (version: 1) route
+2026-07-29 18:45:20 [info]: CashController {/api/caja} (version: 1):
+2026-07-29 18:45:20 [info]: Mapped {/api/caja/abrir, POST} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/caja/activa, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/caja/resumen, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/caja/movimiento, POST} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/caja/cerrar, POST} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/caja/historial, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/caja/sesion/:id, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: PurchaseOrderController {/api/purchase-orders} (version: 1):
+2026-07-29 18:45:20 [info]: Mapped {/api/purchase-orders, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/purchase-orders/:id, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/purchase-orders, POST} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/purchase-orders/:id/receive, PATCH} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/purchase-orders/:id/cancel, PATCH} (version: 1) route
+2026-07-29 18:45:20 [info]: EstablishmentsController {/api/establishments} (version: 1):
+2026-07-29 18:45:20 [info]: Mapped {/api/establishments, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/establishments, POST} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/establishments/series, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/establishments/series, POST} (version: 1) route
+2026-07-29 18:45:20 [info]: GuiaRemisionController {/api/guias-remision} (version: 1):
+2026-07-29 18:45:20 [info]: Mapped {/api/guias-remision, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/guias-remision/:id, GET} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/guias-remision, POST} (version: 1) route
+2026-07-29 18:45:20 [info]: Mapped {/api/guias-remision/:id/resend-sunat, POST} (version: 1) route
+2026-07-29 18:45:20 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 18:45:20 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 18:45:20 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 18:45:20 [info]: Nest application successfully started
+2026-07-29 18:45:32 [error]: QueryFailedError: Unknown column 'p.peso_unitario' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getMany (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1766:25)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-07-29 18:45:43 [info]: Starting Nest application...
+2026-07-29 18:45:43 [info]: AppModule dependencies initialized
+2026-07-29 18:45:43 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:43 [info]: PassportModule dependencies initialized
+2026-07-29 18:45:43 [info]: ConfigHostModule dependencies initialized
+2026-07-29 18:45:43 [info]: WinstonModule dependencies initialized
+2026-07-29 18:45:43 [info]: HealthModule dependencies initialized
+2026-07-29 18:45:43 [info]: HttpModule dependencies initialized
+2026-07-29 18:45:43 [info]: DiscoveryModule dependencies initialized
+2026-07-29 18:45:43 [info]: ConfigModule dependencies initialized
+2026-07-29 18:45:43 [info]: ConfigModule dependencies initialized
+2026-07-29 18:45:43 [info]: EventEmitterModule dependencies initialized
+2026-07-29 18:45:43 [info]: ScheduleModule dependencies initialized
+2026-07-29 18:45:43 [info]: JwtModule dependencies initialized
+2026-07-29 18:45:43 [info]: TypeOrmCoreModule dependencies initialized
+2026-07-29 18:45:43 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:43 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:43 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:43 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:43 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:43 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:43 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:43 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:43 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:43 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:43 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:43 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:45:43 [info]: CategoryModule dependencies initialized
+2026-07-29 18:45:43 [info]: SupplierModule dependencies initialized
+2026-07-29 18:45:43 [info]: CustomerModule dependencies initialized
+2026-07-29 18:45:43 [info]: AuthModule dependencies initialized
+2026-07-29 18:45:43 [info]: EstablishmentsModule dependencies initialized
+2026-07-29 18:45:43 [info]: UserModule dependencies initialized
+2026-07-29 18:45:43 [info]: ProductModule dependencies initialized
+2026-07-29 18:45:43 [info]: PurchaseOrderModule dependencies initialized
+2026-07-29 18:45:43 [info]: CompanySettingsModule dependencies initialized
+2026-07-29 18:45:43 [info]: GuiaRemisionModule dependencies initialized
+2026-07-29 18:45:43 [info]: SaleModule dependencies initialized
+2026-07-29 18:45:43 [info]: CashModule dependencies initialized
+2026-07-29 18:45:43 [info]: AuthController {/api/auth} (version: 1):
+2026-07-29 18:45:43 [info]: Mapped {/api/auth/login, POST} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/auth/status, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: UserController {/api/users} (version: 1):
+2026-07-29 18:45:43 [info]: Mapped {/api/users, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/users/:id, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/users, POST} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/users/:id, PUT} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/users/:id, DELETE} (version: 1) route
+2026-07-29 18:45:43 [info]: HealthController {/api/health} (version: 1):
+2026-07-29 18:45:43 [info]: Mapped {/api/health, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: CategoryController {/api/categories} (version: 1):
+2026-07-29 18:45:43 [info]: Mapped {/api/categories, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/categories/:id, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/categories, POST} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/categories/:id, PUT} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/categories/:id, DELETE} (version: 1) route
+2026-07-29 18:45:43 [info]: SupplierController {/api/suppliers} (version: 1):
+2026-07-29 18:45:43 [info]: Mapped {/api/suppliers, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/suppliers/:id, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/suppliers, POST} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/suppliers/:id, PUT} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/suppliers/:id, DELETE} (version: 1) route
+2026-07-29 18:45:43 [info]: ProductController {/api/products} (version: 1):
+2026-07-29 18:45:43 [info]: Mapped {/api/products, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/products/low-stock, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/products/excel/template, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/products/excel/import, POST} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/products/barcode/:barcode, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/products/:id, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/products, POST} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/products/:id, PUT} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/products/:id, DELETE} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/products/:id/batches, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/products/:id/stock/add, PATCH} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/products/:id/stock/subtract, PATCH} (version: 1) route
+2026-07-29 18:45:43 [info]: CustomerController {/api/customers} (version: 1):
+2026-07-29 18:45:43 [info]: Mapped {/api/customers, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/customers/lookup/:doc, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/customers/:id, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/customers, POST} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/customers/:id, PUT} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/customers/:id, DELETE} (version: 1) route
+2026-07-29 18:45:43 [info]: SaleController {/api/sales} (version: 1):
+2026-07-29 18:45:43 [info]: Mapped {/api/sales, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/sales/summary, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/sales/comprobante/pdf/:token, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/sales/:id/pdf-token, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/sales/:id/pdf, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/sales/:id, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/sales, POST} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/sales/credit-note, POST} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/sales/:id/void, PATCH} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/sales/:id/send-whatsapp, POST} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/sales/:id/resend-sunat, POST} (version: 1) route
+2026-07-29 18:45:43 [info]: CompanySettingsController {/api/company-settings} (version: 1):
+2026-07-29 18:45:43 [info]: Mapped {/api/company-settings, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/company-settings, PUT} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/company-settings/logo, POST} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/company-settings/register-sunat-api, POST} (version: 1) route
+2026-07-29 18:45:43 [info]: CashController {/api/caja} (version: 1):
+2026-07-29 18:45:43 [info]: Mapped {/api/caja/abrir, POST} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/caja/activa, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/caja/resumen, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/caja/movimiento, POST} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/caja/cerrar, POST} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/caja/historial, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/caja/sesion/:id, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: PurchaseOrderController {/api/purchase-orders} (version: 1):
+2026-07-29 18:45:43 [info]: Mapped {/api/purchase-orders, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/purchase-orders/:id, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/purchase-orders, POST} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/purchase-orders/:id/receive, PATCH} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/purchase-orders/:id/cancel, PATCH} (version: 1) route
+2026-07-29 18:45:43 [info]: EstablishmentsController {/api/establishments} (version: 1):
+2026-07-29 18:45:43 [info]: Mapped {/api/establishments, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/establishments, POST} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/establishments/series, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/establishments/series, POST} (version: 1) route
+2026-07-29 18:45:43 [info]: GuiaRemisionController {/api/guias-remision} (version: 1):
+2026-07-29 18:45:43 [info]: Mapped {/api/guias-remision, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/guias-remision/:id, GET} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/guias-remision, POST} (version: 1) route
+2026-07-29 18:45:43 [info]: Mapped {/api/guias-remision/:id/resend-sunat, POST} (version: 1) route
+2026-07-29 18:45:43 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 18:45:43 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 18:45:43 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 18:45:43 [info]: Nest application successfully started
+2026-07-29 18:46:00 [error]: QueryFailedError: Unknown column 'p.peso_unitario' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getMany (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1766:25)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-07-29 18:46:10 [error]: QueryFailedError: Unknown column 'p.peso_unitario' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getMany (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1766:25)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-07-29 18:46:20 [error]: QueryFailedError: Unknown column 'p.peso_unitario' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getMany (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1766:25)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-07-29 18:46:31 [error]: QueryFailedError: Unknown column 'p.peso_unitario' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getMany (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1766:25)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-07-29 18:46:40 [error]: QueryFailedError: Unknown column 'p.peso_unitario' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getMany (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1766:25)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-07-29 18:46:51 [error]: QueryFailedError: Unknown column 'p.peso_unitario' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getMany (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1766:25)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-07-29 18:46:58 [info]: Starting Nest application...
+2026-07-29 18:46:58 [info]: AppModule dependencies initialized
+2026-07-29 18:46:58 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:46:58 [info]: PassportModule dependencies initialized
+2026-07-29 18:46:58 [info]: ConfigHostModule dependencies initialized
+2026-07-29 18:46:58 [info]: WinstonModule dependencies initialized
+2026-07-29 18:46:58 [info]: HealthModule dependencies initialized
+2026-07-29 18:46:58 [info]: HttpModule dependencies initialized
+2026-07-29 18:46:58 [info]: DiscoveryModule dependencies initialized
+2026-07-29 18:46:58 [info]: ConfigModule dependencies initialized
+2026-07-29 18:46:58 [info]: ConfigModule dependencies initialized
+2026-07-29 18:46:58 [info]: EventEmitterModule dependencies initialized
+2026-07-29 18:46:58 [info]: ScheduleModule dependencies initialized
+2026-07-29 18:46:58 [info]: JwtModule dependencies initialized
+2026-07-29 18:46:59 [info]: TypeOrmCoreModule dependencies initialized
+2026-07-29 18:46:59 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:46:59 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:46:59 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:46:59 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:46:59 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:46:59 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:46:59 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:46:59 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:46:59 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:46:59 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:46:59 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:46:59 [info]: TypeOrmModule dependencies initialized
+2026-07-29 18:46:59 [info]: CategoryModule dependencies initialized
+2026-07-29 18:46:59 [info]: SupplierModule dependencies initialized
+2026-07-29 18:46:59 [info]: CustomerModule dependencies initialized
+2026-07-29 18:46:59 [info]: AuthModule dependencies initialized
+2026-07-29 18:46:59 [info]: EstablishmentsModule dependencies initialized
+2026-07-29 18:46:59 [info]: UserModule dependencies initialized
+2026-07-29 18:46:59 [info]: ProductModule dependencies initialized
+2026-07-29 18:46:59 [info]: PurchaseOrderModule dependencies initialized
+2026-07-29 18:46:59 [info]: CompanySettingsModule dependencies initialized
+2026-07-29 18:46:59 [info]: GuiaRemisionModule dependencies initialized
+2026-07-29 18:46:59 [info]: SaleModule dependencies initialized
+2026-07-29 18:46:59 [info]: CashModule dependencies initialized
+2026-07-29 18:46:59 [info]: AuthController {/api/auth} (version: 1):
+2026-07-29 18:46:59 [info]: Mapped {/api/auth/login, POST} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/auth/status, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: UserController {/api/users} (version: 1):
+2026-07-29 18:46:59 [info]: Mapped {/api/users, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/users/:id, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/users, POST} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/users/:id, PUT} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/users/:id, DELETE} (version: 1) route
+2026-07-29 18:46:59 [info]: HealthController {/api/health} (version: 1):
+2026-07-29 18:46:59 [info]: Mapped {/api/health, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: CategoryController {/api/categories} (version: 1):
+2026-07-29 18:46:59 [info]: Mapped {/api/categories, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/categories/:id, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/categories, POST} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/categories/:id, PUT} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/categories/:id, DELETE} (version: 1) route
+2026-07-29 18:46:59 [info]: SupplierController {/api/suppliers} (version: 1):
+2026-07-29 18:46:59 [info]: Mapped {/api/suppliers, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/suppliers/:id, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/suppliers, POST} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/suppliers/:id, PUT} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/suppliers/:id, DELETE} (version: 1) route
+2026-07-29 18:46:59 [info]: ProductController {/api/products} (version: 1):
+2026-07-29 18:46:59 [info]: Mapped {/api/products, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/products/low-stock, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/products/excel/template, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/products/excel/import, POST} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/products/barcode/:barcode, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/products/:id, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/products, POST} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/products/:id, PUT} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/products/:id, DELETE} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/products/:id/batches, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/products/:id/stock/add, PATCH} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/products/:id/stock/subtract, PATCH} (version: 1) route
+2026-07-29 18:46:59 [info]: CustomerController {/api/customers} (version: 1):
+2026-07-29 18:46:59 [info]: Mapped {/api/customers, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/customers/lookup/:doc, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/customers/:id, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/customers, POST} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/customers/:id, PUT} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/customers/:id, DELETE} (version: 1) route
+2026-07-29 18:46:59 [info]: SaleController {/api/sales} (version: 1):
+2026-07-29 18:46:59 [info]: Mapped {/api/sales, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/sales/summary, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/sales/comprobante/pdf/:token, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/sales/:id/pdf-token, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/sales/:id/pdf, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/sales/:id, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/sales, POST} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/sales/credit-note, POST} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/sales/:id/void, PATCH} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/sales/:id/send-whatsapp, POST} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/sales/:id/resend-sunat, POST} (version: 1) route
+2026-07-29 18:46:59 [info]: CompanySettingsController {/api/company-settings} (version: 1):
+2026-07-29 18:46:59 [info]: Mapped {/api/company-settings, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/company-settings, PUT} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/company-settings/logo, POST} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/company-settings/register-sunat-api, POST} (version: 1) route
+2026-07-29 18:46:59 [info]: CashController {/api/caja} (version: 1):
+2026-07-29 18:46:59 [info]: Mapped {/api/caja/abrir, POST} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/caja/activa, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/caja/resumen, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/caja/movimiento, POST} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/caja/cerrar, POST} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/caja/historial, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/caja/sesion/:id, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: PurchaseOrderController {/api/purchase-orders} (version: 1):
+2026-07-29 18:46:59 [info]: Mapped {/api/purchase-orders, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/purchase-orders/:id, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/purchase-orders, POST} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/purchase-orders/:id/receive, PATCH} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/purchase-orders/:id/cancel, PATCH} (version: 1) route
+2026-07-29 18:46:59 [info]: EstablishmentsController {/api/establishments} (version: 1):
+2026-07-29 18:46:59 [info]: Mapped {/api/establishments, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/establishments, POST} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/establishments/series, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/establishments/series, POST} (version: 1) route
+2026-07-29 18:46:59 [info]: GuiaRemisionController {/api/guias-remision} (version: 1):
+2026-07-29 18:46:59 [info]: Mapped {/api/guias-remision, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/guias-remision/:id, GET} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/guias-remision, POST} (version: 1) route
+2026-07-29 18:46:59 [info]: Mapped {/api/guias-remision/:id/resend-sunat, POST} (version: 1) route
+2026-07-29 18:46:59 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 18:46:59 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 18:46:59 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 18:46:59 [info]: Nest application successfully started
+2026-07-29 19:12:59 [info]: GRR #6 → payload:
+{
+  "serie": "T001",
+  "fecha_emision": "2026-07-29",
+  "destinatario": {
+    "tipo_doc": "6",
+    "num_doc": "20600781058",
+    "razon_social": "EISEGMI S.A.C."
+  },
+  "cod_traslado": "01",
+  "mod_traslado": "01",
+  "fecha_traslado": "2026-07-29",
+  "peso_total": 12,
+  "und_peso_total": "KGM",
+  "partida_ubigeo": "060102",
+  "partida_direccion": "Jr. chepen 408",
+  "llegada_ubigeo": "060101",
+  "llegada_direccion": "av. cossio 1505",
+  "items": [
+    {
+      "codigo": "PROD-12",
+      "descripcion": "Aceite Vegetal 1L",
+      "cantidad": 4,
+      "unidad": "NIU"
+    }
+  ],
+  "transportista": {
+    "tipo_doc": "6",
+    "num_doc": "20515963406",
+    "razon_social": "POPEYE CARGOS S.A.C.",
+    "nro_mtc": "1536592CNG"
+  },
+  "fecha_de_entrega_al_transportista": "2026-07-29"
+}
+2026-07-29 19:13:00 [info]: GRR #6 ← respuesta APISUNAT:
+{
+  "estado": "exito",
+  "mensaje": "Guía de remisión creada y encolada para envío a SUNAT.",
+  "datos": {
+    "id": 4,
+    "serie": "T001",
+    "correlativo": 4,
+    "numero_completo": "T001-000004",
+    "fecha_emision": "2026-07-29 19:13:00",
+    "destinatario": {
+      "tipo_doc": "6",
+      "num_doc": "20600781058",
+      "razon_social": "EISEGMI S.A.C."
+    },
+    "envio": {
+      "cod_traslado": "01",
+      "mod_traslado": "01",
+      "fecha_traslado": "2026-07-29",
+      "fecha_entrega_transportista": "2026-07-29",
+      "peso_total": 12,
+      "und_peso_total": "KGM"
+    },
+    "direcciones": {
+      "llegada": {
+        "ubigeo": "060101",
+        "direccion": "av. cossio 1505"
+      },
+      "partida": {
+        "ubigeo": "060102",
+        "direccion": "Jr. chepen 408"
+      }
+    },
+    "observacion": null,
+    "transportista": {
+      "nro_mtc": "1536592CNG",
+      "num_doc": "20515963406",
+      "tipo_doc": "6",
+      "razon_social": "POPEYE CARGOS S.A.C."
+    },
+    "vehiculo": null,
+    "conductor": null,
+    "num_bultos": null,
+    "items": [
+      {
+        "codigo": "PROD-12",
+        "unidad": "NIU",
+        "cantidad": 4,
+        "descripcion": "Aceite Vegetal 1L"
+      }
+    ],
+    "sunat": {
+      "estado": "enviado",
+      "codigo": null,
+      "descripcion": null,
+      "ticket": null
+    },
+    "archivos": {
+      "xml": null,
+      "cdr": null,
+      "pdf": null
+    },
+    "creado_en": "2026-07-30T00:13:00+00:00"
+  }
+}
+2026-07-29 19:13:00 [info]: GRR #6 → SUNAT: ACEPTADO | Guía de remisión creada y encolada para envío a SUNAT.
+2026-07-29 19:25:25 [info]: GRR #7 → payload:
+{
+  "serie": "T001",
+  "fecha_emision": "2026-07-29",
+  "destinatario": {
+    "tipo_doc": "6",
+    "num_doc": "20600781058",
+    "razon_social": "EISEGMI S.A.C."
+  },
+  "cod_traslado": "01",
+  "mod_traslado": "01",
+  "fecha_traslado": "2026-07-29",
+  "peso_total": 120,
+  "und_peso_total": "KGM",
+  "partida_ubigeo": "060104",
+  "partida_direccion": "Jr. chepen 408",
+  "llegada_ubigeo": "150101",
+  "llegada_direccion": "av. cossio 1505",
+  "items": [
+    {
+      "codigo": "PROD-39",
+      "descripcion": "ARROZ CACERITA",
+      "cantidad": 1,
+      "unidad": "NIU"
+    },
+    {
+      "codigo": "PROD-39",
+      "descripcion": "ARROZ CACERITA",
+      "cantidad": 1,
+      "unidad": "NIU"
+    }
+  ],
+  "num_bultos": 5,
+  "transportista": {
+    "tipo_doc": "6",
+    "num_doc": "20515963406",
+    "razon_social": "POPEYE CARGOS S.A.C.",
+    "nro_mtc": "1536592CNG"
+  },
+  "fecha_de_entrega_al_transportista": "2026-07-29"
+}
+2026-07-29 19:25:25 [info]: GRR #7 ← respuesta APISUNAT:
+{
+  "estado": "exito",
+  "mensaje": "Guía de remisión creada y encolada para envío a SUNAT.",
+  "datos": {
+    "id": 5,
+    "serie": "T001",
+    "correlativo": 5,
+    "numero_completo": "T001-000005",
+    "fecha_emision": "2026-07-29 19:25:25",
+    "destinatario": {
+      "tipo_doc": "6",
+      "num_doc": "20600781058",
+      "razon_social": "EISEGMI S.A.C."
+    },
+    "envio": {
+      "cod_traslado": "01",
+      "mod_traslado": "01",
+      "fecha_traslado": "2026-07-29",
+      "fecha_entrega_transportista": "2026-07-29",
+      "peso_total": 120,
+      "und_peso_total": "KGM"
+    },
+    "direcciones": {
+      "llegada": {
+        "ubigeo": "150101",
+        "direccion": "av. cossio 1505"
+      },
+      "partida": {
+        "ubigeo": "060104",
+        "direccion": "Jr. chepen 408"
+      }
+    },
+    "observacion": null,
+    "transportista": {
+      "nro_mtc": "1536592CNG",
+      "num_doc": "20515963406",
+      "tipo_doc": "6",
+      "razon_social": "POPEYE CARGOS S.A.C."
+    },
+    "vehiculo": null,
+    "conductor": null,
+    "num_bultos": 5,
+    "items": [
+      {
+        "codigo": "PROD-39",
+        "unidad": "NIU",
+        "cantidad": 1,
+        "descripcion": "ARROZ CACERITA"
+      },
+      {
+        "codigo": "PROD-39",
+        "unidad": "NIU",
+        "cantidad": 1,
+        "descripcion": "ARROZ CACERITA"
+      }
+    ],
+    "sunat": {
+      "estado": "enviado",
+      "codigo": null,
+      "descripcion": null,
+      "ticket": null
+    },
+    "archivos": {
+      "xml": null,
+      "cdr": null,
+      "pdf": null
+    },
+    "creado_en": "2026-07-30T00:25:25+00:00"
+  }
+}
+2026-07-29 19:25:25 [info]: GRR #7 → SUNAT: ACEPTADO | Guía de remisión creada y encolada para envío a SUNAT.
+2026-07-29 19:29:03 [info]: Starting Nest application...
+2026-07-29 19:29:03 [info]: AppModule dependencies initialized
+2026-07-29 19:29:03 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:29:03 [info]: PassportModule dependencies initialized
+2026-07-29 19:29:03 [info]: ConfigHostModule dependencies initialized
+2026-07-29 19:29:03 [info]: WinstonModule dependencies initialized
+2026-07-29 19:29:03 [info]: HealthModule dependencies initialized
+2026-07-29 19:29:03 [info]: HttpModule dependencies initialized
+2026-07-29 19:29:03 [info]: DiscoveryModule dependencies initialized
+2026-07-29 19:29:03 [info]: ConfigModule dependencies initialized
+2026-07-29 19:29:03 [info]: ConfigModule dependencies initialized
+2026-07-29 19:29:03 [info]: EventEmitterModule dependencies initialized
+2026-07-29 19:29:03 [info]: ScheduleModule dependencies initialized
+2026-07-29 19:29:03 [info]: JwtModule dependencies initialized
+2026-07-29 19:29:03 [info]: TypeOrmCoreModule dependencies initialized
+2026-07-29 19:29:03 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:29:03 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:29:03 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:29:03 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:29:03 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:29:03 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:29:03 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:29:03 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:29:03 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:29:03 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:29:03 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:29:03 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:29:03 [info]: CategoryModule dependencies initialized
+2026-07-29 19:29:03 [info]: SupplierModule dependencies initialized
+2026-07-29 19:29:03 [info]: CustomerModule dependencies initialized
+2026-07-29 19:29:03 [info]: AuthModule dependencies initialized
+2026-07-29 19:29:03 [info]: EstablishmentsModule dependencies initialized
+2026-07-29 19:29:03 [info]: UserModule dependencies initialized
+2026-07-29 19:29:03 [info]: ProductModule dependencies initialized
+2026-07-29 19:29:03 [info]: PurchaseOrderModule dependencies initialized
+2026-07-29 19:29:03 [info]: CompanySettingsModule dependencies initialized
+2026-07-29 19:29:03 [info]: GuiaRemisionModule dependencies initialized
+2026-07-29 19:29:03 [info]: SaleModule dependencies initialized
+2026-07-29 19:29:03 [info]: CashModule dependencies initialized
+2026-07-29 19:29:03 [info]: AuthController {/api/auth} (version: 1):
+2026-07-29 19:29:03 [info]: Mapped {/api/auth/login, POST} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/auth/status, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: UserController {/api/users} (version: 1):
+2026-07-29 19:29:03 [info]: Mapped {/api/users, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/users/:id, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/users, POST} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/users/:id, PUT} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/users/:id, DELETE} (version: 1) route
+2026-07-29 19:29:03 [info]: HealthController {/api/health} (version: 1):
+2026-07-29 19:29:03 [info]: Mapped {/api/health, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: CategoryController {/api/categories} (version: 1):
+2026-07-29 19:29:03 [info]: Mapped {/api/categories, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/categories/:id, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/categories, POST} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/categories/:id, PUT} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/categories/:id, DELETE} (version: 1) route
+2026-07-29 19:29:03 [info]: SupplierController {/api/suppliers} (version: 1):
+2026-07-29 19:29:03 [info]: Mapped {/api/suppliers, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/suppliers/:id, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/suppliers, POST} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/suppliers/:id, PUT} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/suppliers/:id, DELETE} (version: 1) route
+2026-07-29 19:29:03 [info]: ProductController {/api/products} (version: 1):
+2026-07-29 19:29:03 [info]: Mapped {/api/products, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/products/low-stock, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/products/excel/template, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/products/excel/import, POST} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/products/barcode/:barcode, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/products/:id, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/products, POST} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/products/:id, PUT} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/products/:id, DELETE} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/products/:id/batches, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/products/:id/stock/add, PATCH} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/products/:id/stock/subtract, PATCH} (version: 1) route
+2026-07-29 19:29:03 [info]: CustomerController {/api/customers} (version: 1):
+2026-07-29 19:29:03 [info]: Mapped {/api/customers, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/customers/lookup/:doc, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/customers/:id, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/customers, POST} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/customers/:id, PUT} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/customers/:id, DELETE} (version: 1) route
+2026-07-29 19:29:03 [info]: SaleController {/api/sales} (version: 1):
+2026-07-29 19:29:03 [info]: Mapped {/api/sales, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/sales/summary, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/sales/comprobante/pdf/:token, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/sales/:id/pdf-token, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/sales/:id/pdf, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/sales/:id, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/sales, POST} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/sales/credit-note, POST} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/sales/:id/void, PATCH} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/sales/:id/send-whatsapp, POST} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/sales/:id/resend-sunat, POST} (version: 1) route
+2026-07-29 19:29:03 [info]: CompanySettingsController {/api/company-settings} (version: 1):
+2026-07-29 19:29:03 [info]: Mapped {/api/company-settings, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/company-settings, PUT} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/company-settings/logo, POST} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/company-settings/register-sunat-api, POST} (version: 1) route
+2026-07-29 19:29:03 [info]: CashController {/api/caja} (version: 1):
+2026-07-29 19:29:03 [info]: Mapped {/api/caja/abrir, POST} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/caja/activa, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/caja/resumen, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/caja/movimiento, POST} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/caja/cerrar, POST} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/caja/historial, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/caja/sesion/:id, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: PurchaseOrderController {/api/purchase-orders} (version: 1):
+2026-07-29 19:29:03 [info]: Mapped {/api/purchase-orders, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/purchase-orders/:id, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/purchase-orders, POST} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/purchase-orders/:id/receive, PATCH} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/purchase-orders/:id/cancel, PATCH} (version: 1) route
+2026-07-29 19:29:03 [info]: EstablishmentsController {/api/establishments} (version: 1):
+2026-07-29 19:29:03 [info]: Mapped {/api/establishments, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/establishments, POST} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/establishments/series, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/establishments/series, POST} (version: 1) route
+2026-07-29 19:29:03 [info]: GuiaRemisionController {/api/guias-remision} (version: 1):
+2026-07-29 19:29:03 [info]: Mapped {/api/guias-remision, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/guias-remision/:id, GET} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/guias-remision, POST} (version: 1) route
+2026-07-29 19:29:03 [info]: Mapped {/api/guias-remision/:id/resend-sunat, POST} (version: 1) route
+2026-07-29 19:29:03 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 19:29:03 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 19:29:03 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 19:29:03 [info]: Nest application successfully started
+2026-07-29 19:32:45 [info]: Starting Nest application...
+2026-07-29 19:32:45 [info]: AppModule dependencies initialized
+2026-07-29 19:32:45 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:32:45 [info]: PassportModule dependencies initialized
+2026-07-29 19:32:45 [info]: ConfigHostModule dependencies initialized
+2026-07-29 19:32:45 [info]: WinstonModule dependencies initialized
+2026-07-29 19:32:45 [info]: HealthModule dependencies initialized
+2026-07-29 19:32:45 [info]: HttpModule dependencies initialized
+2026-07-29 19:32:45 [info]: DiscoveryModule dependencies initialized
+2026-07-29 19:32:45 [info]: ConfigModule dependencies initialized
+2026-07-29 19:32:45 [info]: ConfigModule dependencies initialized
+2026-07-29 19:32:45 [info]: EventEmitterModule dependencies initialized
+2026-07-29 19:32:45 [info]: ScheduleModule dependencies initialized
+2026-07-29 19:32:45 [info]: JwtModule dependencies initialized
+2026-07-29 19:32:45 [info]: TypeOrmCoreModule dependencies initialized
+2026-07-29 19:32:45 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:32:45 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:32:45 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:32:45 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:32:45 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:32:45 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:32:45 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:32:45 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:32:45 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:32:45 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:32:45 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:32:45 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:32:45 [info]: CategoryModule dependencies initialized
+2026-07-29 19:32:45 [info]: SupplierModule dependencies initialized
+2026-07-29 19:32:45 [info]: CustomerModule dependencies initialized
+2026-07-29 19:32:45 [info]: AuthModule dependencies initialized
+2026-07-29 19:32:45 [info]: EstablishmentsModule dependencies initialized
+2026-07-29 19:32:45 [info]: UserModule dependencies initialized
+2026-07-29 19:32:45 [info]: ProductModule dependencies initialized
+2026-07-29 19:32:45 [info]: PurchaseOrderModule dependencies initialized
+2026-07-29 19:32:45 [info]: CompanySettingsModule dependencies initialized
+2026-07-29 19:32:45 [info]: GuiaRemisionModule dependencies initialized
+2026-07-29 19:32:45 [info]: SaleModule dependencies initialized
+2026-07-29 19:32:45 [info]: CashModule dependencies initialized
+2026-07-29 19:32:45 [info]: AuthController {/api/auth} (version: 1):
+2026-07-29 19:32:45 [info]: Mapped {/api/auth/login, POST} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/auth/status, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: UserController {/api/users} (version: 1):
+2026-07-29 19:32:45 [info]: Mapped {/api/users, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/users/:id, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/users, POST} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/users/:id, PUT} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/users/:id, DELETE} (version: 1) route
+2026-07-29 19:32:45 [info]: HealthController {/api/health} (version: 1):
+2026-07-29 19:32:45 [info]: Mapped {/api/health, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: CategoryController {/api/categories} (version: 1):
+2026-07-29 19:32:45 [info]: Mapped {/api/categories, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/categories/:id, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/categories, POST} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/categories/:id, PUT} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/categories/:id, DELETE} (version: 1) route
+2026-07-29 19:32:45 [info]: SupplierController {/api/suppliers} (version: 1):
+2026-07-29 19:32:45 [info]: Mapped {/api/suppliers, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/suppliers/:id, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/suppliers, POST} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/suppliers/:id, PUT} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/suppliers/:id, DELETE} (version: 1) route
+2026-07-29 19:32:45 [info]: ProductController {/api/products} (version: 1):
+2026-07-29 19:32:45 [info]: Mapped {/api/products, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/products/low-stock, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/products/excel/template, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/products/excel/import, POST} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/products/barcode/:barcode, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/products/:id, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/products, POST} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/products/:id, PUT} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/products/:id, DELETE} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/products/:id/batches, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/products/:id/stock/add, PATCH} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/products/:id/stock/subtract, PATCH} (version: 1) route
+2026-07-29 19:32:45 [info]: CustomerController {/api/customers} (version: 1):
+2026-07-29 19:32:45 [info]: Mapped {/api/customers, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/customers/lookup/:doc, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/customers/:id, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/customers, POST} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/customers/:id, PUT} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/customers/:id, DELETE} (version: 1) route
+2026-07-29 19:32:45 [info]: SaleController {/api/sales} (version: 1):
+2026-07-29 19:32:45 [info]: Mapped {/api/sales, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/sales/summary, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/sales/comprobante/pdf/:token, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/sales/:id/pdf-token, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/sales/:id/pdf, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/sales/:id, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/sales, POST} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/sales/credit-note, POST} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/sales/:id/void, PATCH} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/sales/:id/send-whatsapp, POST} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/sales/:id/resend-sunat, POST} (version: 1) route
+2026-07-29 19:32:45 [info]: CompanySettingsController {/api/company-settings} (version: 1):
+2026-07-29 19:32:45 [info]: Mapped {/api/company-settings, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/company-settings, PUT} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/company-settings/logo, POST} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/company-settings/register-sunat-api, POST} (version: 1) route
+2026-07-29 19:32:45 [info]: CashController {/api/caja} (version: 1):
+2026-07-29 19:32:45 [info]: Mapped {/api/caja/abrir, POST} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/caja/activa, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/caja/resumen, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/caja/movimiento, POST} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/caja/cerrar, POST} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/caja/historial, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/caja/sesion/:id, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: PurchaseOrderController {/api/purchase-orders} (version: 1):
+2026-07-29 19:32:45 [info]: Mapped {/api/purchase-orders, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/purchase-orders/:id, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/purchase-orders, POST} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/purchase-orders/:id/receive, PATCH} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/purchase-orders/:id/cancel, PATCH} (version: 1) route
+2026-07-29 19:32:45 [info]: EstablishmentsController {/api/establishments} (version: 1):
+2026-07-29 19:32:45 [info]: Mapped {/api/establishments, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/establishments, POST} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/establishments/series, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/establishments/series, POST} (version: 1) route
+2026-07-29 19:32:45 [info]: GuiaRemisionController {/api/guias-remision} (version: 1):
+2026-07-29 19:32:45 [info]: Mapped {/api/guias-remision, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/guias-remision/:id/pdf, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/guias-remision/:id, GET} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/guias-remision, POST} (version: 1) route
+2026-07-29 19:32:45 [info]: Mapped {/api/guias-remision/:id/resend-sunat, POST} (version: 1) route
+2026-07-29 19:32:45 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 19:32:45 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 19:32:45 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 19:32:45 [info]: Nest application successfully started
+2026-07-29 19:34:05 [info]: GRR #8 → payload:
+{
+  "serie": "T001",
+  "fecha_emision": "2026-07-29",
+  "destinatario": {
+    "tipo_doc": "6",
+    "num_doc": "20600781058",
+    "razon_social": "EISEGMI S.A.C."
+  },
+  "cod_traslado": "01",
+  "mod_traslado": "01",
+  "fecha_traslado": "2026-07-29",
+  "peso_total": 90,
+  "und_peso_total": "KGM",
+  "partida_ubigeo": "150101",
+  "partida_direccion": "Jr. chepen 408",
+  "llegada_ubigeo": "150101",
+  "llegada_direccion": "av. cossio 1505",
+  "items": [
+    {
+      "codigo": "PROD-39",
+      "descripcion": "ARROZ CACERITA",
+      "cantidad": 1,
+      "unidad": "NIU"
+    },
+    {
+      "codigo": "PROD-39",
+      "descripcion": "ARROZ CACERITA",
+      "cantidad": 1,
+      "unidad": "NIU"
+    }
+  ],
+  "transportista": {
+    "tipo_doc": "6",
+    "num_doc": "20515963406",
+    "razon_social": "POPEYE CARGOS S.A.C.",
+    "nro_mtc": "1536592CNG"
+  },
+  "fecha_de_entrega_al_transportista": "2026-07-29"
+}
+2026-07-29 19:34:06 [info]: GRR #8 ← respuesta APISUNAT:
+{
+  "estado": "exito",
+  "mensaje": "Guía de remisión creada y encolada para envío a SUNAT.",
+  "datos": {
+    "id": 6,
+    "serie": "T001",
+    "correlativo": 6,
+    "numero_completo": "T001-000006",
+    "fecha_emision": "2026-07-29 19:34:05",
+    "destinatario": {
+      "tipo_doc": "6",
+      "num_doc": "20600781058",
+      "razon_social": "EISEGMI S.A.C."
+    },
+    "envio": {
+      "cod_traslado": "01",
+      "mod_traslado": "01",
+      "fecha_traslado": "2026-07-29",
+      "fecha_entrega_transportista": "2026-07-29",
+      "peso_total": 90,
+      "und_peso_total": "KGM"
+    },
+    "direcciones": {
+      "llegada": {
+        "ubigeo": "150101",
+        "direccion": "av. cossio 1505"
+      },
+      "partida": {
+        "ubigeo": "150101",
+        "direccion": "Jr. chepen 408"
+      }
+    },
+    "observacion": null,
+    "transportista": {
+      "nro_mtc": "1536592CNG",
+      "num_doc": "20515963406",
+      "tipo_doc": "6",
+      "razon_social": "POPEYE CARGOS S.A.C."
+    },
+    "vehiculo": null,
+    "conductor": null,
+    "num_bultos": null,
+    "items": [
+      {
+        "codigo": "PROD-39",
+        "unidad": "NIU",
+        "cantidad": 1,
+        "descripcion": "ARROZ CACERITA"
+      },
+      {
+        "codigo": "PROD-39",
+        "unidad": "NIU",
+        "cantidad": 1,
+        "descripcion": "ARROZ CACERITA"
+      }
+    ],
+    "sunat": {
+      "estado": "enviado",
+      "codigo": null,
+      "descripcion": null,
+      "ticket": null
+    },
+    "archivos": {
+      "xml": null,
+      "cdr": null,
+      "pdf": null
+    },
+    "creado_en": "2026-07-30T00:34:05+00:00"
+  }
+}
+2026-07-29 19:34:06 [info]: GRR #8 → SUNAT: ACEPTADO | Guía de remisión creada y encolada para envío a SUNAT.
+2026-07-29 19:34:58 [info]: Starting Nest application...
+2026-07-29 19:34:58 [info]: AppModule dependencies initialized
+2026-07-29 19:34:58 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:34:58 [info]: PassportModule dependencies initialized
+2026-07-29 19:34:58 [info]: ConfigHostModule dependencies initialized
+2026-07-29 19:34:58 [info]: WinstonModule dependencies initialized
+2026-07-29 19:34:58 [info]: HealthModule dependencies initialized
+2026-07-29 19:34:58 [info]: HttpModule dependencies initialized
+2026-07-29 19:34:58 [info]: DiscoveryModule dependencies initialized
+2026-07-29 19:34:58 [info]: ConfigModule dependencies initialized
+2026-07-29 19:34:58 [info]: ConfigModule dependencies initialized
+2026-07-29 19:34:58 [info]: EventEmitterModule dependencies initialized
+2026-07-29 19:34:58 [info]: ScheduleModule dependencies initialized
+2026-07-29 19:34:58 [info]: JwtModule dependencies initialized
+2026-07-29 19:34:59 [info]: TypeOrmCoreModule dependencies initialized
+2026-07-29 19:34:59 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:34:59 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:34:59 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:34:59 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:34:59 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:34:59 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:34:59 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:34:59 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:34:59 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:34:59 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:34:59 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:34:59 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:34:59 [info]: CategoryModule dependencies initialized
+2026-07-29 19:34:59 [info]: SupplierModule dependencies initialized
+2026-07-29 19:34:59 [info]: CustomerModule dependencies initialized
+2026-07-29 19:34:59 [info]: AuthModule dependencies initialized
+2026-07-29 19:34:59 [info]: EstablishmentsModule dependencies initialized
+2026-07-29 19:34:59 [info]: UserModule dependencies initialized
+2026-07-29 19:34:59 [info]: ProductModule dependencies initialized
+2026-07-29 19:34:59 [info]: PurchaseOrderModule dependencies initialized
+2026-07-29 19:34:59 [info]: CompanySettingsModule dependencies initialized
+2026-07-29 19:34:59 [info]: GuiaRemisionModule dependencies initialized
+2026-07-29 19:34:59 [info]: SaleModule dependencies initialized
+2026-07-29 19:34:59 [info]: CashModule dependencies initialized
+2026-07-29 19:34:59 [info]: AuthController {/api/auth} (version: 1):
+2026-07-29 19:34:59 [info]: Mapped {/api/auth/login, POST} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/auth/status, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: UserController {/api/users} (version: 1):
+2026-07-29 19:34:59 [info]: Mapped {/api/users, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/users/:id, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/users, POST} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/users/:id, PUT} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/users/:id, DELETE} (version: 1) route
+2026-07-29 19:34:59 [info]: HealthController {/api/health} (version: 1):
+2026-07-29 19:34:59 [info]: Mapped {/api/health, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: CategoryController {/api/categories} (version: 1):
+2026-07-29 19:34:59 [info]: Mapped {/api/categories, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/categories/:id, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/categories, POST} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/categories/:id, PUT} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/categories/:id, DELETE} (version: 1) route
+2026-07-29 19:34:59 [info]: SupplierController {/api/suppliers} (version: 1):
+2026-07-29 19:34:59 [info]: Mapped {/api/suppliers, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/suppliers/:id, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/suppliers, POST} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/suppliers/:id, PUT} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/suppliers/:id, DELETE} (version: 1) route
+2026-07-29 19:34:59 [info]: ProductController {/api/products} (version: 1):
+2026-07-29 19:34:59 [info]: Mapped {/api/products, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/products/low-stock, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/products/excel/template, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/products/excel/import, POST} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/products/barcode/:barcode, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/products/:id, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/products, POST} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/products/:id, PUT} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/products/:id, DELETE} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/products/:id/batches, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/products/:id/stock/add, PATCH} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/products/:id/stock/subtract, PATCH} (version: 1) route
+2026-07-29 19:34:59 [info]: CustomerController {/api/customers} (version: 1):
+2026-07-29 19:34:59 [info]: Mapped {/api/customers, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/customers/lookup/:doc, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/customers/:id, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/customers, POST} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/customers/:id, PUT} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/customers/:id, DELETE} (version: 1) route
+2026-07-29 19:34:59 [info]: SaleController {/api/sales} (version: 1):
+2026-07-29 19:34:59 [info]: Mapped {/api/sales, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/sales/summary, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/sales/comprobante/pdf/:token, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/sales/:id/pdf-token, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/sales/:id/pdf, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/sales/:id, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/sales, POST} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/sales/credit-note, POST} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/sales/:id/void, PATCH} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/sales/:id/send-whatsapp, POST} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/sales/:id/resend-sunat, POST} (version: 1) route
+2026-07-29 19:34:59 [info]: CompanySettingsController {/api/company-settings} (version: 1):
+2026-07-29 19:34:59 [info]: Mapped {/api/company-settings, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/company-settings, PUT} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/company-settings/logo, POST} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/company-settings/register-sunat-api, POST} (version: 1) route
+2026-07-29 19:34:59 [info]: CashController {/api/caja} (version: 1):
+2026-07-29 19:34:59 [info]: Mapped {/api/caja/abrir, POST} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/caja/activa, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/caja/resumen, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/caja/movimiento, POST} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/caja/cerrar, POST} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/caja/historial, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/caja/sesion/:id, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: PurchaseOrderController {/api/purchase-orders} (version: 1):
+2026-07-29 19:34:59 [info]: Mapped {/api/purchase-orders, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/purchase-orders/:id, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/purchase-orders, POST} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/purchase-orders/:id/receive, PATCH} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/purchase-orders/:id/cancel, PATCH} (version: 1) route
+2026-07-29 19:34:59 [info]: EstablishmentsController {/api/establishments} (version: 1):
+2026-07-29 19:34:59 [info]: Mapped {/api/establishments, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/establishments, POST} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/establishments/series, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/establishments/series, POST} (version: 1) route
+2026-07-29 19:34:59 [info]: GuiaRemisionController {/api/guias-remision} (version: 1):
+2026-07-29 19:34:59 [info]: Mapped {/api/guias-remision, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/guias-remision/:id/pdf, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/guias-remision/:id, GET} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/guias-remision, POST} (version: 1) route
+2026-07-29 19:34:59 [info]: Mapped {/api/guias-remision/:id/resend-sunat, POST} (version: 1) route
+2026-07-29 19:34:59 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 19:34:59 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 19:34:59 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 19:34:59 [info]: Nest application successfully started
+2026-07-29 19:35:05 [error]: TypeError: PDFDocument is not a constructor
+    at buffer (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/guia-remision.service.ts:387:19)
+    at new Promise (<anonymous>)
+    at GuiaRemisionService.generatePdfBuffer (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/guia-remision.service.ts:386:26)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async GuiaRemisionController.getPdf (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/controllers/guia-remision.controller.ts:32:34)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-07-29 19:35:28 [error]: TypeError: PDFDocument is not a constructor
+    at buffer (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/guia-remision.service.ts:387:19)
+    at new Promise (<anonymous>)
+    at GuiaRemisionService.generatePdfBuffer (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/guia-remision.service.ts:386:26)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async GuiaRemisionController.getPdf (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/controllers/guia-remision.controller.ts:32:34)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-07-29 19:36:23 [error]: TypeError: PDFDocument is not a constructor
+    at buffer (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/guia-remision.service.ts:387:19)
+    at new Promise (<anonymous>)
+    at GuiaRemisionService.generatePdfBuffer (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/guia-remision.service.ts:386:26)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async GuiaRemisionController.getPdf (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/controllers/guia-remision.controller.ts:32:34)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-07-29 19:36:46 [info]: Starting Nest application...
+2026-07-29 19:36:46 [info]: AppModule dependencies initialized
+2026-07-29 19:36:46 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:36:46 [info]: PassportModule dependencies initialized
+2026-07-29 19:36:46 [info]: ConfigHostModule dependencies initialized
+2026-07-29 19:36:46 [info]: WinstonModule dependencies initialized
+2026-07-29 19:36:46 [info]: HealthModule dependencies initialized
+2026-07-29 19:36:46 [info]: HttpModule dependencies initialized
+2026-07-29 19:36:46 [info]: DiscoveryModule dependencies initialized
+2026-07-29 19:36:46 [info]: ConfigModule dependencies initialized
+2026-07-29 19:36:46 [info]: ConfigModule dependencies initialized
+2026-07-29 19:36:46 [info]: EventEmitterModule dependencies initialized
+2026-07-29 19:36:46 [info]: ScheduleModule dependencies initialized
+2026-07-29 19:36:46 [info]: JwtModule dependencies initialized
+2026-07-29 19:36:46 [info]: TypeOrmCoreModule dependencies initialized
+2026-07-29 19:36:46 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:36:46 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:36:46 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:36:46 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:36:46 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:36:46 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:36:46 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:36:46 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:36:46 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:36:46 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:36:46 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:36:46 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:36:46 [info]: CategoryModule dependencies initialized
+2026-07-29 19:36:46 [info]: SupplierModule dependencies initialized
+2026-07-29 19:36:46 [info]: CustomerModule dependencies initialized
+2026-07-29 19:36:46 [info]: AuthModule dependencies initialized
+2026-07-29 19:36:46 [info]: EstablishmentsModule dependencies initialized
+2026-07-29 19:36:46 [info]: UserModule dependencies initialized
+2026-07-29 19:36:46 [info]: ProductModule dependencies initialized
+2026-07-29 19:36:46 [info]: PurchaseOrderModule dependencies initialized
+2026-07-29 19:36:46 [info]: CompanySettingsModule dependencies initialized
+2026-07-29 19:36:46 [info]: GuiaRemisionModule dependencies initialized
+2026-07-29 19:36:46 [info]: SaleModule dependencies initialized
+2026-07-29 19:36:46 [info]: CashModule dependencies initialized
+2026-07-29 19:36:46 [info]: AuthController {/api/auth} (version: 1):
+2026-07-29 19:36:46 [info]: Mapped {/api/auth/login, POST} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/auth/status, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: UserController {/api/users} (version: 1):
+2026-07-29 19:36:46 [info]: Mapped {/api/users, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/users/:id, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/users, POST} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/users/:id, PUT} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/users/:id, DELETE} (version: 1) route
+2026-07-29 19:36:46 [info]: HealthController {/api/health} (version: 1):
+2026-07-29 19:36:46 [info]: Mapped {/api/health, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: CategoryController {/api/categories} (version: 1):
+2026-07-29 19:36:46 [info]: Mapped {/api/categories, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/categories/:id, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/categories, POST} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/categories/:id, PUT} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/categories/:id, DELETE} (version: 1) route
+2026-07-29 19:36:46 [info]: SupplierController {/api/suppliers} (version: 1):
+2026-07-29 19:36:46 [info]: Mapped {/api/suppliers, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/suppliers/:id, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/suppliers, POST} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/suppliers/:id, PUT} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/suppliers/:id, DELETE} (version: 1) route
+2026-07-29 19:36:46 [info]: ProductController {/api/products} (version: 1):
+2026-07-29 19:36:46 [info]: Mapped {/api/products, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/products/low-stock, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/products/excel/template, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/products/excel/import, POST} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/products/barcode/:barcode, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/products/:id, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/products, POST} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/products/:id, PUT} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/products/:id, DELETE} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/products/:id/batches, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/products/:id/stock/add, PATCH} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/products/:id/stock/subtract, PATCH} (version: 1) route
+2026-07-29 19:36:46 [info]: CustomerController {/api/customers} (version: 1):
+2026-07-29 19:36:46 [info]: Mapped {/api/customers, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/customers/lookup/:doc, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/customers/:id, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/customers, POST} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/customers/:id, PUT} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/customers/:id, DELETE} (version: 1) route
+2026-07-29 19:36:46 [info]: SaleController {/api/sales} (version: 1):
+2026-07-29 19:36:46 [info]: Mapped {/api/sales, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/sales/summary, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/sales/comprobante/pdf/:token, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/sales/:id/pdf-token, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/sales/:id/pdf, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/sales/:id, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/sales, POST} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/sales/credit-note, POST} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/sales/:id/void, PATCH} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/sales/:id/send-whatsapp, POST} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/sales/:id/resend-sunat, POST} (version: 1) route
+2026-07-29 19:36:46 [info]: CompanySettingsController {/api/company-settings} (version: 1):
+2026-07-29 19:36:46 [info]: Mapped {/api/company-settings, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/company-settings, PUT} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/company-settings/logo, POST} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/company-settings/register-sunat-api, POST} (version: 1) route
+2026-07-29 19:36:46 [info]: CashController {/api/caja} (version: 1):
+2026-07-29 19:36:46 [info]: Mapped {/api/caja/abrir, POST} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/caja/activa, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/caja/resumen, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/caja/movimiento, POST} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/caja/cerrar, POST} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/caja/historial, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/caja/sesion/:id, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: PurchaseOrderController {/api/purchase-orders} (version: 1):
+2026-07-29 19:36:46 [info]: Mapped {/api/purchase-orders, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/purchase-orders/:id, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/purchase-orders, POST} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/purchase-orders/:id/receive, PATCH} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/purchase-orders/:id/cancel, PATCH} (version: 1) route
+2026-07-29 19:36:46 [info]: EstablishmentsController {/api/establishments} (version: 1):
+2026-07-29 19:36:46 [info]: Mapped {/api/establishments, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/establishments, POST} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/establishments/series, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/establishments/series, POST} (version: 1) route
+2026-07-29 19:36:46 [info]: GuiaRemisionController {/api/guias-remision} (version: 1):
+2026-07-29 19:36:46 [info]: Mapped {/api/guias-remision, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/guias-remision/:id/pdf, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/guias-remision/:id, GET} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/guias-remision, POST} (version: 1) route
+2026-07-29 19:36:46 [info]: Mapped {/api/guias-remision/:id/resend-sunat, POST} (version: 1) route
+2026-07-29 19:36:46 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 19:36:46 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 19:36:46 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 19:36:46 [info]: Nest application successfully started
+2026-07-29 19:37:22 [info]: Starting Nest application...
+2026-07-29 19:37:22 [info]: AppModule dependencies initialized
+2026-07-29 19:37:22 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:37:22 [info]: PassportModule dependencies initialized
+2026-07-29 19:37:22 [info]: ConfigHostModule dependencies initialized
+2026-07-29 19:37:22 [info]: WinstonModule dependencies initialized
+2026-07-29 19:37:22 [info]: HealthModule dependencies initialized
+2026-07-29 19:37:22 [info]: HttpModule dependencies initialized
+2026-07-29 19:37:22 [info]: DiscoveryModule dependencies initialized
+2026-07-29 19:37:22 [info]: ConfigModule dependencies initialized
+2026-07-29 19:37:22 [info]: ConfigModule dependencies initialized
+2026-07-29 19:37:22 [info]: EventEmitterModule dependencies initialized
+2026-07-29 19:37:22 [info]: ScheduleModule dependencies initialized
+2026-07-29 19:37:22 [info]: JwtModule dependencies initialized
+2026-07-29 19:37:23 [info]: TypeOrmCoreModule dependencies initialized
+2026-07-29 19:37:23 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:37:23 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:37:23 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:37:23 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:37:23 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:37:23 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:37:23 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:37:23 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:37:23 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:37:23 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:37:23 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:37:23 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:37:23 [info]: CategoryModule dependencies initialized
+2026-07-29 19:37:23 [info]: SupplierModule dependencies initialized
+2026-07-29 19:37:23 [info]: CustomerModule dependencies initialized
+2026-07-29 19:37:23 [info]: AuthModule dependencies initialized
+2026-07-29 19:37:23 [info]: EstablishmentsModule dependencies initialized
+2026-07-29 19:37:23 [info]: UserModule dependencies initialized
+2026-07-29 19:37:23 [info]: ProductModule dependencies initialized
+2026-07-29 19:37:23 [info]: PurchaseOrderModule dependencies initialized
+2026-07-29 19:37:23 [info]: CompanySettingsModule dependencies initialized
+2026-07-29 19:37:23 [info]: GuiaRemisionModule dependencies initialized
+2026-07-29 19:37:23 [info]: SaleModule dependencies initialized
+2026-07-29 19:37:23 [info]: CashModule dependencies initialized
+2026-07-29 19:37:23 [info]: AuthController {/api/auth} (version: 1):
+2026-07-29 19:37:23 [info]: Mapped {/api/auth/login, POST} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/auth/status, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: UserController {/api/users} (version: 1):
+2026-07-29 19:37:23 [info]: Mapped {/api/users, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/users/:id, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/users, POST} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/users/:id, PUT} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/users/:id, DELETE} (version: 1) route
+2026-07-29 19:37:23 [info]: HealthController {/api/health} (version: 1):
+2026-07-29 19:37:23 [info]: Mapped {/api/health, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: CategoryController {/api/categories} (version: 1):
+2026-07-29 19:37:23 [info]: Mapped {/api/categories, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/categories/:id, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/categories, POST} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/categories/:id, PUT} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/categories/:id, DELETE} (version: 1) route
+2026-07-29 19:37:23 [info]: SupplierController {/api/suppliers} (version: 1):
+2026-07-29 19:37:23 [info]: Mapped {/api/suppliers, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/suppliers/:id, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/suppliers, POST} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/suppliers/:id, PUT} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/suppliers/:id, DELETE} (version: 1) route
+2026-07-29 19:37:23 [info]: ProductController {/api/products} (version: 1):
+2026-07-29 19:37:23 [info]: Mapped {/api/products, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/products/low-stock, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/products/excel/template, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/products/excel/import, POST} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/products/barcode/:barcode, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/products/:id, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/products, POST} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/products/:id, PUT} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/products/:id, DELETE} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/products/:id/batches, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/products/:id/stock/add, PATCH} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/products/:id/stock/subtract, PATCH} (version: 1) route
+2026-07-29 19:37:23 [info]: CustomerController {/api/customers} (version: 1):
+2026-07-29 19:37:23 [info]: Mapped {/api/customers, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/customers/lookup/:doc, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/customers/:id, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/customers, POST} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/customers/:id, PUT} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/customers/:id, DELETE} (version: 1) route
+2026-07-29 19:37:23 [info]: SaleController {/api/sales} (version: 1):
+2026-07-29 19:37:23 [info]: Mapped {/api/sales, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/sales/summary, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/sales/comprobante/pdf/:token, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/sales/:id/pdf-token, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/sales/:id/pdf, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/sales/:id, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/sales, POST} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/sales/credit-note, POST} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/sales/:id/void, PATCH} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/sales/:id/send-whatsapp, POST} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/sales/:id/resend-sunat, POST} (version: 1) route
+2026-07-29 19:37:23 [info]: CompanySettingsController {/api/company-settings} (version: 1):
+2026-07-29 19:37:23 [info]: Mapped {/api/company-settings, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/company-settings, PUT} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/company-settings/logo, POST} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/company-settings/register-sunat-api, POST} (version: 1) route
+2026-07-29 19:37:23 [info]: CashController {/api/caja} (version: 1):
+2026-07-29 19:37:23 [info]: Mapped {/api/caja/abrir, POST} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/caja/activa, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/caja/resumen, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/caja/movimiento, POST} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/caja/cerrar, POST} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/caja/historial, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/caja/sesion/:id, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: PurchaseOrderController {/api/purchase-orders} (version: 1):
+2026-07-29 19:37:23 [info]: Mapped {/api/purchase-orders, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/purchase-orders/:id, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/purchase-orders, POST} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/purchase-orders/:id/receive, PATCH} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/purchase-orders/:id/cancel, PATCH} (version: 1) route
+2026-07-29 19:37:23 [info]: EstablishmentsController {/api/establishments} (version: 1):
+2026-07-29 19:37:23 [info]: Mapped {/api/establishments, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/establishments, POST} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/establishments/series, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/establishments/series, POST} (version: 1) route
+2026-07-29 19:37:23 [info]: GuiaRemisionController {/api/guias-remision} (version: 1):
+2026-07-29 19:37:23 [info]: Mapped {/api/guias-remision, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/guias-remision/:id/pdf, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/guias-remision/:id, GET} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/guias-remision, POST} (version: 1) route
+2026-07-29 19:37:23 [info]: Mapped {/api/guias-remision/:id/resend-sunat, POST} (version: 1) route
+2026-07-29 19:37:23 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 19:37:23 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 19:37:23 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 19:37:23 [info]: Nest application successfully started
+2026-07-29 19:38:50 [info]: Starting Nest application...
+2026-07-29 19:38:50 [info]: AppModule dependencies initialized
+2026-07-29 19:38:50 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:38:50 [info]: PassportModule dependencies initialized
+2026-07-29 19:38:50 [info]: ConfigHostModule dependencies initialized
+2026-07-29 19:38:50 [info]: WinstonModule dependencies initialized
+2026-07-29 19:38:50 [info]: HealthModule dependencies initialized
+2026-07-29 19:38:50 [info]: HttpModule dependencies initialized
+2026-07-29 19:38:50 [info]: DiscoveryModule dependencies initialized
+2026-07-29 19:38:50 [info]: ConfigModule dependencies initialized
+2026-07-29 19:38:50 [info]: ConfigModule dependencies initialized
+2026-07-29 19:38:50 [info]: EventEmitterModule dependencies initialized
+2026-07-29 19:38:50 [info]: ScheduleModule dependencies initialized
+2026-07-29 19:38:50 [info]: JwtModule dependencies initialized
+2026-07-29 19:38:50 [info]: TypeOrmCoreModule dependencies initialized
+2026-07-29 19:38:50 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:38:50 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:38:50 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:38:50 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:38:50 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:38:50 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:38:50 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:38:50 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:38:50 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:38:50 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:38:50 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:38:50 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:38:50 [info]: CategoryModule dependencies initialized
+2026-07-29 19:38:50 [info]: SupplierModule dependencies initialized
+2026-07-29 19:38:50 [info]: CustomerModule dependencies initialized
+2026-07-29 19:38:50 [info]: AuthModule dependencies initialized
+2026-07-29 19:38:50 [info]: EstablishmentsModule dependencies initialized
+2026-07-29 19:38:50 [info]: UserModule dependencies initialized
+2026-07-29 19:38:50 [info]: ProductModule dependencies initialized
+2026-07-29 19:38:50 [info]: PurchaseOrderModule dependencies initialized
+2026-07-29 19:38:50 [info]: CompanySettingsModule dependencies initialized
+2026-07-29 19:38:50 [info]: GuiaRemisionModule dependencies initialized
+2026-07-29 19:38:50 [info]: SaleModule dependencies initialized
+2026-07-29 19:38:50 [info]: CashModule dependencies initialized
+2026-07-29 19:38:50 [info]: AuthController {/api/auth} (version: 1):
+2026-07-29 19:38:50 [info]: Mapped {/api/auth/login, POST} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/auth/status, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: UserController {/api/users} (version: 1):
+2026-07-29 19:38:50 [info]: Mapped {/api/users, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/users/:id, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/users, POST} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/users/:id, PUT} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/users/:id, DELETE} (version: 1) route
+2026-07-29 19:38:50 [info]: HealthController {/api/health} (version: 1):
+2026-07-29 19:38:50 [info]: Mapped {/api/health, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: CategoryController {/api/categories} (version: 1):
+2026-07-29 19:38:50 [info]: Mapped {/api/categories, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/categories/:id, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/categories, POST} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/categories/:id, PUT} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/categories/:id, DELETE} (version: 1) route
+2026-07-29 19:38:50 [info]: SupplierController {/api/suppliers} (version: 1):
+2026-07-29 19:38:50 [info]: Mapped {/api/suppliers, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/suppliers/:id, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/suppliers, POST} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/suppliers/:id, PUT} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/suppliers/:id, DELETE} (version: 1) route
+2026-07-29 19:38:50 [info]: ProductController {/api/products} (version: 1):
+2026-07-29 19:38:50 [info]: Mapped {/api/products, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/products/low-stock, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/products/excel/template, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/products/excel/import, POST} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/products/barcode/:barcode, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/products/:id, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/products, POST} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/products/:id, PUT} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/products/:id, DELETE} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/products/:id/batches, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/products/:id/stock/add, PATCH} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/products/:id/stock/subtract, PATCH} (version: 1) route
+2026-07-29 19:38:50 [info]: CustomerController {/api/customers} (version: 1):
+2026-07-29 19:38:50 [info]: Mapped {/api/customers, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/customers/lookup/:doc, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/customers/:id, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/customers, POST} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/customers/:id, PUT} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/customers/:id, DELETE} (version: 1) route
+2026-07-29 19:38:50 [info]: SaleController {/api/sales} (version: 1):
+2026-07-29 19:38:50 [info]: Mapped {/api/sales, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/sales/summary, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/sales/comprobante/pdf/:token, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/sales/:id/pdf-token, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/sales/:id/pdf, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/sales/:id, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/sales, POST} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/sales/credit-note, POST} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/sales/:id/void, PATCH} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/sales/:id/send-whatsapp, POST} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/sales/:id/resend-sunat, POST} (version: 1) route
+2026-07-29 19:38:50 [info]: CompanySettingsController {/api/company-settings} (version: 1):
+2026-07-29 19:38:50 [info]: Mapped {/api/company-settings, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/company-settings, PUT} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/company-settings/logo, POST} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/company-settings/register-sunat-api, POST} (version: 1) route
+2026-07-29 19:38:50 [info]: CashController {/api/caja} (version: 1):
+2026-07-29 19:38:50 [info]: Mapped {/api/caja/abrir, POST} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/caja/activa, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/caja/resumen, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/caja/movimiento, POST} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/caja/cerrar, POST} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/caja/historial, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/caja/sesion/:id, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: PurchaseOrderController {/api/purchase-orders} (version: 1):
+2026-07-29 19:38:50 [info]: Mapped {/api/purchase-orders, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/purchase-orders/:id, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/purchase-orders, POST} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/purchase-orders/:id/receive, PATCH} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/purchase-orders/:id/cancel, PATCH} (version: 1) route
+2026-07-29 19:38:50 [info]: EstablishmentsController {/api/establishments} (version: 1):
+2026-07-29 19:38:50 [info]: Mapped {/api/establishments, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/establishments, POST} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/establishments/series, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/establishments/series, POST} (version: 1) route
+2026-07-29 19:38:50 [info]: GuiaRemisionController {/api/guias-remision} (version: 1):
+2026-07-29 19:38:50 [info]: Mapped {/api/guias-remision, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/guias-remision/:id/pdf, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/guias-remision/:id, GET} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/guias-remision, POST} (version: 1) route
+2026-07-29 19:38:50 [info]: Mapped {/api/guias-remision/:id/resend-sunat, POST} (version: 1) route
+2026-07-29 19:38:50 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 19:38:50 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 19:38:50 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 19:38:50 [info]: Nest application successfully started
+2026-07-29 19:41:49 [info]: Starting Nest application...
+2026-07-29 19:41:49 [info]: AppModule dependencies initialized
+2026-07-29 19:41:49 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:41:49 [info]: PassportModule dependencies initialized
+2026-07-29 19:41:49 [info]: ConfigHostModule dependencies initialized
+2026-07-29 19:41:49 [info]: WinstonModule dependencies initialized
+2026-07-29 19:41:49 [info]: HealthModule dependencies initialized
+2026-07-29 19:41:49 [info]: HttpModule dependencies initialized
+2026-07-29 19:41:49 [info]: DiscoveryModule dependencies initialized
+2026-07-29 19:41:49 [info]: ConfigModule dependencies initialized
+2026-07-29 19:41:49 [info]: ConfigModule dependencies initialized
+2026-07-29 19:41:49 [info]: EventEmitterModule dependencies initialized
+2026-07-29 19:41:49 [info]: ScheduleModule dependencies initialized
+2026-07-29 19:41:49 [info]: JwtModule dependencies initialized
+2026-07-29 19:41:49 [info]: TypeOrmCoreModule dependencies initialized
+2026-07-29 19:41:49 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:41:49 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:41:49 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:41:49 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:41:49 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:41:49 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:41:49 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:41:49 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:41:49 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:41:49 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:41:49 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:41:49 [info]: TypeOrmModule dependencies initialized
+2026-07-29 19:41:49 [info]: CategoryModule dependencies initialized
+2026-07-29 19:41:49 [info]: SupplierModule dependencies initialized
+2026-07-29 19:41:49 [info]: CustomerModule dependencies initialized
+2026-07-29 19:41:49 [info]: AuthModule dependencies initialized
+2026-07-29 19:41:49 [info]: EstablishmentsModule dependencies initialized
+2026-07-29 19:41:49 [info]: UserModule dependencies initialized
+2026-07-29 19:41:49 [info]: ProductModule dependencies initialized
+2026-07-29 19:41:49 [info]: PurchaseOrderModule dependencies initialized
+2026-07-29 19:41:49 [info]: CompanySettingsModule dependencies initialized
+2026-07-29 19:41:49 [info]: GuiaRemisionModule dependencies initialized
+2026-07-29 19:41:49 [info]: SaleModule dependencies initialized
+2026-07-29 19:41:49 [info]: CashModule dependencies initialized
+2026-07-29 19:41:49 [info]: AuthController {/api/auth} (version: 1):
+2026-07-29 19:41:49 [info]: Mapped {/api/auth/login, POST} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/auth/status, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: UserController {/api/users} (version: 1):
+2026-07-29 19:41:49 [info]: Mapped {/api/users, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/users/:id, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/users, POST} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/users/:id, PUT} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/users/:id, DELETE} (version: 1) route
+2026-07-29 19:41:49 [info]: HealthController {/api/health} (version: 1):
+2026-07-29 19:41:49 [info]: Mapped {/api/health, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: CategoryController {/api/categories} (version: 1):
+2026-07-29 19:41:49 [info]: Mapped {/api/categories, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/categories/:id, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/categories, POST} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/categories/:id, PUT} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/categories/:id, DELETE} (version: 1) route
+2026-07-29 19:41:49 [info]: SupplierController {/api/suppliers} (version: 1):
+2026-07-29 19:41:49 [info]: Mapped {/api/suppliers, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/suppliers/:id, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/suppliers, POST} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/suppliers/:id, PUT} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/suppliers/:id, DELETE} (version: 1) route
+2026-07-29 19:41:49 [info]: ProductController {/api/products} (version: 1):
+2026-07-29 19:41:49 [info]: Mapped {/api/products, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/products/low-stock, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/products/excel/template, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/products/excel/import, POST} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/products/barcode/:barcode, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/products/:id, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/products, POST} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/products/:id, PUT} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/products/:id, DELETE} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/products/:id/batches, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/products/:id/stock/add, PATCH} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/products/:id/stock/subtract, PATCH} (version: 1) route
+2026-07-29 19:41:49 [info]: CustomerController {/api/customers} (version: 1):
+2026-07-29 19:41:49 [info]: Mapped {/api/customers, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/customers/lookup/:doc, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/customers/:id, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/customers, POST} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/customers/:id, PUT} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/customers/:id, DELETE} (version: 1) route
+2026-07-29 19:41:49 [info]: SaleController {/api/sales} (version: 1):
+2026-07-29 19:41:49 [info]: Mapped {/api/sales, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/sales/summary, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/sales/comprobante/pdf/:token, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/sales/:id/pdf-token, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/sales/:id/pdf, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/sales/:id, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/sales, POST} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/sales/credit-note, POST} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/sales/:id/void, PATCH} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/sales/:id/send-whatsapp, POST} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/sales/:id/resend-sunat, POST} (version: 1) route
+2026-07-29 19:41:49 [info]: CompanySettingsController {/api/company-settings} (version: 1):
+2026-07-29 19:41:49 [info]: Mapped {/api/company-settings, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/company-settings, PUT} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/company-settings/logo, POST} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/company-settings/register-sunat-api, POST} (version: 1) route
+2026-07-29 19:41:49 [info]: CashController {/api/caja} (version: 1):
+2026-07-29 19:41:49 [info]: Mapped {/api/caja/abrir, POST} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/caja/activa, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/caja/resumen, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/caja/movimiento, POST} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/caja/cerrar, POST} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/caja/historial, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/caja/sesion/:id, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: PurchaseOrderController {/api/purchase-orders} (version: 1):
+2026-07-29 19:41:49 [info]: Mapped {/api/purchase-orders, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/purchase-orders/:id, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/purchase-orders, POST} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/purchase-orders/:id/receive, PATCH} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/purchase-orders/:id/cancel, PATCH} (version: 1) route
+2026-07-29 19:41:49 [info]: EstablishmentsController {/api/establishments} (version: 1):
+2026-07-29 19:41:49 [info]: Mapped {/api/establishments, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/establishments, POST} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/establishments/series, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/establishments/series, POST} (version: 1) route
+2026-07-29 19:41:49 [info]: GuiaRemisionController {/api/guias-remision} (version: 1):
+2026-07-29 19:41:49 [info]: Mapped {/api/guias-remision, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/guias-remision/:id/pdf, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/guias-remision/:id, GET} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/guias-remision, POST} (version: 1) route
+2026-07-29 19:41:49 [info]: Mapped {/api/guias-remision/:id/resend-sunat, POST} (version: 1) route
+2026-07-29 19:41:49 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 19:41:49 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 19:41:49 [info]: Facturación electrónica: Adaptador inicializado.
+2026-07-29 19:41:49 [info]: Nest application successfully started
