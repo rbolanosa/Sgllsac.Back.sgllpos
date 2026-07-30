@@ -41,6 +41,10 @@ export declare class SaleService {
     createCreditNote(originalId: number, reason: string, description: string): Promise<SaleEntity>;
     private sendCreditNoteToApisunat;
     resendSunat(saleId: number): Promise<any>;
+    getXml(saleId: number): Promise<{
+        buffer: Buffer;
+        filename: string;
+    }>;
     fixIncorrectRefundedStatuses(): Promise<void>;
     voidSale(id: number, dto: VoidSaleDto, performedBy?: number): Promise<SaleEntity>;
     getSalesSummary(from: string, to: string): Promise<{

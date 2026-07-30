@@ -104,4 +104,13 @@ export class SaleController {
   resendSunat(@Param('id', ParseIntPipe) id: number) {
     return this.saleService.resendSunat(id);
   }
+
+  @Get(':id/xml')
+  @ApiOperation({ summary: 'Download official signed SUNAT XML for a sale' })
+  async getXml(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
+    const { buffer, filename } = await this.saleService.getXml(id);
+    res.setHeader('Content-Type', 'application/xml');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    return res.send(buffer);
+  }
 }

@@ -778,6 +778,28 @@ let SaleService = SaleService_1 = class SaleService {
             return this.sendToApisunat(sale);
         }
     }
+    async getXml(saleId) {
+        const sale = await this.saleRepo.findOne({ where: { id: saleId } });
+        if (!sale)
+            throw new common_1.NotFoundException(`Sale #${saleId} not found`);
+        const filename = `${sale.invoiceNumber || 'comprobante'}.xml`;
+        const endpointPrefix = sale.documentType === sale_entity_1.DocumentType.FACTURA
+            ? '/facturas'
+            : sale.documentType === sale_entity_1.DocumentType.NOTA_CREDITO
+                ? '/notas-credito'
+                : '/boletas';
+        try {
+            const xmlRes = await this.facturacionAdapter.get(`${endpointPrefix}/${sale.id}/xml`);
+            if (xmlRes) {
+                const content = typeof xmlRes === 'string' ? xmlRes : (xmlRes.xml || xmlRes.contenido || JSON.stringify(xmlRes));
+                return { buffer: Buffer.from(content, 'utf-8'), filename };
+            }
+        }
+        catch (e) {
+            this.logger.warn(`Could not fetch XML from APISUNAT endpoint: ${e.message}`);
+        }
+        throw new common_1.NotFoundException('No se pudo obtener el XML firmado de SUNAT');
+    }
     async fixIncorrectRefundedStatuses() {
         try {
             const rejectedNcs = await this.saleRepo.find({

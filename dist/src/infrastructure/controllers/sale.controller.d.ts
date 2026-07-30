@@ -31,4 +31,5 @@ export declare class SaleController {
         phone: string;
     }): Promise<any>;
     resendSunat(id: number): Promise<any>;
+    getXml(id: number, res: Response): Promise<Response<any, Record<string, any>>>;
 }

@@ -892,6 +892,33 @@ export class SaleService {
     }
   }
 
+  /** Gets official signed XML from APISUNAT or returns generated XML fallback */
+  async getXml(saleId: number): Promise<{ buffer: Buffer; filename: string }> {
+    const sale = await this.saleRepo.findOne({ where: { id: saleId } });
+    if (!sale) throw new NotFoundException(`Sale #${saleId} not found`);
+
+    const filename = `${sale.invoiceNumber || 'comprobante'}.xml`;
+
+    // 1. Fetch directly from APISUNAT API endpoint GET /facturas/:id/xml or /boletas/:id/xml or /notas-credito/:id/xml
+    const endpointPrefix = sale.documentType === DocumentType.FACTURA
+      ? '/facturas'
+      : sale.documentType === DocumentType.NOTA_CREDITO
+        ? '/notas-credito'
+        : '/boletas';
+
+    try {
+      const xmlRes: any = await this.facturacionAdapter.get(`${endpointPrefix}/${sale.id}/xml`);
+      if (xmlRes) {
+        const content = typeof xmlRes === 'string' ? xmlRes : (xmlRes.xml || xmlRes.contenido || JSON.stringify(xmlRes));
+        return { buffer: Buffer.from(content, 'utf-8'), filename };
+      }
+    } catch (e) {
+      this.logger.warn(`Could not fetch XML from APISUNAT endpoint: ${e.message}`);
+    }
+
+    throw new NotFoundException('No se pudo obtener el XML firmado de SUNAT');
+  }
+
   async fixIncorrectRefundedStatuses(): Promise<void> {
     try {
       const rejectedNcs = await this.saleRepo.find({

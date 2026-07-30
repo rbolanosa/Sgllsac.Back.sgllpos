@@ -69,6 +69,12 @@ let SaleController = class SaleController {
     resendSunat(id) {
         return this.saleService.resendSunat(id);
     }
+    async getXml(id, res) {
+        const { buffer, filename } = await this.saleService.getXml(id);
+        res.setHeader('Content-Type', 'application/xml');
+        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+        return res.send(buffer);
+    }
 };
 exports.SaleController = SaleController;
 __decorate([
@@ -171,6 +177,15 @@ __decorate([
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
 ], SaleController.prototype, "resendSunat", null);
+__decorate([
+    (0, common_1.Get)(':id/xml'),
+    (0, swagger_1.ApiOperation)({ summary: 'Download official signed SUNAT XML for a sale' }),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:returntype", Promise)
+], SaleController.prototype, "getXml", null);
 exports.SaleController = SaleController = __decorate([
     (0, swagger_1.ApiTags)('Sales'),
     (0, swagger_1.ApiBearerAuth)('JWT-auth'),
