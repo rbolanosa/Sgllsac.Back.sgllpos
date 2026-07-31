@@ -793,24 +793,41 @@ export class SaleService {
 
       const datos = res?.datos || res;
 
-      let sunatStatus = datos?.sunat?.estado || res?.estado || 'enviado';
+      let sunatStatus = datos?.sunat?.estado || res?.estado || 'pendiente';
       let sunatMessage = datos?.sunat?.descripcion || res?.mensaje || 'Nota de Crédito registrada';
       let xmlUrl = datos?.archivos?.xml || null;
       let cdrUrl = datos?.archivos?.cdr || null;
       let pdfUrl = datos?.archivos?.pdf || null;
       let qrCode = datos?.qr_code || null;
 
-      if (['enviado', 'aceptado', 'pendiente', 'exito'].includes(String(sunatStatus).toLowerCase())) {
+      // Si retornó enviado/pendiente sin CDR ni XML, llamamos al endpoint /enviar o /reenviar de APISUNAT para forzar procesamiento
+      if ((!xmlUrl || !cdrUrl) && datos?.id) {
+        try {
+          this.logger.log(`Solicitando procesamiento inmediato de Nota de Crédito #${datos.id} en APISUNAT...`);
+          const sendRes: any = await this.facturacionAdapter.post(`/notas-credito/${datos.id}/enviar`, {});
+          const datosSend = sendRes?.datos || sendRes;
+          if (datosSend?.sunat?.estado) sunatStatus = datosSend.sunat.estado;
+          if (datosSend?.sunat?.descripcion) sunatMessage = datosSend.sunat.descripcion;
+          if (datosSend?.archivos?.xml) xmlUrl = datosSend.archivos.xml;
+          if (datosSend?.archivos?.cdr) cdrUrl = datosSend.archivos.cdr;
+          if (datosSend?.archivos?.pdf) pdfUrl = datosSend.archivos.pdf;
+        } catch (sendErr: any) {
+          this.logger.warn(`No se pudo enviar Nota de Crédito #${datos.id} inmediatamente: ${sendErr?.message}`);
+        }
+      }
+
+      const isRealAccepted = String(sunatStatus).toLowerCase() === 'aceptado' || (xmlUrl && cdrUrl);
+
+      if (isRealAccepted) {
         sunatStatus = 'ACEPTADO';
         if (!sunatMessage || sunatMessage.includes('encolada') || sunatMessage.includes('registrado') || sunatMessage.includes('Beta')) {
           sunatMessage = 'Nota de Crédito Aceptada por SUNAT';
         }
-        // Mark original sale as REFUNDED only when Credit Note is ACCEPTED by SUNAT
         if (original?.id) {
           await this.saleRepo.update(original.id, { status: SaleStatus.REFUNDED });
         }
       } else {
-        // If rejected, keep original sale as COMPLETED
+        sunatStatus = String(sunatStatus).toUpperCase();
         if (original?.id) {
           await this.saleRepo.update(original.id, { status: SaleStatus.COMPLETED });
         }
