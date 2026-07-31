@@ -627,9 +627,17 @@ let SaleService = SaleService_1 = class SaleService {
         const payload = {
             serie: ncSerie,
             fecha_emision: fechaEmisionStr,
+            tipo_moneda: 'PEN',
+            doc_afectado: {
+                tipo: original.documentType === sale_entity_1.DocumentType.FACTURA ? '01' : '03',
+                serie: docAfectadoSerie,
+                correlativo: String(docAfectadoCorrelativo),
+                motivo_codigo: cleanCodMotivo,
+                motivo_descripcion: cleanDesMotivo,
+            },
             doc_afectado_tipo: original.documentType === sale_entity_1.DocumentType.FACTURA ? '01' : '03',
             doc_afectado_serie: docAfectadoSerie,
-            doc_afectado_correlativo: docAfectadoCorrelativo,
+            doc_afectado_correlativo: String(docAfectadoCorrelativo),
             cod_motivo: cleanCodMotivo,
             des_motivo: cleanDesMotivo,
             cliente: {
