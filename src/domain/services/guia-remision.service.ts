@@ -309,15 +309,18 @@ export class GuiaRemisionService {
     if (['rechazado', 'error', 'rechazada'].includes(sunatEstado) || sunatObj?.codigo === 'BUILD_ERROR') {
       sunatStatus  = 'RECHAZADO';
       sunatMessage = sunatDesc || 'SUNAT rechazó la Guía de Remisión';
-    } else if (['aceptado', 'aceptada', 'enviado', 'ok'].includes(sunatEstado)) {
+    } else if (['aceptado', 'aceptada'].includes(sunatEstado)) {
       sunatStatus  = 'ACEPTADO';
-      sunatMessage = sunatDesc || 'Guía de Remisión enviada correctamente';
+      sunatMessage = sunatDesc || 'Guía de Remisión aceptada por SUNAT';
+    } else if (['enviado'].includes(sunatEstado)) {
+      sunatStatus  = 'ENVIADO';
+      sunatMessage = sunatDesc || 'Guía de Remisión enviada a SUNAT';
     } else if (sunatEstado === 'exito' && (!sunatObj || sunatObj.estado === 'aceptado')) {
       sunatStatus  = 'ACEPTADO';
       sunatMessage = sunatDesc || 'Guía de Remisión enviada correctamente';
     } else {
-      sunatStatus  = 'RECHAZADO';
-      sunatMessage = sunatDesc || 'SUNAT rechazó la Guía de Remisión';
+      sunatStatus  = 'PENDIENTE';
+      sunatMessage = sunatDesc || 'Estado pendiente en SUNAT';
     }
 
     // Extract numero_completo

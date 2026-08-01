@@ -132,6 +132,14 @@ export class UpdateCompanySettingsDto {
 
   @IsOptional()
   @IsString()
+  sunatClientId?: string;
+
+  @IsOptional()
+  @IsString()
+  sunatClientSecret?: string;
+
+  @IsOptional()
+  @IsString()
   certificadoUrl?: string;
 
   @IsOptional()

@@ -128,6 +128,10 @@ export class CompanySettingsService {
         if (dto.telefono) payload.telefonos = [dto.telefono];
         if (dto.email) payload.emails = [dto.email];
         if (dto.regimenTributario) payload.tax_regime = dto.regimenTributario;
+        if (dto.usuarioSol) payload.sol_user = dto.usuarioSol;
+        if (dto.claveSol) payload.sol_pass = dto.claveSol;
+        if (dto.sunatClientId) payload.client_id = dto.sunatClientId;
+        if (dto.sunatClientSecret) payload.client_secret = dto.sunatClientSecret;
         if (dto.productionMode !== undefined) payload.entorno = dto.productionMode ? 'production' : 'beta';
 
         if (Object.keys(payload).length > 0) {

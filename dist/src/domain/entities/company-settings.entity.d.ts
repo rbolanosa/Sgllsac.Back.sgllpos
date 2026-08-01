@@ -38,6 +38,8 @@ export declare class CompanySettingsEntity {
     productionMode: boolean;
     sunatApiKey: string | null;
     sunatApiSecret: string | null;
+    sunatClientId: string | null;
+    sunatClientSecret: string | null;
     certificadoUrl: string | null;
     certificadoPassword: string | null;
     createdAt: Date;

@@ -174,6 +174,16 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
+], UpdateCompanySettingsDto.prototype, "sunatClientId", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], UpdateCompanySettingsDto.prototype, "sunatClientSecret", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
 ], UpdateCompanySettingsDto.prototype, "certificadoUrl", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),

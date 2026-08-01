@@ -27,6 +27,8 @@ export declare class UpdateCompanySettingsDto {
     productionMode?: boolean;
     sunatApiKey?: string;
     sunatApiSecret?: string;
+    sunatClientId?: string;
+    sunatClientSecret?: string;
     certificadoUrl?: string;
     certificadoPassword?: string;
 }

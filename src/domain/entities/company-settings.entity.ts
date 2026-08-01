@@ -116,6 +116,12 @@ export class CompanySettingsEntity {
   @Column({ name: 'sunat_api_secret', type: 'varchar', length: 255, nullable: true })
   sunatApiSecret: string | null;
 
+  @Column({ name: 'sunat_client_id', type: 'varchar', length: 255, nullable: true })
+  sunatClientId: string | null;
+
+  @Column({ name: 'sunat_client_secret', type: 'varchar', length: 255, nullable: true })
+  sunatClientSecret: string | null;
+
   @Column({ name: 'certificado_url', type: 'varchar', length: 500, nullable: true })
   certificadoUrl: string | null;
 
