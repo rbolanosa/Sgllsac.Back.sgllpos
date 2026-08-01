@@ -518,3 +518,133 @@
 2026-08-01 16:25:40 [info]: Facturación electrónica: Adaptador inicializado.
 2026-08-01 16:25:40 [info]: Facturación electrónica: Adaptador inicializado.
 2026-08-01 16:25:40 [info]: Nest application successfully started
+2026-08-01 16:41:56 [info]: Starting Nest application...
+2026-08-01 16:41:56 [info]: AppModule dependencies initialized
+2026-08-01 16:41:56 [info]: TypeOrmModule dependencies initialized
+2026-08-01 16:41:56 [info]: PassportModule dependencies initialized
+2026-08-01 16:41:56 [info]: ConfigHostModule dependencies initialized
+2026-08-01 16:41:56 [info]: WinstonModule dependencies initialized
+2026-08-01 16:41:56 [info]: HealthModule dependencies initialized
+2026-08-01 16:41:56 [info]: HttpModule dependencies initialized
+2026-08-01 16:41:56 [info]: DiscoveryModule dependencies initialized
+2026-08-01 16:41:56 [info]: ConfigModule dependencies initialized
+2026-08-01 16:41:56 [info]: ConfigModule dependencies initialized
+2026-08-01 16:41:56 [info]: EventEmitterModule dependencies initialized
+2026-08-01 16:41:56 [info]: ScheduleModule dependencies initialized
+2026-08-01 16:41:56 [info]: JwtModule dependencies initialized
+2026-08-01 16:41:56 [info]: TypeOrmCoreModule dependencies initialized
+2026-08-01 16:41:56 [info]: TypeOrmModule dependencies initialized
+2026-08-01 16:41:56 [info]: TypeOrmModule dependencies initialized
+2026-08-01 16:41:56 [info]: TypeOrmModule dependencies initialized
+2026-08-01 16:41:56 [info]: TypeOrmModule dependencies initialized
+2026-08-01 16:41:56 [info]: TypeOrmModule dependencies initialized
+2026-08-01 16:41:56 [info]: TypeOrmModule dependencies initialized
+2026-08-01 16:41:56 [info]: TypeOrmModule dependencies initialized
+2026-08-01 16:41:56 [info]: TypeOrmModule dependencies initialized
+2026-08-01 16:41:56 [info]: TypeOrmModule dependencies initialized
+2026-08-01 16:41:56 [info]: TypeOrmModule dependencies initialized
+2026-08-01 16:41:56 [info]: TypeOrmModule dependencies initialized
+2026-08-01 16:41:56 [info]: TypeOrmModule dependencies initialized
+2026-08-01 16:41:56 [info]: CategoryModule dependencies initialized
+2026-08-01 16:41:56 [info]: SupplierModule dependencies initialized
+2026-08-01 16:41:56 [info]: CustomerModule dependencies initialized
+2026-08-01 16:41:56 [info]: AuthModule dependencies initialized
+2026-08-01 16:41:56 [info]: EstablishmentsModule dependencies initialized
+2026-08-01 16:41:56 [info]: UserModule dependencies initialized
+2026-08-01 16:41:56 [info]: ProductModule dependencies initialized
+2026-08-01 16:41:56 [info]: PurchaseOrderModule dependencies initialized
+2026-08-01 16:41:56 [info]: CompanySettingsModule dependencies initialized
+2026-08-01 16:41:56 [info]: GuiaRemisionModule dependencies initialized
+2026-08-01 16:41:56 [info]: SaleModule dependencies initialized
+2026-08-01 16:41:56 [info]: CashModule dependencies initialized
+2026-08-01 16:41:56 [info]: AuthController {/api/auth} (version: 1):
+2026-08-01 16:41:56 [info]: Mapped {/api/auth/login, POST} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/auth/status, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: UserController {/api/users} (version: 1):
+2026-08-01 16:41:56 [info]: Mapped {/api/users, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/users/:id, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/users, POST} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/users/:id, PUT} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/users/:id, DELETE} (version: 1) route
+2026-08-01 16:41:56 [info]: HealthController {/api/health} (version: 1):
+2026-08-01 16:41:56 [info]: Mapped {/api/health, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: CategoryController {/api/categories} (version: 1):
+2026-08-01 16:41:56 [info]: Mapped {/api/categories, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/categories/:id, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/categories, POST} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/categories/:id, PUT} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/categories/:id, DELETE} (version: 1) route
+2026-08-01 16:41:56 [info]: SupplierController {/api/suppliers} (version: 1):
+2026-08-01 16:41:56 [info]: Mapped {/api/suppliers, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/suppliers/:id, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/suppliers, POST} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/suppliers/:id, PUT} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/suppliers/:id, DELETE} (version: 1) route
+2026-08-01 16:41:56 [info]: ProductController {/api/products} (version: 1):
+2026-08-01 16:41:56 [info]: Mapped {/api/products, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/products/low-stock, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/products/excel/template, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/products/excel/import, POST} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/products/barcode/:barcode, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/products/:id, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/products, POST} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/products/:id, PUT} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/products/:id, DELETE} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/products/:id/batches, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/products/:id/stock/add, PATCH} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/products/:id/stock/subtract, PATCH} (version: 1) route
+2026-08-01 16:41:56 [info]: CustomerController {/api/customers} (version: 1):
+2026-08-01 16:41:56 [info]: Mapped {/api/customers, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/customers/lookup/:doc, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/customers/:id, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/customers, POST} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/customers/:id, PUT} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/customers/:id, DELETE} (version: 1) route
+2026-08-01 16:41:56 [info]: SaleController {/api/sales} (version: 1):
+2026-08-01 16:41:56 [info]: Mapped {/api/sales, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/sales/summary, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/sales/comprobante/pdf/:token, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/sales/:id/pdf-token, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/sales/:id/pdf, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/sales/:id, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/sales, POST} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/sales/credit-note, POST} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/sales/:id/void, PATCH} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/sales/:id/send-whatsapp, POST} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/sales/:id/resend-sunat, POST} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/sales/:id/xml, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: CompanySettingsController {/api/company-settings} (version: 1):
+2026-08-01 16:41:56 [info]: Mapped {/api/company-settings, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/company-settings/sync, POST} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/company-settings, PUT} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/company-settings/logo, POST} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/company-settings/register-sunat-api, POST} (version: 1) route
+2026-08-01 16:41:56 [info]: CashController {/api/caja} (version: 1):
+2026-08-01 16:41:56 [info]: Mapped {/api/caja/abrir, POST} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/caja/activa, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/caja/resumen, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/caja/movimiento, POST} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/caja/cerrar, POST} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/caja/historial, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/caja/sesion/:id, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: PurchaseOrderController {/api/purchase-orders} (version: 1):
+2026-08-01 16:41:56 [info]: Mapped {/api/purchase-orders, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/purchase-orders/:id, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/purchase-orders, POST} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/purchase-orders/:id/receive, PATCH} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/purchase-orders/:id/cancel, PATCH} (version: 1) route
+2026-08-01 16:41:56 [info]: EstablishmentsController {/api/establishments} (version: 1):
+2026-08-01 16:41:56 [info]: Mapped {/api/establishments, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/establishments, POST} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/establishments/series, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/establishments/series, POST} (version: 1) route
+2026-08-01 16:41:56 [info]: GuiaRemisionController {/api/guias-remision} (version: 1):
+2026-08-01 16:41:56 [info]: Mapped {/api/guias-remision, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/guias-remision/:id/pdf, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/guias-remision/:id, GET} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/guias-remision, POST} (version: 1) route
+2026-08-01 16:41:56 [info]: Mapped {/api/guias-remision/:id/resend-sunat, POST} (version: 1) route
+2026-08-01 16:41:56 [info]: Facturación electrónica: Adaptador inicializado.
+2026-08-01 16:41:56 [info]: Facturación electrónica: Adaptador inicializado.
+2026-08-01 16:41:56 [info]: Facturación electrónica: Adaptador inicializado.
+2026-08-01 16:41:56 [info]: Nest application successfully started

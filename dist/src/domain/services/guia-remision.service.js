@@ -154,6 +154,59 @@ let GuiaRemisionService = GuiaRemisionService_1 = class GuiaRemisionService {
             qb.andWhere('g.fechaEmision <= :to', { to: params.to });
         }
         const [data, total] = await qb.getManyAndCount();
+        try {
+            const apiRes = await this.facturacion.get('/guias-remision?por_pagina=50');
+            const apiList = apiRes?.datos?.datos || apiRes?.datos || (Array.isArray(apiRes) ? apiRes : []);
+            if (Array.isArray(apiList) && apiList.length > 0) {
+                for (const item of apiList) {
+                    const numComp = item.numero_completo;
+                    const sunatObj = item.sunat;
+                    if (!sunatObj)
+                        continue;
+                    let mappedStatus = 'PENDIENTE';
+                    const st = String(sunatObj.estado || '').toLowerCase();
+                    if (st === 'rechazado' || sunatObj.codigo === 'BUILD_ERROR') {
+                        mappedStatus = 'RECHAZADO';
+                    }
+                    else if (st === 'aceptado') {
+                        mappedStatus = 'ACEPTADO';
+                    }
+                    else if (st === 'enviado') {
+                        mappedStatus = 'ENVIADO';
+                    }
+                    else if (st === 'pendiente') {
+                        mappedStatus = 'PENDIENTE';
+                    }
+                    const desc = sunatObj.descripcion || item.mensaje || null;
+                    const xml = item.archivos?.xml || null;
+                    const cdr = item.archivos?.cdr || null;
+                    const pdf = item.archivos?.pdf || null;
+                    const match = data.find((g) => (numComp && g.numeroCompleto === numComp) ||
+                        g.apisunatId === item.id ||
+                        g.id === item.id);
+                    if (match) {
+                        match.sunatStatus = mappedStatus;
+                        if (desc)
+                            match.sunatMessage = desc;
+                        if (xml)
+                            match.xmlUrl = xml;
+                        if (cdr)
+                            match.cdrUrl = cdr;
+                        if (pdf)
+                            match.pdfUrl = pdf;
+                        this.repo.update(match.id, {
+                            sunatStatus: mappedStatus,
+                            ...(desc ? { sunatMessage: desc } : {}),
+                            ...(xml ? { xmlUrl: xml } : {}),
+                            ...(cdr ? { cdrUrl: cdr } : {}),
+                            ...(pdf ? { pdfUrl: pdf } : {}),
+                        }).catch(() => null);
+                    }
+                }
+            }
+        }
+        catch {
+        }
         return { data: data.map((g) => this.serialize(g)), total, page, limit };
     }
     async findById(id) {
