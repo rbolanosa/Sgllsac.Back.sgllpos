@@ -57,6 +57,8 @@ export class CompanySettingsService {
           departamento: emp.departamento || settings.departamento,
           provincia: emp.provincia || settings.provincia,
           distrito: emp.distrito || settings.distrito,
+          usuarioSol: emp.sol_user || settings.usuarioSol,
+          sunatClientId: emp.client_id || settings.sunatClientId,
           logoUrl: emp.logo_url ? (emp.logo_url.startsWith('http') ? emp.logo_url : `${new URL(url).origin}${emp.logo_url}`) : settings.logoUrl,
           regimenTributario: emp.tax_regime || settings.regimenTributario,
           productionMode: emp.entorno === 'production',
