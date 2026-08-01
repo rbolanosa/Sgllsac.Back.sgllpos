@@ -235,23 +235,35 @@ let GuiaRemisionService = GuiaRemisionService_1 = class GuiaRemisionService {
         this.logger.log(`GRR #${entity.id} → payload:\n${JSON.stringify(payload, null, 2)}`);
         const res = await this.facturacion.post('/guias-remision', payload);
         this.logger.log(`GRR #${entity.id} ← respuesta APISUNAT:\n${JSON.stringify(res, null, 2)}`);
-        const datos = res?.datos ?? res;
-        const estadoRaw = String(res?.estado || datos?.estado || datos?.sunat?.estado || '').toLowerCase();
-        const mensajeRaw = res?.mensaje || datos?.mensaje || datos?.sunat?.descripcion || '';
+        let target = res?.datos ?? res;
+        if (target?.datos && Array.isArray(target.datos) && target.datos.length > 0) {
+            target = target.datos[0];
+        }
+        const sunatObj = target?.sunat || res?.sunat || null;
+        const sunatEstado = String(sunatObj?.estado || (sunatObj ? '' : target?.estado || res?.estado) || '').toLowerCase();
+        const sunatDesc = sunatObj?.descripcion || target?.mensaje || res?.mensaje || '';
         let sunatStatus;
         let sunatMessage;
-        if (['exito', 'enviado', 'aceptado', 'pendiente', 'ok', 'registrado'].includes(estadoRaw)) {
+        if (['rechazado', 'error', 'rechazada'].includes(sunatEstado) || sunatObj?.codigo === 'BUILD_ERROR') {
+            sunatStatus = 'RECHAZADO';
+            sunatMessage = sunatDesc || 'SUNAT rechazó la Guía de Remisión';
+        }
+        else if (['aceptado', 'aceptada', 'enviado', 'ok'].includes(sunatEstado)) {
             sunatStatus = 'ACEPTADO';
-            sunatMessage = mensajeRaw || 'Guía de Remisión enviada correctamente';
+            sunatMessage = sunatDesc || 'Guía de Remisión enviada correctamente';
+        }
+        else if (sunatEstado === 'exito' && (!sunatObj || sunatObj.estado === 'aceptado')) {
+            sunatStatus = 'ACEPTADO';
+            sunatMessage = sunatDesc || 'Guía de Remisión enviada correctamente';
         }
         else {
             sunatStatus = 'RECHAZADO';
-            sunatMessage = mensajeRaw || 'SUNAT rechazó la Guía de Remisión';
+            sunatMessage = sunatDesc || 'SUNAT rechazó la Guía de Remisión';
         }
         let numeroCompleto = entity.numeroCompleto;
         let correlativo = entity.correlativo;
-        const apiId = datos?.id ?? null;
-        const numComp = datos?.numero_completo || res?.numero_completo;
+        const apiId = target?.id ?? res?.id ?? null;
+        const numComp = target?.numero_completo || res?.numero_completo;
         if (numComp) {
             const parts = String(numComp).split('-');
             if (parts.length === 2) {
@@ -262,14 +274,15 @@ let GuiaRemisionService = GuiaRemisionService_1 = class GuiaRemisionService {
                 numeroCompleto = numComp;
             }
         }
+        const archivos = target?.archivos || res?.archivos || null;
         await this.repo.update(entity.id, {
             sunatStatus,
             sunatMessage,
             numeroCompleto,
             correlativo,
-            xmlUrl: datos?.archivos?.xml || null,
-            pdfUrl: datos?.archivos?.pdf || null,
-            cdrUrl: datos?.archivos?.cdr || null,
+            xmlUrl: archivos?.xml || null,
+            pdfUrl: archivos?.pdf || null,
+            cdrUrl: archivos?.cdr || null,
             apisunatId: apiId,
         });
         entity.sunatStatus = sunatStatus;
@@ -279,8 +292,20 @@ let GuiaRemisionService = GuiaRemisionService_1 = class GuiaRemisionService {
         return res;
     }
     serialize(g) {
+        let sunatStatus = g.sunatStatus;
+        if (sunatStatus === 'ACEPTADO' &&
+            g.sunatMessage &&
+            (g.sunatMessage.includes('401') ||
+                g.sunatMessage.includes('Unauthorized') ||
+                g.sunatMessage.includes('BUILD_ERROR') ||
+                g.sunatMessage.includes('Client error') ||
+                g.sunatMessage.toLowerCase().includes('rechazad'))) {
+            sunatStatus = 'RECHAZADO';
+            this.repo.update(g.id, { sunatStatus: 'RECHAZADO' }).catch(() => null);
+        }
         return {
             ...g,
+            sunatStatus,
             transportista: g.transportistaJson ? JSON.parse(g.transportistaJson) : null,
             vehiculo: g.vehiculoJson ? JSON.parse(g.vehiculoJson) : null,
             conductor: g.conductorJson ? JSON.parse(g.conductorJson) : null,

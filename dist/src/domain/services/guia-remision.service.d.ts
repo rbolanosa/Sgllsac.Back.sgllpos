@@ -18,6 +18,7 @@ export declare class GuiaRemisionService {
         to?: string;
     }): Promise<{
         data: {
+            sunatStatus: string;
             transportista: any;
             vehiculo: any;
             conductor: any;
@@ -45,7 +46,6 @@ export declare class GuiaRemisionService {
             vehiculoJson: string | null;
             conductorJson: string | null;
             itemsJson: string;
-            sunatStatus: string;
             sunatMessage: string | null;
             xmlUrl: string | null;
             pdfUrl: string | null;
@@ -59,6 +59,7 @@ export declare class GuiaRemisionService {
         limit: number;
     }>;
     findById(id: number): Promise<{
+        sunatStatus: string;
         transportista: any;
         vehiculo: any;
         conductor: any;
@@ -86,7 +87,6 @@ export declare class GuiaRemisionService {
         vehiculoJson: string | null;
         conductorJson: string | null;
         itemsJson: string;
-        sunatStatus: string;
         sunatMessage: string | null;
         xmlUrl: string | null;
         pdfUrl: string | null;

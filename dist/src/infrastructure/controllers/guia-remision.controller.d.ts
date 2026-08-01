@@ -6,6 +6,7 @@ export declare class GuiaRemisionController {
     constructor(service: GuiaRemisionService);
     findAll(page?: number, limit?: number, sunatStatus?: string, from?: string, to?: string): Promise<{
         data: {
+            sunatStatus: string;
             transportista: any;
             vehiculo: any;
             conductor: any;
@@ -33,7 +34,6 @@ export declare class GuiaRemisionController {
             vehiculoJson: string | null;
             conductorJson: string | null;
             itemsJson: string;
-            sunatStatus: string;
             sunatMessage: string | null;
             xmlUrl: string | null;
             pdfUrl: string | null;
@@ -48,6 +48,7 @@ export declare class GuiaRemisionController {
     }>;
     getPdf(id: number, res: Response): Promise<void>;
     findOne(id: number): Promise<{
+        sunatStatus: string;
         transportista: any;
         vehiculo: any;
         conductor: any;
@@ -75,7 +76,6 @@ export declare class GuiaRemisionController {
         vehiculoJson: string | null;
         conductorJson: string | null;
         itemsJson: string;
-        sunatStatus: string;
         sunatMessage: string | null;
         xmlUrl: string | null;
         pdfUrl: string | null;
