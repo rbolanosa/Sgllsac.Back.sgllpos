@@ -159,11 +159,11 @@ __decorate([
     __metadata("design:type", String)
 ], CompanySettingsEntity.prototype, "certificadoPassword", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ name: 'whatsapp_company_id', type: 'varchar', length: 100, default: 'empresa_demo' }),
+    (0, typeorm_1.Column)({ name: 'whatsapp_company_id', type: 'varchar', length: 100, nullable: true, default: 'empresa_demo' }),
     __metadata("design:type", String)
 ], CompanySettingsEntity.prototype, "whatsappCompanyId", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ name: 'whatsapp_api_url', type: 'varchar', length: 300, default: 'https://apiwatsapp-production.up.railway.app' }),
+    (0, typeorm_1.Column)({ name: 'whatsapp_api_url', type: 'varchar', length: 300, nullable: true, default: 'https://apiwatsapp-production.up.railway.app' }),
     __metadata("design:type", String)
 ], CompanySettingsEntity.prototype, "whatsappApiUrl", void 0);
 __decorate([
