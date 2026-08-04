@@ -56,18 +56,22 @@ let WhatsappMultiService = WhatsappMultiService_1 = class WhatsappMultiService {
             return { connected: false, companyId, baseUrl, error: msg };
         }
         const isConnected = statusData.connected === true || statusData.status === 'open' || statusData.state === 'open';
-        if (!isConnected && !statusData.qrcode && !statusData.qr) {
+        if (!isConnected) {
             try {
                 const qrRes = await axios_1.default.get(`${baseUrl}/qr`, {
                     params: { companyId },
                     headers,
                     timeout: 10000,
+                    responseType: 'text',
                 });
-                const qrData = qrRes.data ?? {};
-                const qrValue = qrData.qrcode || qrData.qr || qrData.qrCode || qrData.code || qrData.base64 || null;
-                if (qrValue) {
-                    statusData.qrcode = qrValue;
-                    this.logger.log(`QR obtenido correctamente para empresa: ${companyId}`);
+                const html = typeof qrRes.data === 'string' ? qrRes.data : JSON.stringify(qrRes.data);
+                const match = html.match(/src="(data:image\/[^;]+;base64,[^"]+)"/);
+                if (match && match[1]) {
+                    statusData.qrcode = match[1];
+                    this.logger.log(`QR base64 extraído correctamente para empresa: ${companyId}`);
+                }
+                else {
+                    this.logger.warn(`No se encontró imagen base64 en la respuesta del QR`);
                 }
             }
             catch (e) {

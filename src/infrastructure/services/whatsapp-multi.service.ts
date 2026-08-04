@@ -34,7 +34,7 @@ export class WhatsappMultiService {
 
   /**
    * Check connection status of current company.
-   * If not connected, try common QR endpoints automatically.
+   * If not connected, fetch /qr and extract the base64 QR image from the HTML response.
    */
   async getStatus() {
     const { baseUrl, companyId } = await this.getCompanyConfig();
@@ -51,19 +51,24 @@ export class WhatsappMultiService {
 
     const isConnected = statusData.connected === true || statusData.status === 'open' || statusData.state === 'open';
 
-    // If not connected, get QR from the documented endpoint: GET /qr?companyId=XYZ
-    if (!isConnected && !statusData.qrcode && !statusData.qr) {
+    // If not connected → fetch /qr and extract base64 from HTML <img src="data:image/png;base64,...">
+    if (!isConnected) {
       try {
         const qrRes = await axios.get(`${baseUrl}/qr`, {
           params: { companyId },
           headers,
           timeout: 10000,
+          responseType: 'text',
         });
-        const qrData = qrRes.data ?? {};
-        const qrValue = qrData.qrcode || qrData.qr || qrData.qrCode || qrData.code || qrData.base64 || null;
-        if (qrValue) {
-          statusData.qrcode = qrValue;
-          this.logger.log(`QR obtenido correctamente para empresa: ${companyId}`);
+        const html: string = typeof qrRes.data === 'string' ? qrRes.data : JSON.stringify(qrRes.data);
+
+        // Extract base64 from <img src="data:image/...;base64,...">
+        const match = html.match(/src="(data:image\/[^;]+;base64,[^"]+)"/);
+        if (match && match[1]) {
+          statusData.qrcode = match[1];
+          this.logger.log(`QR base64 extraído correctamente para empresa: ${companyId}`);
+        } else {
+          this.logger.warn(`No se encontró imagen base64 en la respuesta del QR`);
         }
       } catch (e: any) {
         this.logger.warn(`No se pudo obtener QR: ${e?.message}`);
