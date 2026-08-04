@@ -33,31 +33,49 @@ export class WhatsappMultiService {
   }
 
   /**
-   * Check connection status of current company
-   * Request GET /status with x-company-id header
+   * Check connection status of current company.
+   * If not connected, try common QR endpoints automatically.
    */
   async getStatus() {
     const { baseUrl, companyId } = await this.getCompanyConfig();
+    const headers = { 'x-company-id': companyId };
+
+    let statusData: any = {};
     try {
-      const response = await axios.get(`${baseUrl}/status`, {
-        headers: { 'x-company-id': companyId },
-        timeout: 10000,
-      });
-      return {
-        companyId,
-        baseUrl,
-        ...response.data,
-      };
+      const response = await axios.get(`${baseUrl}/status`, { headers, timeout: 10000 });
+      statusData = response.data ?? {};
     } catch (error: any) {
       const msg = error?.response?.data?.message || error?.message || 'Error de conexión con la API de WhatsApp';
-      return {
-        connected: false,
-        companyId,
-        baseUrl,
-        error: msg,
-        status: error?.response?.status || 500,
-      };
+      return { connected: false, companyId, baseUrl, error: msg };
     }
+
+    const isConnected = statusData.connected === true || statusData.status === 'open' || statusData.state === 'open';
+
+    // If not connected, get QR from the documented endpoint: GET /qr?companyId=XYZ
+    if (!isConnected && !statusData.qrcode && !statusData.qr) {
+      try {
+        const qrRes = await axios.get(`${baseUrl}/qr`, {
+          params: { companyId },
+          headers,
+          timeout: 10000,
+        });
+        const qrData = qrRes.data ?? {};
+        const qrValue = qrData.qrcode || qrData.qr || qrData.qrCode || qrData.code || qrData.base64 || null;
+        if (qrValue) {
+          statusData.qrcode = qrValue;
+          this.logger.log(`QR obtenido correctamente para empresa: ${companyId}`);
+        }
+      } catch (e: any) {
+        this.logger.warn(`No se pudo obtener QR: ${e?.message}`);
+      }
+    }
+
+    return {
+      companyId,
+      baseUrl,
+      connected: isConnected,
+      ...statusData,
+    };
   }
 
   /**
