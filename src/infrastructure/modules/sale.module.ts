@@ -13,6 +13,8 @@ import { CompanySettingsModule } from './company-settings.module';
 import { CashModule } from './cash.module';
 
 import { WhatsappAdapter } from '../adapters/whatsapp.adapter';
+import { WhatsappMultiModule } from './whatsapp-multi.module';
+import { WhatsappMultiService } from '../services/whatsapp-multi.service';
 
 @Module({
   imports: [
@@ -27,9 +29,10 @@ import { WhatsappAdapter } from '../adapters/whatsapp.adapter';
     ]),
     CompanySettingsModule,
     CashModule,
+    WhatsappMultiModule,
   ],
   controllers: [SaleController],
-  providers: [SaleService, WhatsappAdapter],
+  providers: [SaleService, WhatsappAdapter, WhatsappMultiService],
   exports: [SaleService, WhatsappAdapter],
 })
 export class SaleModule {}

@@ -62,10 +62,11 @@ const crypto = __importStar(require("crypto"));
 const company_settings_service_1 = require("./company-settings.service");
 const facturacion_adapter_1 = require("../../infrastructure/adapters/facturacion.adapter");
 const whatsapp_adapter_1 = require("../../infrastructure/adapters/whatsapp.adapter");
+const whatsapp_multi_service_1 = require("../../infrastructure/services/whatsapp-multi.service");
 const cash_service_1 = require("./cash.service");
 const sunat_units_1 = require("../constants/sunat-units");
 let SaleService = SaleService_1 = class SaleService {
-    constructor(saleRepo, saleItemRepo, productRepo, customerRepo, movementRepo, dataSource, companySettings, facturacionAdapter, whatsappAdapter, cashService) {
+    constructor(saleRepo, saleItemRepo, productRepo, customerRepo, movementRepo, dataSource, companySettings, facturacionAdapter, whatsappAdapter, whatsappMulti, cashService) {
         this.saleRepo = saleRepo;
         this.saleItemRepo = saleItemRepo;
         this.productRepo = productRepo;
@@ -75,6 +76,7 @@ let SaleService = SaleService_1 = class SaleService {
         this.companySettings = companySettings;
         this.facturacionAdapter = facturacionAdapter;
         this.whatsappAdapter = whatsappAdapter;
+        this.whatsappMulti = whatsappMulti;
         this.cashService = cashService;
         this.logger = new common_1.Logger(SaleService_1.name);
     }
@@ -935,7 +937,26 @@ let SaleService = SaleService_1 = class SaleService {
     async sendWhatsappMessage(id, phone) {
         const sale = await this.findById(id);
         const company = await this.companySettings.get();
-        const result = await this.whatsappAdapter.sendInvoiceMessage(sale, phone, company);
+        let pdfBase64 = null;
+        try {
+            const pdfBuffer = await this.whatsappAdapter.generateReceiptPdfBuffer(sale, company);
+            pdfBase64 = pdfBuffer.toString('base64');
+        }
+        catch (err) {
+            this.logger.warn(`Error generando PDF para WhatsApp: ${err?.message}`);
+        }
+        const isNota = sale?.documentType === 'nota_venta';
+        const docLabel = isNota ? 'Nota de Venta' : sale?.documentType === 'factura' ? 'Factura Electrónica' : 'Boleta Electrónica';
+        const companyName = company?.nombreComercial || company?.razonSocial || '';
+        const total = Number(sale?.totalAmount || 0).toFixed(2);
+        const serie = sale?.invoiceNumber || 'COMPROBANTE';
+        const custName = sale?.customer?.name || 'Cliente';
+        const caption = `*${companyName}*\n` +
+            `Hola *${custName}*, gracias por su compra.\n\n` +
+            `• *${docLabel}:* ${serie}\n` +
+            `• *Total:* S/ ${total}\n\n` +
+            `¡Que tenga un excelente día!`;
+        const result = await this.whatsappMulti.sendMedia(phone, pdfBase64, caption, `${serie}.pdf`);
         return {
             success: true,
             message: `Comprobante enviado por WhatsApp al ${phone}`,
@@ -993,6 +1014,7 @@ exports.SaleService = SaleService = SaleService_1 = __decorate([
         company_settings_service_1.CompanySettingsService,
         facturacion_adapter_1.FacturacionAdapter,
         whatsapp_adapter_1.WhatsappAdapter,
+        whatsapp_multi_service_1.WhatsappMultiService,
         cash_service_1.CashService])
 ], SaleService);
 //# sourceMappingURL=sale.service.js.map

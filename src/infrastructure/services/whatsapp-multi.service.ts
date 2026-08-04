@@ -112,6 +112,41 @@ export class WhatsappMultiService {
   }
 
   /**
+   * Send a PDF file (base64) directly via POST /send-media
+   * Used by SaleService to send invoice without going through sendVoucher
+   */
+  async sendMedia(to: string, pdfBase64: string | null, caption: string, fileName: string) {
+    const { baseUrl, companyId } = await this.getCompanyConfig();
+    const cleanPhone = to.replace(/\D/g, '');
+    const phone = cleanPhone.length === 9 ? `51${cleanPhone}` : cleanPhone;
+
+    const form = new FormData();
+    form.append('to', phone);
+    form.append('caption', caption);
+
+    if (pdfBase64) {
+      const pdfBuffer = Buffer.from(pdfBase64, 'base64');
+      form.append('file', pdfBuffer, { filename: fileName, contentType: 'application/pdf' });
+    }
+
+    try {
+      const response = await axios.post(`${baseUrl}/send-media`, form, {
+        headers: {
+          ...form.getHeaders(),
+          'x-company-id': companyId,
+        },
+        timeout: 30000,
+      });
+      this.logger.log(`PDF enviado vía Railway WhatsApp API a ${phone}`);
+      return response.data;
+    } catch (error: any) {
+      const msg = error?.response?.data?.message || error?.message || 'Error enviando PDF';
+      this.logger.error(`Error sendMedia: ${msg}`);
+      throw new BadRequestException(`No se pudo enviar el comprobante por WhatsApp: ${msg}`);
+    }
+  }
+
+  /**
    * Send voucher/invoice file PDF to customer
    * POST /send-media via multipart/form-data
    */

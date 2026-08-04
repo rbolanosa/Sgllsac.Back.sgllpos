@@ -21,6 +21,8 @@ const sale_controller_1 = require("../controllers/sale.controller");
 const company_settings_module_1 = require("./company-settings.module");
 const cash_module_1 = require("./cash.module");
 const whatsapp_adapter_1 = require("../adapters/whatsapp.adapter");
+const whatsapp_multi_module_1 = require("./whatsapp-multi.module");
+const whatsapp_multi_service_1 = require("../services/whatsapp-multi.service");
 let SaleModule = class SaleModule {
 };
 exports.SaleModule = SaleModule;
@@ -38,9 +40,10 @@ exports.SaleModule = SaleModule = __decorate([
             ]),
             company_settings_module_1.CompanySettingsModule,
             cash_module_1.CashModule,
+            whatsapp_multi_module_1.WhatsappMultiModule,
         ],
         controllers: [sale_controller_1.SaleController],
-        providers: [sale_service_1.SaleService, whatsapp_adapter_1.WhatsappAdapter],
+        providers: [sale_service_1.SaleService, whatsapp_adapter_1.WhatsappAdapter, whatsapp_multi_service_1.WhatsappMultiService],
         exports: [sale_service_1.SaleService, whatsapp_adapter_1.WhatsappAdapter],
     })
 ], SaleModule);

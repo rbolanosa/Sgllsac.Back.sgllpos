@@ -23,6 +23,7 @@ import { CreateSaleDto, VoidSaleDto } from '../../application/dtos/sale.dto';
 import { CompanySettingsService } from './company-settings.service';
 import { FacturacionAdapter } from '../../infrastructure/adapters/facturacion.adapter';
 import { WhatsappAdapter } from '../../infrastructure/adapters/whatsapp.adapter';
+import { WhatsappMultiService } from '../../infrastructure/services/whatsapp-multi.service';
 import { CashService } from './cash.service';
 import { resolveSunatUnit, stripBoxSuffix } from '../constants/sunat-units';
 
@@ -44,6 +45,7 @@ export class SaleService {
     private readonly companySettings: CompanySettingsService,
     private readonly facturacionAdapter: FacturacionAdapter,
     private readonly whatsappAdapter: WhatsappAdapter,
+    private readonly whatsappMulti: WhatsappMultiService,
     private readonly cashService: CashService,
   ) {}
 
@@ -1059,11 +1061,36 @@ export class SaleService {
     return this.companySettings.nextInvoiceNumber('boleta', manager);
   }
 
-  /** Send WhatsApp invoice message directly via Evolution API without opening browser tabs */
+  /** Send WhatsApp invoice message via WhatsApp Multi-Empresa API (Railway) */
   async sendWhatsappMessage(id: number, phone: string): Promise<any> {
     const sale = await this.findById(id);
     const company = await this.companySettings.get();
-    const result = await this.whatsappAdapter.sendInvoiceMessage(sale, phone, company);
+
+    // Generate PDF buffer using the existing adapter
+    let pdfBase64: string | null = null;
+    try {
+      const pdfBuffer = await this.whatsappAdapter.generateReceiptPdfBuffer(sale, company);
+      pdfBase64 = pdfBuffer.toString('base64');
+    } catch (err: any) {
+      this.logger.warn(`Error generando PDF para WhatsApp: ${err?.message}`);
+    }
+
+    const isNota = sale?.documentType === 'nota_venta';
+    const docLabel = isNota ? 'Nota de Venta' : sale?.documentType === 'factura' ? 'Factura Electrónica' : 'Boleta Electrónica';
+    const companyName = company?.nombreComercial || company?.razonSocial || '';
+    const total = Number(sale?.totalAmount || 0).toFixed(2);
+    const serie = sale?.invoiceNumber || 'COMPROBANTE';
+    const custName = sale?.customer?.name || 'Cliente';
+
+    const caption =
+      `*${companyName}*\n` +
+      `Hola *${custName}*, gracias por su compra.\n\n` +
+      `• *${docLabel}:* ${serie}\n` +
+      `• *Total:* S/ ${total}\n\n` +
+      `¡Que tenga un excelente día!`;
+
+    // Send via WhatsApp Multi-Empresa (Railway API)
+    const result = await this.whatsappMulti.sendMedia(phone, pdfBase64, caption, `${serie}.pdf`);
     return {
       success: true,
       message: `Comprobante enviado por WhatsApp al ${phone}`,

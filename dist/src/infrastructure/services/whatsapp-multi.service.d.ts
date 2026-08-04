@@ -13,6 +13,7 @@ export declare class WhatsappMultiService {
     private getCompanyConfig;
     getStatus(): Promise<any>;
     sendText(to: string, message: string): Promise<any>;
+    sendMedia(to: string, pdfBase64: string | null, caption: string, fileName: string): Promise<any>;
     sendVoucher(saleId: number, recipientPhone?: string): Promise<{
         success: boolean;
         message: string;

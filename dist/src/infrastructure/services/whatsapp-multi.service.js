@@ -104,6 +104,34 @@ let WhatsappMultiService = WhatsappMultiService_1 = class WhatsappMultiService {
             throw new common_1.BadRequestException(`No se pudo enviar el mensaje por WhatsApp: ${msg}`);
         }
     }
+    async sendMedia(to, pdfBase64, caption, fileName) {
+        const { baseUrl, companyId } = await this.getCompanyConfig();
+        const cleanPhone = to.replace(/\D/g, '');
+        const phone = cleanPhone.length === 9 ? `51${cleanPhone}` : cleanPhone;
+        const form = new form_data_1.default();
+        form.append('to', phone);
+        form.append('caption', caption);
+        if (pdfBase64) {
+            const pdfBuffer = Buffer.from(pdfBase64, 'base64');
+            form.append('file', pdfBuffer, { filename: fileName, contentType: 'application/pdf' });
+        }
+        try {
+            const response = await axios_1.default.post(`${baseUrl}/send-media`, form, {
+                headers: {
+                    ...form.getHeaders(),
+                    'x-company-id': companyId,
+                },
+                timeout: 30000,
+            });
+            this.logger.log(`PDF enviado vía Railway WhatsApp API a ${phone}`);
+            return response.data;
+        }
+        catch (error) {
+            const msg = error?.response?.data?.message || error?.message || 'Error enviando PDF';
+            this.logger.error(`Error sendMedia: ${msg}`);
+            throw new common_1.BadRequestException(`No se pudo enviar el comprobante por WhatsApp: ${msg}`);
+        }
+    }
     async sendVoucher(saleId, recipientPhone) {
         const { baseUrl, companyId, company } = await this.getCompanyConfig();
         const sale = await this.saleRepo.findOne({
