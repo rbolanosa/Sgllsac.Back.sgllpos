@@ -64,6 +64,7 @@ const user_module_1 = require("./infrastructure/modules/user.module");
 const establishments_module_1 = require("./infrastructure/modules/establishments.module");
 const cash_module_1 = require("./infrastructure/modules/cash.module");
 const guia_remision_module_1 = require("./infrastructure/modules/guia-remision.module");
+const whatsapp_multi_module_1 = require("./infrastructure/modules/whatsapp-multi.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -109,6 +110,7 @@ exports.AppModule = AppModule = __decorate([
             establishments_module_1.EstablishmentsModule,
             cash_module_1.CashModule,
             guia_remision_module_1.GuiaRemisionModule,
+            whatsapp_multi_module_1.WhatsappMultiModule,
         ],
     })
 ], AppModule);

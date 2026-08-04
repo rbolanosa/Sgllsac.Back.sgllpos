@@ -128,6 +128,13 @@ export class CompanySettingsEntity {
   @Column({ name: 'certificado_password', type: 'varchar', length: 255, nullable: true })
   certificadoPassword: string | null;
 
+  // ── WhatsApp Multi-Empresa API ───────────────────────────────────────────
+  @Column({ name: 'whatsapp_company_id', type: 'varchar', length: 100, default: 'empresa_demo' })
+  whatsappCompanyId: string;
+
+  @Column({ name: 'whatsapp_api_url', type: 'varchar', length: 300, default: 'https://apiwatsapp-production.up.railway.app' })
+  whatsappApiUrl: string;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 

@@ -42,6 +42,8 @@ export declare class CompanySettingsEntity {
     sunatClientSecret: string | null;
     certificadoUrl: string | null;
     certificadoPassword: string | null;
+    whatsappCompanyId: string;
+    whatsappApiUrl: string;
     createdAt: Date;
     updatedAt: Date;
 }

@@ -1351,3 +1351,889 @@
 2026-08-01 18:54:36 [info]: Facturación electrónica: Adaptador inicializado.
 2026-08-01 18:54:36 [info]: Facturación electrónica: Adaptador inicializado.
 2026-08-01 18:54:36 [info]: Nest application successfully started
+2026-08-04 17:41:04 [info]: Starting Nest application...
+2026-08-04 17:41:04 [info]: AppModule dependencies initialized
+2026-08-04 17:41:04 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:41:04 [info]: PassportModule dependencies initialized
+2026-08-04 17:41:04 [info]: ConfigHostModule dependencies initialized
+2026-08-04 17:41:04 [info]: WinstonModule dependencies initialized
+2026-08-04 17:41:04 [info]: HealthModule dependencies initialized
+2026-08-04 17:41:04 [info]: HttpModule dependencies initialized
+2026-08-04 17:41:04 [info]: DiscoveryModule dependencies initialized
+2026-08-04 17:41:04 [info]: ConfigModule dependencies initialized
+2026-08-04 17:41:04 [info]: ConfigModule dependencies initialized
+2026-08-04 17:41:04 [info]: EventEmitterModule dependencies initialized
+2026-08-04 17:41:04 [info]: ScheduleModule dependencies initialized
+2026-08-04 17:41:04 [info]: JwtModule dependencies initialized
+2026-08-04 17:41:05 [info]: TypeOrmCoreModule dependencies initialized
+2026-08-04 17:41:05 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:41:05 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:41:05 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:41:05 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:41:05 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:41:05 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:41:05 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:41:05 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:41:05 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:41:05 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:41:05 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:41:05 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:41:05 [info]: CategoryModule dependencies initialized
+2026-08-04 17:41:05 [info]: SupplierModule dependencies initialized
+2026-08-04 17:41:05 [info]: CustomerModule dependencies initialized
+2026-08-04 17:41:05 [info]: AuthModule dependencies initialized
+2026-08-04 17:41:05 [info]: EstablishmentsModule dependencies initialized
+2026-08-04 17:41:05 [info]: UserModule dependencies initialized
+2026-08-04 17:41:05 [info]: ProductModule dependencies initialized
+2026-08-04 17:41:05 [info]: PurchaseOrderModule dependencies initialized
+2026-08-04 17:41:05 [info]: CompanySettingsModule dependencies initialized
+2026-08-04 17:41:05 [info]: GuiaRemisionModule dependencies initialized
+2026-08-04 17:41:05 [info]: SaleModule dependencies initialized
+2026-08-04 17:41:05 [info]: CashModule dependencies initialized
+2026-08-04 17:41:05 [info]: AuthController {/api/auth} (version: 1):
+2026-08-04 17:41:05 [info]: Mapped {/api/auth/login, POST} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/auth/status, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: UserController {/api/users} (version: 1):
+2026-08-04 17:41:05 [info]: Mapped {/api/users, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/users/:id, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/users, POST} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/users/:id, PUT} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/users/:id, DELETE} (version: 1) route
+2026-08-04 17:41:05 [info]: HealthController {/api/health} (version: 1):
+2026-08-04 17:41:05 [info]: Mapped {/api/health, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: CategoryController {/api/categories} (version: 1):
+2026-08-04 17:41:05 [info]: Mapped {/api/categories, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/categories/:id, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/categories, POST} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/categories/:id, PUT} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/categories/:id, DELETE} (version: 1) route
+2026-08-04 17:41:05 [info]: SupplierController {/api/suppliers} (version: 1):
+2026-08-04 17:41:05 [info]: Mapped {/api/suppliers, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/suppliers/:id, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/suppliers, POST} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/suppliers/:id, PUT} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/suppliers/:id, DELETE} (version: 1) route
+2026-08-04 17:41:05 [info]: ProductController {/api/products} (version: 1):
+2026-08-04 17:41:05 [info]: Mapped {/api/products, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/products/low-stock, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/products/excel/template, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/products/excel/import, POST} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/products/barcode/:barcode, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/products/:id, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/products, POST} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/products/:id, PUT} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/products/:id, DELETE} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/products/:id/batches, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/products/:id/stock/add, PATCH} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/products/:id/stock/subtract, PATCH} (version: 1) route
+2026-08-04 17:41:05 [info]: CustomerController {/api/customers} (version: 1):
+2026-08-04 17:41:05 [info]: Mapped {/api/customers, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/customers/lookup/:doc, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/customers/:id, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/customers, POST} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/customers/:id, PUT} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/customers/:id, DELETE} (version: 1) route
+2026-08-04 17:41:05 [info]: SaleController {/api/sales} (version: 1):
+2026-08-04 17:41:05 [info]: Mapped {/api/sales, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/sales/summary, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/sales/comprobante/pdf/:token, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/sales/:id/pdf-token, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/sales/:id/pdf, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/sales/:id, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/sales, POST} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/sales/credit-note, POST} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/sales/:id/void, PATCH} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/sales/:id/send-whatsapp, POST} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/sales/:id/resend-sunat, POST} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/sales/:id/xml, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: CompanySettingsController {/api/company-settings} (version: 1):
+2026-08-04 17:41:05 [info]: Mapped {/api/company-settings, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/company-settings/sync, POST} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/company-settings, PUT} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/company-settings/logo, POST} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/company-settings/register-sunat-api, POST} (version: 1) route
+2026-08-04 17:41:05 [info]: CashController {/api/caja} (version: 1):
+2026-08-04 17:41:05 [info]: Mapped {/api/caja/abrir, POST} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/caja/activa, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/caja/resumen, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/caja/movimiento, POST} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/caja/cerrar, POST} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/caja/historial, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/caja/sesion/:id, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: PurchaseOrderController {/api/purchase-orders} (version: 1):
+2026-08-04 17:41:05 [info]: Mapped {/api/purchase-orders, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/purchase-orders/:id, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/purchase-orders, POST} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/purchase-orders/:id/receive, PATCH} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/purchase-orders/:id/cancel, PATCH} (version: 1) route
+2026-08-04 17:41:05 [info]: EstablishmentsController {/api/establishments} (version: 1):
+2026-08-04 17:41:05 [info]: Mapped {/api/establishments, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/establishments, POST} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/establishments/series, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/establishments/series, POST} (version: 1) route
+2026-08-04 17:41:05 [info]: GuiaRemisionController {/api/guias-remision} (version: 1):
+2026-08-04 17:41:05 [info]: Mapped {/api/guias-remision, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/guias-remision/:id/pdf, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/guias-remision/:id, GET} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/guias-remision, POST} (version: 1) route
+2026-08-04 17:41:05 [info]: Mapped {/api/guias-remision/:id/resend-sunat, POST} (version: 1) route
+2026-08-04 17:41:05 [info]: Facturación electrónica: Adaptador inicializado.
+2026-08-04 17:41:05 [info]: Facturación electrónica: Adaptador inicializado.
+2026-08-04 17:41:05 [info]: Facturación electrónica: Adaptador inicializado.
+2026-08-04 17:41:05 [info]: Nest application successfully started
+2026-08-04 17:41:37 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async CompanySettingsService.get (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/company-settings.service.ts:24:20)
+    at async CompanySettingsController.get (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/controllers/company-settings.controller.ts:32:22)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:41:37 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async CompanySettingsService.get (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/company-settings.service.ts:24:20)
+    at async CompanySettingsController.get (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/controllers/company-settings.controller.ts:32:22)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:41:41 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async CompanySettingsService.get (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/company-settings.service.ts:24:20)
+    at async CompanySettingsController.get (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/controllers/company-settings.controller.ts:32:22)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:41:41 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async CompanySettingsService.get (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/company-settings.service.ts:24:20)
+    at async CompanySettingsController.get (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/controllers/company-settings.controller.ts:32:22)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:43:17 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async CompanySettingsService.get (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/company-settings.service.ts:24:20)
+    at async CompanySettingsController.get (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/controllers/company-settings.controller.ts:32:22)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:43:17 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async CompanySettingsService.get (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/company-settings.service.ts:24:20)
+    at async CompanySettingsController.get (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/controllers/company-settings.controller.ts:32:22)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:43:43 [info]: Starting Nest application...
+2026-08-04 17:43:43 [info]: AppModule dependencies initialized
+2026-08-04 17:43:43 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:43:43 [info]: PassportModule dependencies initialized
+2026-08-04 17:43:43 [info]: ConfigHostModule dependencies initialized
+2026-08-04 17:43:43 [info]: WinstonModule dependencies initialized
+2026-08-04 17:43:43 [info]: HealthModule dependencies initialized
+2026-08-04 17:43:43 [info]: HttpModule dependencies initialized
+2026-08-04 17:43:43 [info]: DiscoveryModule dependencies initialized
+2026-08-04 17:43:43 [info]: ConfigModule dependencies initialized
+2026-08-04 17:43:43 [info]: ConfigModule dependencies initialized
+2026-08-04 17:43:43 [info]: EventEmitterModule dependencies initialized
+2026-08-04 17:43:43 [info]: ScheduleModule dependencies initialized
+2026-08-04 17:43:43 [info]: JwtModule dependencies initialized
+2026-08-04 17:43:43 [info]: TypeOrmCoreModule dependencies initialized
+2026-08-04 17:43:43 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:43:43 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:43:43 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:43:43 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:43:43 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:43:43 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:43:43 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:43:43 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:43:43 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:43:43 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:43:43 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:43:43 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:43:43 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:43:43 [info]: CategoryModule dependencies initialized
+2026-08-04 17:43:43 [info]: SupplierModule dependencies initialized
+2026-08-04 17:43:43 [info]: CustomerModule dependencies initialized
+2026-08-04 17:43:43 [info]: AuthModule dependencies initialized
+2026-08-04 17:43:43 [info]: EstablishmentsModule dependencies initialized
+2026-08-04 17:43:43 [info]: UserModule dependencies initialized
+2026-08-04 17:43:43 [info]: ProductModule dependencies initialized
+2026-08-04 17:43:43 [info]: PurchaseOrderModule dependencies initialized
+2026-08-04 17:43:43 [info]: WhatsappMultiModule dependencies initialized
+2026-08-04 17:43:43 [info]: CompanySettingsModule dependencies initialized
+2026-08-04 17:43:43 [info]: GuiaRemisionModule dependencies initialized
+2026-08-04 17:43:43 [info]: SaleModule dependencies initialized
+2026-08-04 17:43:43 [info]: CashModule dependencies initialized
+2026-08-04 17:43:43 [info]: AuthController {/api/auth} (version: 1):
+2026-08-04 17:43:43 [info]: Mapped {/api/auth/login, POST} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/auth/status, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: UserController {/api/users} (version: 1):
+2026-08-04 17:43:43 [info]: Mapped {/api/users, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/users/:id, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/users, POST} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/users/:id, PUT} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/users/:id, DELETE} (version: 1) route
+2026-08-04 17:43:43 [info]: HealthController {/api/health} (version: 1):
+2026-08-04 17:43:43 [info]: Mapped {/api/health, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: CategoryController {/api/categories} (version: 1):
+2026-08-04 17:43:43 [info]: Mapped {/api/categories, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/categories/:id, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/categories, POST} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/categories/:id, PUT} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/categories/:id, DELETE} (version: 1) route
+2026-08-04 17:43:43 [info]: SupplierController {/api/suppliers} (version: 1):
+2026-08-04 17:43:43 [info]: Mapped {/api/suppliers, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/suppliers/:id, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/suppliers, POST} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/suppliers/:id, PUT} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/suppliers/:id, DELETE} (version: 1) route
+2026-08-04 17:43:43 [info]: ProductController {/api/products} (version: 1):
+2026-08-04 17:43:43 [info]: Mapped {/api/products, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/products/low-stock, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/products/excel/template, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/products/excel/import, POST} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/products/barcode/:barcode, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/products/:id, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/products, POST} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/products/:id, PUT} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/products/:id, DELETE} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/products/:id/batches, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/products/:id/stock/add, PATCH} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/products/:id/stock/subtract, PATCH} (version: 1) route
+2026-08-04 17:43:43 [info]: CustomerController {/api/customers} (version: 1):
+2026-08-04 17:43:43 [info]: Mapped {/api/customers, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/customers/lookup/:doc, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/customers/:id, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/customers, POST} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/customers/:id, PUT} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/customers/:id, DELETE} (version: 1) route
+2026-08-04 17:43:43 [info]: SaleController {/api/sales} (version: 1):
+2026-08-04 17:43:43 [info]: Mapped {/api/sales, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/sales/summary, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/sales/comprobante/pdf/:token, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/sales/:id/pdf-token, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/sales/:id/pdf, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/sales/:id, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/sales, POST} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/sales/credit-note, POST} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/sales/:id/void, PATCH} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/sales/:id/send-whatsapp, POST} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/sales/:id/resend-sunat, POST} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/sales/:id/xml, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: CompanySettingsController {/api/company-settings} (version: 1):
+2026-08-04 17:43:43 [info]: Mapped {/api/company-settings, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/company-settings/sync, POST} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/company-settings, PUT} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/company-settings/logo, POST} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/company-settings/register-sunat-api, POST} (version: 1) route
+2026-08-04 17:43:43 [info]: CashController {/api/caja} (version: 1):
+2026-08-04 17:43:43 [info]: Mapped {/api/caja/abrir, POST} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/caja/activa, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/caja/resumen, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/caja/movimiento, POST} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/caja/cerrar, POST} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/caja/historial, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/caja/sesion/:id, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: PurchaseOrderController {/api/purchase-orders} (version: 1):
+2026-08-04 17:43:43 [info]: Mapped {/api/purchase-orders, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/purchase-orders/:id, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/purchase-orders, POST} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/purchase-orders/:id/receive, PATCH} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/purchase-orders/:id/cancel, PATCH} (version: 1) route
+2026-08-04 17:43:43 [info]: EstablishmentsController {/api/establishments} (version: 1):
+2026-08-04 17:43:43 [info]: Mapped {/api/establishments, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/establishments, POST} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/establishments/series, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/establishments/series, POST} (version: 1) route
+2026-08-04 17:43:43 [info]: GuiaRemisionController {/api/guias-remision} (version: 1):
+2026-08-04 17:43:43 [info]: Mapped {/api/guias-remision, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/guias-remision/:id/pdf, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/guias-remision/:id, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/guias-remision, POST} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/guias-remision/:id/resend-sunat, POST} (version: 1) route
+2026-08-04 17:43:43 [info]: WhatsappMultiController {/api/whatsapp} (version: 1):
+2026-08-04 17:43:43 [info]: Mapped {/api/whatsapp/status, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/whatsapp/contacts, GET} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/whatsapp/send-text, POST} (version: 1) route
+2026-08-04 17:43:43 [info]: Mapped {/api/whatsapp/send-voucher/:saleId, POST} (version: 1) route
+2026-08-04 17:43:43 [info]: Facturación electrónica: Adaptador inicializado.
+2026-08-04 17:43:43 [info]: Facturación electrónica: Adaptador inicializado.
+2026-08-04 17:43:43 [info]: Facturación electrónica: Adaptador inicializado.
+2026-08-04 17:43:43 [info]: Nest application successfully started
+2026-08-04 17:43:44 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async WhatsappMultiService.getCompanyConfig (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:26:19)
+    at async WhatsappMultiService.getStatus (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:40:36)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:43:44 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async CompanySettingsService.get (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/company-settings.service.ts:24:20)
+    at async CompanySettingsController.get (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/controllers/company-settings.controller.ts:32:22)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:43:51 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async WhatsappMultiService.getCompanyConfig (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:26:19)
+    at async WhatsappMultiService.getStatus (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:40:36)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:43:51 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async CompanySettingsService.get (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/company-settings.service.ts:24:20)
+    at async CompanySettingsController.get (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/controllers/company-settings.controller.ts:32:22)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:44:10 [warn]: Error al consultar credenciales de la DB: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+2026-08-04 17:44:10 [warn]: Reintentando GET (1/3)...
+2026-08-04 17:44:11 [warn]: Error al consultar credenciales de la DB: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+2026-08-04 17:44:11 [warn]: Reintentando GET (2/3)...
+2026-08-04 17:44:13 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async WhatsappMultiService.getCompanyConfig (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:26:19)
+    at async WhatsappMultiService.getStatus (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:40:36)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:44:13 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async WhatsappMultiService.getCompanyConfig (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:26:19)
+    at async WhatsappMultiService.getStatus (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:40:36)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:44:13 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async CompanySettingsService.get (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/company-settings.service.ts:24:20)
+    at async CompanySettingsController.get (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/controllers/company-settings.controller.ts:32:22)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:44:13 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async CompanySettingsService.get (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/company-settings.service.ts:24:20)
+    at async CompanySettingsController.get (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/controllers/company-settings.controller.ts:32:22)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:44:13 [warn]: Error al consultar credenciales de la DB: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+2026-08-04 17:44:14 [warn]: Error al consultar credenciales de la DB: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+2026-08-04 17:44:14 [warn]: Reintentando GET (1/3)...
+2026-08-04 17:44:15 [warn]: Error al consultar credenciales de la DB: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+2026-08-04 17:44:15 [warn]: Reintentando GET (2/3)...
+2026-08-04 17:44:17 [warn]: Error al consultar credenciales de la DB: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+2026-08-04 17:44:27 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async WhatsappMultiService.getCompanyConfig (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:26:19)
+    at async WhatsappMultiService.getStatus (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:40:36)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:44:27 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async CompanySettingsService.get (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/company-settings.service.ts:24:20)
+    at async CompanySettingsController.get (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/controllers/company-settings.controller.ts:32:22)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:44:34 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async WhatsappMultiService.getCompanyConfig (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:26:19)
+    at async WhatsappMultiService.getStatus (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:40:36)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:44:34 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async WhatsappMultiService.getCompanyConfig (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:26:19)
+    at async WhatsappMultiService.getStatus (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:40:36)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:44:35 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async CompanySettingsService.get (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/company-settings.service.ts:24:20)
+    at async CompanySettingsController.get (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/controllers/company-settings.controller.ts:32:22)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:44:35 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async CompanySettingsService.get (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/company-settings.service.ts:24:20)
+    at async CompanySettingsController.get (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/controllers/company-settings.controller.ts:32:22)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:44:39 [warn]: Error al consultar credenciales de la DB: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+2026-08-04 17:44:40 [warn]: Reintentando GET (1/3)...
+2026-08-04 17:44:41 [warn]: Error al consultar credenciales de la DB: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+2026-08-04 17:44:41 [warn]: Reintentando GET (2/3)...
+2026-08-04 17:44:43 [warn]: Error al consultar credenciales de la DB: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+2026-08-04 17:44:43 [warn]: Error al consultar credenciales de la DB: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+2026-08-04 17:44:43 [warn]: Reintentando GET (1/3)...
+2026-08-04 17:44:44 [warn]: Error al consultar credenciales de la DB: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+2026-08-04 17:44:45 [warn]: Reintentando GET (2/3)...
+2026-08-04 17:44:47 [warn]: Error al consultar credenciales de la DB: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+2026-08-04 17:48:09 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async WhatsappMultiService.getCompanyConfig (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:26:19)
+    at async WhatsappMultiService.getStatus (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:40:36)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:48:09 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async WhatsappMultiService.getCompanyConfig (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:26:19)
+    at async WhatsappMultiService.getStatus (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:40:36)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:48:09 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async CompanySettingsService.get (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/company-settings.service.ts:24:20)
+    at async CompanySettingsController.get (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/controllers/company-settings.controller.ts:32:22)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:48:09 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async CompanySettingsService.get (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/company-settings.service.ts:24:20)
+    at async CompanySettingsController.get (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/controllers/company-settings.controller.ts:32:22)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:48:53 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async WhatsappMultiService.getCompanyConfig (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:26:19)
+    at async WhatsappMultiService.getStatus (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:40:36)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:51:25 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async WhatsappMultiService.getCompanyConfig (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:26:19)
+    at async WhatsappMultiService.getStatus (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:40:36)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:51:25 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async WhatsappMultiService.getCompanyConfig (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:26:19)
+    at async WhatsappMultiService.getStatus (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:40:36)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:51:25 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async CompanySettingsService.get (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/company-settings.service.ts:24:20)
+    at async CompanySettingsController.get (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/controllers/company-settings.controller.ts:32:22)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:51:25 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async CompanySettingsService.get (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/company-settings.service.ts:24:20)
+    at async CompanySettingsController.get (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/controllers/company-settings.controller.ts:32:22)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:53:31 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async CompanySettingsService.get (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/company-settings.service.ts:24:20)
+    at async CompanySettingsController.get (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/controllers/company-settings.controller.ts:32:22)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:54:01 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async WhatsappMultiService.getCompanyConfig (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:26:19)
+    at async WhatsappMultiService.getStatus (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:40:36)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:54:01 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async WhatsappMultiService.getCompanyConfig (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:26:19)
+    at async WhatsappMultiService.getStatus (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:40:36)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:54:01 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async CompanySettingsService.get (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/company-settings.service.ts:24:20)
+    at async CompanySettingsController.get (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/controllers/company-settings.controller.ts:32:22)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:54:01 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async CompanySettingsService.get (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/company-settings.service.ts:24:20)
+    at async CompanySettingsController.get (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/controllers/company-settings.controller.ts:32:22)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:54:47 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async WhatsappMultiService.getCompanyConfig (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:26:19)
+    at async WhatsappMultiService.getStatus (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:40:36)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:54:47 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async CompanySettingsService.get (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/company-settings.service.ts:24:20)
+    at async CompanySettingsController.get (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/controllers/company-settings.controller.ts:32:22)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:55:40 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async CompanySettingsService.get (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/company-settings.service.ts:24:20)
+    at async CompanySettingsController.get (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/controllers/company-settings.controller.ts:32:22)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:55:40 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async CompanySettingsService.get (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/company-settings.service.ts:24:20)
+    at async CompanySettingsController.get (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/controllers/company-settings.controller.ts:32:22)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:55:46 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async WhatsappMultiService.getCompanyConfig (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:26:19)
+    at async WhatsappMultiService.getStatus (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:40:36)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:55:46 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async WhatsappMultiService.getCompanyConfig (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:26:19)
+    at async WhatsappMultiService.getStatus (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/services/whatsapp-multi.service.ts:40:36)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:55:46 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async CompanySettingsService.get (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/company-settings.service.ts:24:20)
+    at async CompanySettingsController.get (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/controllers/company-settings.controller.ts:32:22)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:55:46 [error]: QueryFailedError: Unknown column 'CompanySettingsEntity.whatsapp_company_id' in 'SELECT'
+    at MysqlQueryRunner.query (/Users/macintosh/Documents/DEVPRO/Back/src/driver/mysql/MysqlQueryRunner.ts:291:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async SelectQueryBuilder.loadRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3897:25)
+    at async SelectQueryBuilder.executeEntitiesAndRawResults (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:3619:26)
+    at async SelectQueryBuilder.getRawAndEntities (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1676:29)
+    at async SelectQueryBuilder.getOne (/Users/macintosh/Documents/DEVPRO/Back/src/query-builder/SelectQueryBuilder.ts:1703:25)
+    at async CompanySettingsService.get (/Users/macintosh/Documents/DEVPRO/Back/src/domain/services/company-settings.service.ts:24:20)
+    at async CompanySettingsController.get (/Users/macintosh/Documents/DEVPRO/Back/src/infrastructure/controllers/company-settings.controller.ts:32:22)
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-execution-context.js:47:62
+    at async /Users/macintosh/Documents/DEVPRO/Back/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2026-08-04 17:57:20 [info]: Starting Nest application...
+2026-08-04 17:57:20 [info]: AppModule dependencies initialized
+2026-08-04 17:57:20 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:57:20 [info]: PassportModule dependencies initialized
+2026-08-04 17:57:20 [info]: ConfigHostModule dependencies initialized
+2026-08-04 17:57:20 [info]: WinstonModule dependencies initialized
+2026-08-04 17:57:20 [info]: HealthModule dependencies initialized
+2026-08-04 17:57:20 [info]: HttpModule dependencies initialized
+2026-08-04 17:57:20 [info]: DiscoveryModule dependencies initialized
+2026-08-04 17:57:20 [info]: ConfigModule dependencies initialized
+2026-08-04 17:57:20 [info]: ConfigModule dependencies initialized
+2026-08-04 17:57:20 [info]: EventEmitterModule dependencies initialized
+2026-08-04 17:57:20 [info]: ScheduleModule dependencies initialized
+2026-08-04 17:57:20 [info]: JwtModule dependencies initialized
+2026-08-04 17:57:21 [info]: TypeOrmCoreModule dependencies initialized
+2026-08-04 17:57:21 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:57:21 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:57:21 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:57:21 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:57:21 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:57:21 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:57:21 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:57:21 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:57:21 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:57:21 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:57:21 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:57:21 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:57:21 [info]: TypeOrmModule dependencies initialized
+2026-08-04 17:57:21 [info]: CategoryModule dependencies initialized
+2026-08-04 17:57:21 [info]: SupplierModule dependencies initialized
+2026-08-04 17:57:21 [info]: CustomerModule dependencies initialized
+2026-08-04 17:57:21 [info]: AuthModule dependencies initialized
+2026-08-04 17:57:21 [info]: EstablishmentsModule dependencies initialized
+2026-08-04 17:57:21 [info]: UserModule dependencies initialized
+2026-08-04 17:57:21 [info]: ProductModule dependencies initialized
+2026-08-04 17:57:21 [info]: PurchaseOrderModule dependencies initialized
+2026-08-04 17:57:21 [info]: WhatsappMultiModule dependencies initialized
+2026-08-04 17:57:21 [info]: CompanySettingsModule dependencies initialized
+2026-08-04 17:57:21 [info]: GuiaRemisionModule dependencies initialized
+2026-08-04 17:57:21 [info]: SaleModule dependencies initialized
+2026-08-04 17:57:21 [info]: CashModule dependencies initialized
+2026-08-04 17:57:21 [info]: AuthController {/api/auth} (version: 1):
+2026-08-04 17:57:21 [info]: Mapped {/api/auth/login, POST} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/auth/status, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: UserController {/api/users} (version: 1):
+2026-08-04 17:57:21 [info]: Mapped {/api/users, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/users/:id, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/users, POST} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/users/:id, PUT} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/users/:id, DELETE} (version: 1) route
+2026-08-04 17:57:21 [info]: HealthController {/api/health} (version: 1):
+2026-08-04 17:57:21 [info]: Mapped {/api/health, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: CategoryController {/api/categories} (version: 1):
+2026-08-04 17:57:21 [info]: Mapped {/api/categories, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/categories/:id, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/categories, POST} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/categories/:id, PUT} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/categories/:id, DELETE} (version: 1) route
+2026-08-04 17:57:21 [info]: SupplierController {/api/suppliers} (version: 1):
+2026-08-04 17:57:21 [info]: Mapped {/api/suppliers, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/suppliers/:id, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/suppliers, POST} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/suppliers/:id, PUT} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/suppliers/:id, DELETE} (version: 1) route
+2026-08-04 17:57:21 [info]: ProductController {/api/products} (version: 1):
+2026-08-04 17:57:21 [info]: Mapped {/api/products, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/products/low-stock, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/products/excel/template, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/products/excel/import, POST} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/products/barcode/:barcode, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/products/:id, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/products, POST} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/products/:id, PUT} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/products/:id, DELETE} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/products/:id/batches, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/products/:id/stock/add, PATCH} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/products/:id/stock/subtract, PATCH} (version: 1) route
+2026-08-04 17:57:21 [info]: CustomerController {/api/customers} (version: 1):
+2026-08-04 17:57:21 [info]: Mapped {/api/customers, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/customers/lookup/:doc, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/customers/:id, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/customers, POST} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/customers/:id, PUT} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/customers/:id, DELETE} (version: 1) route
+2026-08-04 17:57:21 [info]: SaleController {/api/sales} (version: 1):
+2026-08-04 17:57:21 [info]: Mapped {/api/sales, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/sales/summary, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/sales/comprobante/pdf/:token, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/sales/:id/pdf-token, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/sales/:id/pdf, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/sales/:id, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/sales, POST} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/sales/credit-note, POST} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/sales/:id/void, PATCH} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/sales/:id/send-whatsapp, POST} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/sales/:id/resend-sunat, POST} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/sales/:id/xml, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: CompanySettingsController {/api/company-settings} (version: 1):
+2026-08-04 17:57:21 [info]: Mapped {/api/company-settings, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/company-settings/sync, POST} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/company-settings, PUT} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/company-settings/logo, POST} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/company-settings/register-sunat-api, POST} (version: 1) route
+2026-08-04 17:57:21 [info]: CashController {/api/caja} (version: 1):
+2026-08-04 17:57:21 [info]: Mapped {/api/caja/abrir, POST} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/caja/activa, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/caja/resumen, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/caja/movimiento, POST} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/caja/cerrar, POST} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/caja/historial, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/caja/sesion/:id, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: PurchaseOrderController {/api/purchase-orders} (version: 1):
+2026-08-04 17:57:21 [info]: Mapped {/api/purchase-orders, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/purchase-orders/:id, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/purchase-orders, POST} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/purchase-orders/:id/receive, PATCH} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/purchase-orders/:id/cancel, PATCH} (version: 1) route
+2026-08-04 17:57:21 [info]: EstablishmentsController {/api/establishments} (version: 1):
+2026-08-04 17:57:21 [info]: Mapped {/api/establishments, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/establishments, POST} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/establishments/series, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/establishments/series, POST} (version: 1) route
+2026-08-04 17:57:21 [info]: GuiaRemisionController {/api/guias-remision} (version: 1):
+2026-08-04 17:57:21 [info]: Mapped {/api/guias-remision, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/guias-remision/:id/pdf, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/guias-remision/:id, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/guias-remision, POST} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/guias-remision/:id/resend-sunat, POST} (version: 1) route
+2026-08-04 17:57:21 [info]: WhatsappMultiController {/api/whatsapp} (version: 1):
+2026-08-04 17:57:21 [info]: Mapped {/api/whatsapp/status, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/whatsapp/contacts, GET} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/whatsapp/send-text, POST} (version: 1) route
+2026-08-04 17:57:21 [info]: Mapped {/api/whatsapp/send-voucher/:saleId, POST} (version: 1) route
+2026-08-04 17:57:21 [info]: Facturación electrónica: Adaptador inicializado.
+2026-08-04 17:57:21 [info]: Facturación electrónica: Adaptador inicializado.
+2026-08-04 17:57:21 [info]: Facturación electrónica: Adaptador inicializado.
+2026-08-04 17:57:21 [info]: Nest application successfully started
