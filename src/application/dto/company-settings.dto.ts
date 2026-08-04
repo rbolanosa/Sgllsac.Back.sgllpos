@@ -145,4 +145,14 @@ export class UpdateCompanySettingsDto {
   @IsOptional()
   @IsString()
   certificadoPassword?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  whatsappCompanyId?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(300)
+  whatsappApiUrl?: string;
 }

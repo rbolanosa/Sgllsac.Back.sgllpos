@@ -31,4 +31,6 @@ export declare class UpdateCompanySettingsDto {
     sunatClientSecret?: string;
     certificadoUrl?: string;
     certificadoPassword?: string;
+    whatsappCompanyId?: string;
+    whatsappApiUrl?: string;
 }

@@ -190,4 +190,16 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateCompanySettingsDto.prototype, "certificadoPassword", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MaxLength)(100),
+    __metadata("design:type", String)
+], UpdateCompanySettingsDto.prototype, "whatsappCompanyId", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MaxLength)(300),
+    __metadata("design:type", String)
+], UpdateCompanySettingsDto.prototype, "whatsappApiUrl", void 0);
 //# sourceMappingURL=company-settings.dto.js.map
