@@ -32,7 +32,7 @@ import { WhatsappMultiService } from '../services/whatsapp-multi.service';
     WhatsappMultiModule,
   ],
   controllers: [SaleController],
-  providers: [SaleService, WhatsappAdapter, WhatsappMultiService],
+  providers: [SaleService, WhatsappAdapter],
   exports: [SaleService, WhatsappAdapter],
 })
 export class SaleModule {}
