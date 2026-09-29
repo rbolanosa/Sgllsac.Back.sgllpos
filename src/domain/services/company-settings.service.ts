@@ -8,6 +8,7 @@ import * as fs from 'fs';
 import { execSync } from 'child_process';
 import { CompanySettingsEntity } from '../entities/company-settings.entity';
 import { UpdateCompanySettingsDto } from '../../application/dto/company-settings.dto';
+import { SaleEntity } from '../entities/sale.entity';
 
 const SINGLETON_ID = 1;
 
@@ -383,7 +384,6 @@ export class CompanySettingsService {
 
   /** Returns the next invoice number for a given series and increments its independent correlativo. */
   async nextInvoiceNumber(type: 'factura' | 'boleta' | 'nota_venta', manager?: any): Promise<string> {
-    const mgr = manager || this.repo;
     const settings = manager
       ? await manager.findOne(CompanySettingsEntity, { where: { id: SINGLETON_ID } })
       : await this.get();
@@ -391,29 +391,41 @@ export class CompanySettingsService {
     let serie = settings?.serieBoleta || 'B001';
     let nextCorrelativo = (settings?.correlativoBoleta || 0) + 1;
     let fieldToIncrement = 'correlativo_boleta';
+    let entityField: 'correlativoBoleta' | 'correlativoFactura' | 'correlativoNotaVenta' = 'correlativoBoleta';
 
     if (type === 'factura') {
       serie = settings?.serieFactura || 'F001';
       nextCorrelativo = (settings?.correlativoFactura || 0) + 1;
       fieldToIncrement = 'correlativo_factura';
+      entityField = 'correlativoFactura';
     } else if (type === 'nota_venta') {
       serie = settings?.serieNotaVenta || 'NV01';
       nextCorrelativo = (settings?.correlativoNotaVenta || 0) + 1;
       fieldToIncrement = 'correlativo_nota_venta';
+      entityField = 'correlativoNotaVenta';
     }
 
-    const invoiceNumber = `${serie}-${String(nextCorrelativo).padStart(8, '0')}`;
+    // Saltar correlativos que ya existan en sales (auto-healing ante rollbacks previos)
+    let candidate = `${serie}-${String(nextCorrelativo).padStart(8, '0')}`;
+    for (let attempt = 0; attempt < 100; attempt++) {
+      const existing = manager
+        ? await manager.findOne(SaleEntity, { where: { invoiceNumber: candidate } })
+        : await this.repo.manager.findOne(SaleEntity, { where: { invoiceNumber: candidate } });
+      if (!existing) break;
+      nextCorrelativo += 1;
+      candidate = `${serie}-${String(nextCorrelativo).padStart(8, '0')}`;
+    }
 
-    // Increment document-specific correlativo in database
+    // Persistir el nuevo correlativo (siguiente al que vamos a usar)
     if (manager) {
       await manager.query(
-        `UPDATE company_settings SET ${fieldToIncrement} = ${fieldToIncrement} + 1 WHERE id = ?`,
-        [SINGLETON_ID],
+        `UPDATE company_settings SET ${fieldToIncrement} = ? WHERE id = ?`,
+        [nextCorrelativo + 1, SINGLETON_ID],
       );
     } else {
-      await this.repo.increment({ id: SINGLETON_ID }, fieldToIncrement === 'correlativo_boleta' ? 'correlativoBoleta' : fieldToIncrement === 'correlativo_factura' ? 'correlativoFactura' : 'correlativoNotaVenta', 1);
+      await this.repo.update({ id: SINGLETON_ID }, { [entityField]: nextCorrelativo + 1 } as any);
     }
 
-    return invoiceNumber;
+    return candidate;
   }
 }

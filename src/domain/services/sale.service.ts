@@ -1043,12 +1043,25 @@ export class SaleService {
           });
 
           if (localSeries?.serie) {
-            // Usar correlativo_actual como el número a emitir
-            const nextNum = Number(localSeries.correlativoActual ?? 1);
+            // Usar correlativo_actual como el número a emitir; avanzar si ya existe
+            // (puede ocurrir cuando una transacción anterior falló y revirtió el contador)
+            let nextNum = Number(localSeries.correlativoActual ?? 1);
+            let candidate = `${localSeries.serie.toUpperCase()}-${String(nextNum).padStart(8, '0')}`;
+
+            // Saltar números ya usados (máx 100 intentos para evitar bucle infinito)
+            for (let attempt = 0; attempt < 100; attempt++) {
+              const existing = await manager.findOne(SaleEntity, {
+                where: { invoiceNumber: candidate },
+              });
+              if (!existing) break;
+              nextNum += 1;
+              candidate = `${localSeries.serie.toUpperCase()}-${String(nextNum).padStart(8, '0')}`;
+            }
+
             // Incrementar para el próximo uso (atómico dentro de la transacción)
             localSeries.correlativoActual = nextNum + 1;
             await manager.save(localSeries);
-            return `${localSeries.serie.toUpperCase()}-${String(nextNum).padStart(8, '0')}`;
+            return candidate;
           }
         }
       } catch (err: any) {
