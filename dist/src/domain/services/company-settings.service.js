@@ -58,6 +58,7 @@ const form_data_1 = __importDefault(require("form-data"));
 const fs = __importStar(require("fs"));
 const child_process_1 = require("child_process");
 const company_settings_entity_1 = require("../entities/company-settings.entity");
+const sale_entity_1 = require("../entities/sale.entity");
 const SINGLETON_ID = 1;
 let CompanySettingsService = class CompanySettingsService {
     constructor(repo, httpService) {
@@ -387,31 +388,42 @@ let CompanySettingsService = class CompanySettingsService {
         return filePath;
     }
     async nextInvoiceNumber(type, manager) {
-        const mgr = manager || this.repo;
         const settings = manager
             ? await manager.findOne(company_settings_entity_1.CompanySettingsEntity, { where: { id: SINGLETON_ID } })
             : await this.get();
         let serie = settings?.serieBoleta || 'B001';
         let nextCorrelativo = (settings?.correlativoBoleta || 0) + 1;
         let fieldToIncrement = 'correlativo_boleta';
+        let entityField = 'correlativoBoleta';
         if (type === 'factura') {
             serie = settings?.serieFactura || 'F001';
             nextCorrelativo = (settings?.correlativoFactura || 0) + 1;
             fieldToIncrement = 'correlativo_factura';
+            entityField = 'correlativoFactura';
         }
         else if (type === 'nota_venta') {
             serie = settings?.serieNotaVenta || 'NV01';
             nextCorrelativo = (settings?.correlativoNotaVenta || 0) + 1;
             fieldToIncrement = 'correlativo_nota_venta';
+            entityField = 'correlativoNotaVenta';
         }
-        const invoiceNumber = `${serie}-${String(nextCorrelativo).padStart(8, '0')}`;
+        let candidate = `${serie}-${String(nextCorrelativo).padStart(8, '0')}`;
+        for (let attempt = 0; attempt < 100; attempt++) {
+            const existing = manager
+                ? await manager.findOne(sale_entity_1.SaleEntity, { where: { invoiceNumber: candidate } })
+                : await this.repo.manager.findOne(sale_entity_1.SaleEntity, { where: { invoiceNumber: candidate } });
+            if (!existing)
+                break;
+            nextCorrelativo += 1;
+            candidate = `${serie}-${String(nextCorrelativo).padStart(8, '0')}`;
+        }
         if (manager) {
-            await manager.query(`UPDATE company_settings SET ${fieldToIncrement} = ${fieldToIncrement} + 1 WHERE id = ?`, [SINGLETON_ID]);
+            await manager.query(`UPDATE company_settings SET ${fieldToIncrement} = ? WHERE id = ?`, [nextCorrelativo + 1, SINGLETON_ID]);
         }
         else {
-            await this.repo.increment({ id: SINGLETON_ID }, fieldToIncrement === 'correlativo_boleta' ? 'correlativoBoleta' : fieldToIncrement === 'correlativo_factura' ? 'correlativoFactura' : 'correlativoNotaVenta', 1);
+            await this.repo.update({ id: SINGLETON_ID }, { [entityField]: nextCorrelativo + 1 });
         }
-        return invoiceNumber;
+        return candidate;
     }
 };
 exports.CompanySettingsService = CompanySettingsService;

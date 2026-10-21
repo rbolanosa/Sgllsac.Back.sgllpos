@@ -404,6 +404,7 @@ let SaleService = SaleService_1 = class SaleService {
         const payload = {
             tipo_documento: sale.documentType === sale_entity_1.DocumentType.FACTURA ? '01' : '03',
             serie,
+            correlativo,
             fecha_emision: fechaEmisionStr,
             tipo_operacion: '0101',
             tipo_moneda: 'PEN',
@@ -435,16 +436,25 @@ let SaleService = SaleService_1 = class SaleService {
                     sunatMessage = 'Comprobante Aceptado por SUNAT';
                 }
             }
-            const sunatSerie = datos?.serie || datos?.comprobante?.serie;
-            const sunatCorr = datos?.correlativo || datos?.comprobante?.correlativo;
-            if (sunatSerie && sunatCorr) {
-                const assignedNumber = `${sunatSerie}-${String(sunatCorr).padStart(8, '0')}`;
-                if (assignedNumber !== sale.invoiceNumber) {
-                    await this.saleRepo.update(sale.id, { invoiceNumber: assignedNumber });
-                    sale.invoiceNumber = assignedNumber;
+            let dteNumber = sale.dteNumber ?? null;
+            let sunatAssigned = null;
+            if (datos?.numero_completo) {
+                sunatAssigned = String(datos.numero_completo);
+            }
+            else {
+                const sunatSerie = datos?.serie || datos?.comprobante?.serie;
+                const sunatCorr = datos?.correlativo || datos?.comprobante?.correlativo;
+                if (sunatSerie && sunatCorr) {
+                    sunatAssigned = `${sunatSerie}-${String(sunatCorr).padStart(8, '0')}`;
                 }
             }
+            if (sunatAssigned && sunatAssigned !== sale.invoiceNumber) {
+                dteNumber = sunatAssigned;
+                this.logger.warn(`SUNAT asignó número ${sunatAssigned} distinto al local ${sale.invoiceNumber}. ` +
+                    `Se mantiene el local y se registra el SUNAT en dteNumber.`);
+            }
             await this.saleRepo.update(sale.id, {
+                dteNumber,
                 sunatStatus,
                 sunatMessage,
                 xmlUrl,
@@ -495,8 +505,42 @@ let SaleService = SaleService_1 = class SaleService {
                 throw new common_1.BadRequestException('Credit notes can only be issued for invoices (factura) or receipts (boleta)');
             }
             originalDoc = original;
-            const serie = original.documentType === 'factura' ? 'FC01' : 'BC01';
-            const ncNumber = `${serie}-P${crypto.randomBytes(4).toString('hex')}`;
+            const targetTipoNC = 'nota_credito';
+            let ncNumber = '';
+            try {
+                const origCashier = original.cashierId
+                    ? await manager.findOne(user_entity_1.UserEntity, { where: { id: original.cashierId } })
+                    : null;
+                const estabId = origCashier?.establishmentId ?? null;
+                if (estabId) {
+                    const ncSeries = await manager.findOne(establishment_series_entity_1.EstablishmentSeriesEntity, {
+                        where: { establishmentId: estabId, tipo: targetTipoNC, activo: true },
+                        lock: { mode: 'pessimistic_write' },
+                    });
+                    if (ncSeries?.serie) {
+                        let nextNum = Number(ncSeries.correlativoActual ?? 1);
+                        let candidate = `${ncSeries.serie.toUpperCase()}-${String(nextNum).padStart(8, '0')}`;
+                        for (let attempt = 0; attempt < 100; attempt++) {
+                            const existing = await manager.findOne(sale_entity_1.SaleEntity, { where: { invoiceNumber: candidate } });
+                            if (!existing)
+                                break;
+                            nextNum += 1;
+                            candidate = `${ncSeries.serie.toUpperCase()}-${String(nextNum).padStart(8, '0')}`;
+                        }
+                        ncSeries.correlativoActual = nextNum + 1;
+                        await manager.save(ncSeries);
+                        ncNumber = candidate;
+                    }
+                }
+            }
+            catch (serieErr) {
+                this.logger.warn(`No se pudo obtener serie NC del establecimiento: ${serieErr?.message}`);
+            }
+            if (!ncNumber) {
+                const serieFallback = original.documentType === 'factura' ? 'FC01' : 'BC01';
+                const ts = Date.now().toString(36).toUpperCase();
+                ncNumber = `${serieFallback}-T${ts}`;
+            }
             const MOTIVOS_CON_DEVOLUCION_TOTAL = ['01', '02', '06'];
             const restoreStock = MOTIVOS_CON_DEVOLUCION_TOTAL.includes(reason);
             if (restoreStock) {
@@ -732,21 +776,21 @@ let SaleService = SaleService_1 = class SaleService {
                     await this.saleRepo.update(original.id, { status: sale_entity_1.SaleStatus.COMPLETED });
                 }
             }
-            let newInvoiceNumber = nc.invoiceNumber;
+            let ncDteNumber = nc.dteNumber ?? null;
+            let ncSunatAssigned = null;
             if (datos?.numero_completo) {
-                const parts = datos.numero_completo.split('-');
-                if (parts.length === 2) {
-                    newInvoiceNumber = `${parts[0]}-${String(parts[1]).padStart(8, '0')}`;
-                }
-                else {
-                    newInvoiceNumber = datos.numero_completo;
-                }
+                ncSunatAssigned = String(datos.numero_completo);
             }
             else if (datos?.serie && datos?.correlativo) {
-                newInvoiceNumber = `${datos.serie}-${String(datos.correlativo).padStart(8, '0')}`;
+                ncSunatAssigned = `${datos.serie}-${String(datos.correlativo).padStart(8, '0')}`;
+            }
+            if (ncSunatAssigned && ncSunatAssigned !== nc.invoiceNumber) {
+                ncDteNumber = ncSunatAssigned;
+                this.logger.warn(`NC SUNAT asignó número ${ncSunatAssigned} distinto al local ${nc.invoiceNumber}. ` +
+                    `Se mantiene el local y se registra el SUNAT en dteNumber.`);
             }
             await this.saleRepo.update(nc.id, {
-                invoiceNumber: newInvoiceNumber,
+                dteNumber: ncDteNumber,
                 sunatStatus,
                 sunatMessage,
                 xmlUrl,
@@ -754,7 +798,7 @@ let SaleService = SaleService_1 = class SaleService {
                 pdfUrl,
                 qrCode,
             });
-            nc.invoiceNumber = newInvoiceNumber;
+            nc.dteNumber = ncDteNumber;
             nc.sunatStatus = sunatStatus;
             nc.sunatMessage = sunatMessage;
             nc.xmlUrl = xmlUrl;
@@ -792,6 +836,21 @@ let SaleService = SaleService_1 = class SaleService {
         });
         if (!sale)
             throw new common_1.NotFoundException(`Sale #${saleId} not found`);
+        const currentStatus = String(sale.sunatStatus || '').toUpperCase();
+        if (currentStatus === 'ACEPTADO') {
+            throw new common_1.BadRequestException(`El comprobante ${sale.invoiceNumber} ya fue ACEPTADO por SUNAT y no puede reenviarse.`);
+        }
+        if (currentStatus !== 'RECHAZADO') {
+            throw new common_1.BadRequestException(`Solo se pueden reenviar comprobantes con estado RECHAZADO. Estado actual: ${currentStatus || 'Sin enviar'}.`);
+        }
+        const lastRejected = await this.saleRepo.findOne({
+            where: { sunatStatus: 'RECHAZADO' },
+            order: { updatedAt: 'DESC' },
+        });
+        if (lastRejected && lastRejected.id !== sale.id) {
+            throw new common_1.BadRequestException(`Solo puede reenviarse el último comprobante rechazado (${lastRejected.invoiceNumber}). ` +
+                `El comprobante ${sale.invoiceNumber} no es el último intento fallido.`);
+        }
         if (sale.documentType === sale_entity_1.DocumentType.NOTA_CREDITO) {
             const original = sale.relatedDocumentId
                 ? await this.saleRepo.findOne({
@@ -917,10 +976,20 @@ let SaleService = SaleService_1 = class SaleService {
                         lock: { mode: 'pessimistic_write' },
                     });
                     if (localSeries?.serie) {
-                        const nextNum = Number(localSeries.correlativoActual ?? 1);
+                        let nextNum = Number(localSeries.correlativoActual ?? 1);
+                        let candidate = `${localSeries.serie.toUpperCase()}-${String(nextNum).padStart(8, '0')}`;
+                        for (let attempt = 0; attempt < 100; attempt++) {
+                            const existing = await manager.findOne(sale_entity_1.SaleEntity, {
+                                where: { invoiceNumber: candidate },
+                            });
+                            if (!existing)
+                                break;
+                            nextNum += 1;
+                            candidate = `${localSeries.serie.toUpperCase()}-${String(nextNum).padStart(8, '0')}`;
+                        }
                         localSeries.correlativoActual = nextNum + 1;
                         await manager.save(localSeries);
-                        return `${localSeries.serie.toUpperCase()}-${String(nextNum).padStart(8, '0')}`;
+                        return candidate;
                     }
                 }
             }

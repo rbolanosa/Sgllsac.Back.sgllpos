@@ -154,6 +154,12 @@ let EstablishmentsService = class EstablishmentsService {
             if (tipo === 'percepcion' && !/^P[A-Z0-9]{3}$/.test(serieUpper)) {
                 throw new common_1.BadRequestException(`Serie de Percepción inválida: '${item.serie}'. Debe iniciar con P (Ej: P001).`);
             }
+            if (tipo === 'nota_credito' && !/^[BF]C[A-Z0-9]{2}$/.test(serieUpper)) {
+                throw new common_1.BadRequestException(`Serie de Nota de Crédito inválida: '${item.serie}'. Debe ser FC01 (facturas) o BC01 (boletas).`);
+            }
+            if (tipo === 'nota_debito' && !/^[BF]D[A-Z0-9]{2}$/.test(serieUpper)) {
+                throw new common_1.BadRequestException(`Serie de Nota de Débito inválida: '${item.serie}'. Debe ser FD01 (facturas) o BD01 (boletas).`);
+            }
         }
         for (const item of dto.series) {
             const serieUpper = item.serie.trim().toUpperCase();
