@@ -194,6 +194,12 @@ export class EstablishmentsService {
       if (tipo === 'percepcion' && !/^P[A-Z0-9]{3}$/.test(serieUpper)) {
         throw new BadRequestException(`Serie de Percepción inválida: '${item.serie}'. Debe iniciar con P (Ej: P001).`);
       }
+      if (tipo === 'nota_credito' && !/^[BF]C[A-Z0-9]{2}$/.test(serieUpper)) {
+        throw new BadRequestException(`Serie de Nota de Crédito inválida: '${item.serie}'. Debe ser FC01 (facturas) o BC01 (boletas).`);
+      }
+      if (tipo === 'nota_debito' && !/^[BF]D[A-Z0-9]{2}$/.test(serieUpper)) {
+        throw new BadRequestException(`Serie de Nota de Débito inválida: '${item.serie}'. Debe ser FD01 (facturas) o BD01 (boletas).`);
+      }
     }
 
     // 1. Save / Upsert series into local establishment_series table

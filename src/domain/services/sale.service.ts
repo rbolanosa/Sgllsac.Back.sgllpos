@@ -453,7 +453,7 @@ export class SaleService {
     const payload = {
       tipo_documento: sale.documentType === DocumentType.FACTURA ? '01' : '03',
       serie,
-      // Do NOT send correlativo — let the SUNAT API auto-assign it to avoid duplicate errors
+      correlativo,          // Enviar el correlativo local para garantizar sincronía con SUNAT
       fecha_emision: fechaEmisionStr,
       tipo_operacion: '0101',
       tipo_moneda: 'PEN',
@@ -490,18 +490,32 @@ export class SaleService {
         }
       }
 
-      // Sync invoiceNumber with the one assigned by SUNAT API if available
-      const sunatSerie = datos?.serie || datos?.comprobante?.serie;
-      const sunatCorr = datos?.correlativo || datos?.comprobante?.correlativo;
-      if (sunatSerie && sunatCorr) {
-        const assignedNumber = `${sunatSerie}-${String(sunatCorr).padStart(8, '0')}`;
-        if (assignedNumber !== sale.invoiceNumber) {
-          await this.saleRepo.update(sale.id, { invoiceNumber: assignedNumber });
-          sale.invoiceNumber = assignedNumber;
+      // ── Correlativo LOCAL es INMUTABLE ──────────────────────────────────────
+      // El invoiceNumber asignado en la transacción de BD nunca se sobreescribe.
+      // Si SUNAT asigna un número diferente, se persiste en dteNumber como referencia
+      // pero el correlativo visible en el sistema siempre refleja la secuencia local.
+      let dteNumber: string | null = sale.dteNumber ?? null;
+      let sunatAssigned: string | null = null;
+      if (datos?.numero_completo) {
+        sunatAssigned = String(datos.numero_completo);
+      } else {
+        const sunatSerie = datos?.serie || datos?.comprobante?.serie;
+        const sunatCorr  = datos?.correlativo || datos?.comprobante?.correlativo;
+        if (sunatSerie && sunatCorr) {
+          sunatAssigned = `${sunatSerie}-${String(sunatCorr).padStart(8, '0')}`;
         }
+      }
+      // Guardar número SUNAT en dteNumber solo si es diferente al local
+      if (sunatAssigned && sunatAssigned !== sale.invoiceNumber) {
+        dteNumber = sunatAssigned;
+        this.logger.warn(
+          `SUNAT asignó número ${sunatAssigned} distinto al local ${sale.invoiceNumber}. ` +
+          `Se mantiene el local y se registra el SUNAT en dteNumber.`,
+        );
       }
 
       await this.saleRepo.update(sale.id, {
+        dteNumber,
         sunatStatus,
         sunatMessage,
         xmlUrl,
@@ -555,12 +569,51 @@ export class SaleService {
 
       originalDoc = original;
 
-      // Serie según tipo de documento original
-      const serie = original.documentType === 'factura' ? 'FC01' : 'BC01';
-      // Número temporal — SUNAT auto-asigna el correlativo real; se actualiza en la respuesta de la API.
-      // Formato: FC01-P{8 hex chars}  →  14 chars (límite de la columna: 20).
-      // Usa crypto.randomBytes para garantizar unicidad sin colisiones de timestamp.
-      const ncNumber = `${serie}-P${crypto.randomBytes(4).toString('hex')}`;
+      // Número secuencial de la NC usando la serie del establecimiento
+      // Busca el registro de series para 'nota_credito' (FC01 o BC01 según el doc original)
+      const targetTipoNC = 'nota_credito';
+      let ncNumber = '';
+      try {
+        // Intentar obtener el establecimiento del cajero del documento original
+        const origCashier = original.cashierId
+          ? await manager.findOne(UserEntity, { where: { id: original.cashierId } })
+          : null;
+        const estabId = origCashier?.establishmentId ?? null;
+
+        if (estabId) {
+          const ncSeries = await manager.findOne(EstablishmentSeriesEntity, {
+            where: { establishmentId: estabId, tipo: targetTipoNC, activo: true },
+            lock: { mode: 'pessimistic_write' },
+          });
+
+          if (ncSeries?.serie) {
+            let nextNum = Number(ncSeries.correlativoActual ?? 1);
+            let candidate = `${ncSeries.serie.toUpperCase()}-${String(nextNum).padStart(8, '0')}`;
+
+            // Saltar números ya usados
+            for (let attempt = 0; attempt < 100; attempt++) {
+              const existing = await manager.findOne(SaleEntity, { where: { invoiceNumber: candidate } });
+              if (!existing) break;
+              nextNum += 1;
+              candidate = `${ncSeries.serie.toUpperCase()}-${String(nextNum).padStart(8, '0')}`;
+            }
+
+            ncSeries.correlativoActual = nextNum + 1;
+            await manager.save(ncSeries);
+            ncNumber = candidate;
+          }
+        }
+      } catch (serieErr: any) {
+        this.logger.warn(`No se pudo obtener serie NC del establecimiento: ${serieErr?.message}`);
+      }
+
+      // Fallback: si no hay serie registrada, usar timestamp compacto para garantizar unicidad
+      if (!ncNumber) {
+        const serieFallback = original.documentType === 'factura' ? 'FC01' : 'BC01';
+        const ts = Date.now().toString(36).toUpperCase();
+        ncNumber = `${serieFallback}-T${ts}`;
+      }
+
 
       // El original permanece COMPLETED hasta que SUNAT acepte la NC.
 
@@ -835,20 +888,26 @@ export class SaleService {
         }
       }
 
-      let newInvoiceNumber = nc.invoiceNumber;
+      // ── Correlativo LOCAL de NC es INMUTABLE ────────────────────────────────
+      // El invoiceNumber de la NC (FC01-00000001, BC01-00000001, etc.) no cambia.
+      // Si SUNAT devuelve un número diferente, se guarda en dteNumber.
+      let ncDteNumber: string | null = nc.dteNumber ?? null;
+      let ncSunatAssigned: string | null = null;
       if (datos?.numero_completo) {
-        const parts = datos.numero_completo.split('-');
-        if (parts.length === 2) {
-          newInvoiceNumber = `${parts[0]}-${String(parts[1]).padStart(8, '0')}`;
-        } else {
-          newInvoiceNumber = datos.numero_completo;
-        }
+        ncSunatAssigned = String(datos.numero_completo);
       } else if (datos?.serie && datos?.correlativo) {
-        newInvoiceNumber = `${datos.serie}-${String(datos.correlativo).padStart(8, '0')}`;
+        ncSunatAssigned = `${datos.serie}-${String(datos.correlativo).padStart(8, '0')}`;
+      }
+      if (ncSunatAssigned && ncSunatAssigned !== nc.invoiceNumber) {
+        ncDteNumber = ncSunatAssigned;
+        this.logger.warn(
+          `NC SUNAT asignó número ${ncSunatAssigned} distinto al local ${nc.invoiceNumber}. ` +
+          `Se mantiene el local y se registra el SUNAT en dteNumber.`,
+        );
       }
 
       await this.saleRepo.update(nc.id, {
-        invoiceNumber: newInvoiceNumber,
+        dteNumber: ncDteNumber,
         sunatStatus,
         sunatMessage,
         xmlUrl,
@@ -857,7 +916,7 @@ export class SaleService {
         qrCode,
       });
 
-      nc.invoiceNumber = newInvoiceNumber;
+      nc.dteNumber = ncDteNumber;
       nc.sunatStatus = sunatStatus;
       nc.sunatMessage = sunatMessage;
       nc.xmlUrl = xmlUrl;
@@ -898,6 +957,38 @@ export class SaleService {
     });
     if (!sale) throw new NotFoundException(`Sale #${saleId} not found`);
 
+    const currentStatus = String(sale.sunatStatus || '').toUpperCase();
+
+    // ── Regla 1: Comprobante ACEPTADO → no se puede reenviar nunca ────────────
+    if (currentStatus === 'ACEPTADO') {
+      throw new BadRequestException(
+        `El comprobante ${sale.invoiceNumber} ya fue ACEPTADO por SUNAT y no puede reenviarse.`,
+      );
+    }
+
+    // ── Regla 2: Solo los RECHAZADOS pueden reenviarse ────────────────────────
+    if (currentStatus !== 'RECHAZADO') {
+      throw new BadRequestException(
+        `Solo se pueden reenviar comprobantes con estado RECHAZADO. Estado actual: ${currentStatus || 'Sin enviar'}.`,
+      );
+    }
+
+    // ── Regla 3: Solo el último intento (mayor updatedAt) puede reenviarse ────
+    // Puede haber varios comprobantes RECHAZADOS, pero únicamente el que se
+    // intentó enviar más recientemente (mayor updatedAt) es accionable.
+    const lastRejected = await this.saleRepo.findOne({
+      where: { sunatStatus: 'RECHAZADO' },
+      order: { updatedAt: 'DESC' },
+    });
+
+    if (lastRejected && lastRejected.id !== sale.id) {
+      throw new BadRequestException(
+        `Solo puede reenviarse el último comprobante rechazado (${lastRejected.invoiceNumber}). ` +
+        `El comprobante ${sale.invoiceNumber} no es el último intento fallido.`,
+      );
+    }
+
+    // ── Proceder con el reenvío ────────────────────────────────────────────────
     if (sale.documentType === DocumentType.NOTA_CREDITO) {
       const original = sale.relatedDocumentId
         ? await this.saleRepo.findOne({
@@ -918,6 +1009,8 @@ export class SaleService {
       return this.sendToApisunat(sale);
     }
   }
+
+
 
   /** Gets official signed XML from APISUNAT or returns generated XML fallback */
   async getXml(saleId: number): Promise<{ buffer: Buffer; filename: string }> {
