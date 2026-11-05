@@ -126,4 +126,30 @@ export class CompanySettingsController {
     if (!file) throw new BadRequestException('El archivo del certificado digital es requerido.');
     return this.service.registerSunatApi(file, contrasenaCertificado);
   }
+
+  /**
+   * Replace the certificate of an already registered company.
+   */
+  @Roles(UserRole.ADMIN)
+  @Post('certificate')
+  @UseInterceptors(
+    FileInterceptor('certificado', {
+      storage: memoryStorage(),
+      limits: { fileSize: 100 * 1024 }, // APISUNAT acepta hasta 100 KB
+      fileFilter: (_req, file, cb) => {
+        if (!['.p12', '.pfx'].includes(extname(file.originalname).toLowerCase())) {
+          return cb(new BadRequestException('Solo se permiten certificados .p12 o .pfx'), false);
+        }
+        cb(null, true);
+      },
+    }),
+  )
+  async updateCertificate(
+    @UploadedFile() file: Express.Multer.File,
+    @Body('contrasenaCertificado') contrasenaCertificado?: string,
+  ) {
+    if (!file) throw new BadRequestException('El archivo del certificado digital es requerido.');
+    if (!contrasenaCertificado) throw new BadRequestException('La contraseña del certificado es requerida.');
+    return this.service.updateSunatCertificate(file, contrasenaCertificado);
+  }
 }

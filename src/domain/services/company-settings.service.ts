@@ -5,6 +5,9 @@ import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import FormData from 'form-data';
 import * as fs from 'fs';
+import { tmpdir } from 'os';
+import { extname, join } from 'path';
+import { randomUUID } from 'crypto';
 import { execFileSync } from 'child_process';
 import * as bcrypt from 'bcryptjs';
 import { CompanySettingsEntity } from '../entities/company-settings.entity';
@@ -432,6 +435,47 @@ export class CompanySettingsService {
   }
 
   /** Converts legacy PFX/P12 certificate encryption to modern PFX format if openssl is available. */
+  /** Reemplaza el certificado de la empresa ya registrada, sin tocar sus credenciales. */
+  async updateSunatCertificate(certFile: Express.Multer.File, certPassword: string): Promise<{ message: string }> {
+    const settings = await this.get();
+    if (!settings.sunatApiKey || !settings.sunatApiSecret || !settings.sunatApiUrl) {
+      throw new BadRequestException('La empresa aún no está conectada a APISUNAT.');
+    }
+
+    const tempPath = join(tmpdir(), `cert-${randomUUID()}${extname(certFile.originalname)}`);
+    fs.writeFileSync(tempPath, certFile.buffer, { mode: 0o600 });
+    const activeCertPath = this.normalizeCertificatePath(tempPath, certPassword);
+
+    try {
+      const form = new FormData();
+      form.append('certificado', fs.readFileSync(activeCertPath), {
+        filename: certFile.originalname,
+        contentType: certFile.mimetype,
+      });
+      form.append('contrasena_certificado', certPassword);
+
+      const response = await firstValueFrom(
+        this.httpService.post(`${settings.sunatApiUrl.replace(/\/$/, '')}/empresa/certificado`, form, {
+          headers: {
+            ...form.getHeaders(),
+            'X-Api-Key': settings.sunatApiKey,
+            'X-Api-Secret': settings.sunatApiSecret,
+          },
+          timeout: 20_000,
+        }),
+      );
+
+      return { message: response.data?.mensaje || 'Certificado actualizado.' };
+    } catch (err: any) {
+      const detail = err?.response?.data?.mensaje || err?.response?.data?.message;
+      throw new BadGatewayException(detail || 'APISUNAT no pudo actualizar el certificado.');
+    } finally {
+      for (const path of new Set([tempPath, activeCertPath])) {
+        try { fs.unlinkSync(path); } catch {}
+      }
+    }
+  }
+
   private normalizeCertificatePath(filePath: string, password?: string): string {
     if (!password || !fs.existsSync(filePath)) return filePath;
     const tempPem = `${filePath}.pem`;
