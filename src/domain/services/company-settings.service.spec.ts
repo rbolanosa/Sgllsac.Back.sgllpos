@@ -1,3 +1,5 @@
+import { BadGatewayException } from '@nestjs/common';
+import { of, throwError } from 'rxjs';
 import { CompanySettingsService } from './company-settings.service';
 
 describe('CompanySettingsService.nextInvoiceNumber', () => {
@@ -68,5 +70,42 @@ describe('CompanySettingsService.nextInvoiceNumber', () => {
 
     expect(await next('boleta')).toBe('B001-00000007');
     expect(row.correlativoBoleta).toBe(8);
+  });
+});
+
+describe('CompanySettingsService.update', () => {
+  const setup = () => {
+    const settings = {
+      id: 1,
+      sunatApiKey: 'key',
+      sunatApiSecret: 'secret',
+      sunatApiUrl: 'http://apisunat.test',
+    };
+    const repo = {
+      findOne: () => Promise.resolve(settings),
+      update: jest.fn(() => Promise.resolve()),
+    };
+    const http = {
+      get: () => of({ data: {} }),
+      put: jest.fn(() => throwError(() => new Error('sin conexión'))),
+    };
+    const service = new CompanySettingsService(repo as never, null as never);
+    Object.assign(service, { repo, httpService: http });
+    return { service, repo, http };
+  };
+
+  it('avisa si APISUNAT no recibió las credenciales de guías', async () => {
+    const { service, repo } = setup();
+
+    await expect(
+      service.update({ sunatClientId: 'id', sunatClientSecret: 'clave' }),
+    ).rejects.toBeInstanceOf(BadGatewayException);
+    expect(repo.update).toHaveBeenCalled();
+  });
+
+  it('no bloquea un guardado normal si APISUNAT falla', async () => {
+    const { service } = setup();
+
+    await expect(service.update({ direccion: 'Jr. Lima 1' })).resolves.toBeDefined();
   });
 });

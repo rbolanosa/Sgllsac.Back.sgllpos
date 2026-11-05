@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, BadGatewayException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { HttpService } from '@nestjs/axios';
@@ -49,6 +49,7 @@ export class CompanySettingsService {
     return {
       ...safe,
       hasVoidPin,
+      hasSunatClientSecret: !!sunatClientSecret,
       sunatApiUrl,
       sunatClientId,
       usuarioSol,
@@ -216,6 +217,12 @@ export class CompanySettingsService {
         }
       } catch (err: any) {
         console.warn('Advertencia: No se pudo sincronizar actualización con APISUNAT:', err?.message);
+        // Las credenciales solo sirven en APISUNAT: si no llegaron, quien las escribió debe saberlo
+        if (dto.claveSol || dto.sunatClientSecret) {
+          throw new BadGatewayException(
+            'Se guardó en el sistema, pero APISUNAT no recibió las credenciales. Inténtalo de nuevo.',
+          );
+        }
       }
     }
 
