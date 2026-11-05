@@ -4,6 +4,7 @@ import { ExpressAdapter } from '@nestjs/platform-express';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import express from 'express';
 import mysql from 'mysql2/promise';
+import { ensurePresentationsSchema } from '../src/infrastructure/database/ensure-presentations-schema';
 let cachedServer: any;
 
 const CORS_HEADERS = {
@@ -26,6 +27,8 @@ async function ensureProductionSchema() {
       connectTimeout: 10000,
     });
     try {
+      await ensurePresentationsSchema(conn);
+
       await conn.query(`
         CREATE TABLE IF NOT EXISTS \`product_batches\` (
           \`id\`               INT           NOT NULL AUTO_INCREMENT,
