@@ -124,7 +124,7 @@ export class CompanySettingsService {
           distrito: emp.distrito || settings.distrito,
           usuarioSol: emp.sol_user || settings.usuarioSol,
           sunatClientId: emp.client_id || settings.sunatClientId,
-          logoUrl: emp.logo_url ? (emp.logo_url.startsWith('http') ? emp.logo_url : `${new URL(url).origin}${emp.logo_url}`) : settings.logoUrl,
+          logoUrl: emp.logo_url ? this.publicLogoUrl(emp.logo_url, url) : settings.logoUrl,
           regimenTributario: emp.tax_regime || settings.regimenTributario,
           productionMode: emp.entorno === 'production',
         });
@@ -153,10 +153,7 @@ export class CompanySettingsService {
       );
       const remoteLogoPath: string | undefined = response.data?.datos?.logo_url;
       if (remoteLogoPath) {
-        const baseHost = new URL(targetUrl).origin;
-        const publicLogoUrl = remoteLogoPath.startsWith('http')
-          ? remoteLogoPath
-          : `${baseHost}${remoteLogoPath}`;
+        const publicLogoUrl = this.publicLogoUrl(remoteLogoPath, targetUrl);
         // Persist so next request is instant
         await this.repo.update(SINGLETON_ID, { logoUrl: publicLogoUrl });
         return publicLogoUrl;
@@ -422,16 +419,25 @@ export class CompanySettingsService {
       );
 
       const remoteLogoPath: string | undefined = response.data?.datos?.logo_url || response.data?.logo_url;
-      if (remoteLogoPath) {
-        const baseHost = new URL(targetUrl).origin;
-        return remoteLogoPath.startsWith('http')
-          ? remoteLogoPath
-          : `${baseHost}${remoteLogoPath}`;
-      }
+      if (remoteLogoPath) return this.publicLogoUrl(remoteLogoPath, targetUrl);
     } catch (err: any) {
       console.warn('Error al subir logo buffer a APISUNAT:', err?.message);
+      const data = err?.response?.data;
+      const detail = data?.errores?.logo?.[0] || data?.errors?.logo?.[0] || data?.mensaje || data?.message;
+      throw new BadGatewayException(detail || 'APISUNAT no pudo guardar el logo.');
     }
-    return null;
+    throw new BadGatewayException('APISUNAT no devolvió la dirección del logo.');
+  }
+
+  /** APISUNAT puede devolver una ruta relativa o una URL con localhost si su APP_URL no está configurada. */
+  private publicLogoUrl(remoteLogo: string, apiUrl: string): string {
+    const baseHost = new URL(apiUrl).origin;
+    if (!remoteLogo.startsWith('http')) return `${baseHost}${remoteLogo}`;
+
+    const remote = new URL(remoteLogo);
+    return ['localhost', '127.0.0.1'].includes(remote.hostname)
+      ? `${baseHost}${remote.pathname}${remote.search}`
+      : remoteLogo;
   }
 
   /** Converts legacy PFX/P12 certificate encryption to modern PFX format if openssl is available. */

@@ -150,3 +150,30 @@ describe('CompanySettingsService.updateSunatCredentials', () => {
     expect(repo.update).not.toHaveBeenCalled();
   });
 });
+
+describe('CompanySettingsService.syncLogoBufferToApisunat', () => {
+  const file = { buffer: Buffer.from('logo'), originalname: 'logo.png', mimetype: 'image/png' } as never;
+  const setup = (post: () => unknown) => {
+    const settings = { id: 1, sunatApiKey: 'key', sunatApiSecret: 'secret', sunatApiUrl: 'https://api.test/api/v1' };
+    const repo = { findOne: () => Promise.resolve(settings) };
+    return new CompanySettingsService(repo as never, { post } as never);
+  };
+
+  it('corrige una URL con localhost devuelta por APISUNAT', async () => {
+    const service = setup(() =>
+      of({ data: { datos: { logo_url: 'http://localhost/storage/logos/1/logo.png?v=2' } } }),
+    );
+
+    await expect(service.syncLogoBufferToApisunat(file)).resolves.toBe(
+      'https://api.test/storage/logos/1/logo.png?v=2',
+    );
+  });
+
+  it('informa el motivo si APISUNAT rechaza el logo', async () => {
+    const service = setup(() =>
+      throwError(() => ({ response: { data: { mensaje: 'Imagen no válida' } } })),
+    );
+
+    await expect(service.syncLogoBufferToApisunat(file)).rejects.toThrow('Imagen no válida');
+  });
+});
