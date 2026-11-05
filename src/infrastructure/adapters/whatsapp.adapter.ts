@@ -202,13 +202,13 @@ export class WhatsappAdapter {
         const qty = Number(item.quantity).toFixed(3);
         const rawName = stripBoxSuffix(
           item.productName || item.product?.name,
-          item.product?.boxUnitName,
+          item.presentationName ?? item.product?.boxUnitName,
         ) || 'Producto';
         const price = Number(item.unitPrice).toFixed(2);
         const lineTotal = Number(item.subtotal || item.quantity * item.unitPrice).toFixed(2);
         const pdfUnit = resolvePdfUnit(
           item.product?.unit,
-          item.product?.boxUnitName,
+          item.presentationName ?? item.product?.boxUnitName,
           item.productName,
         );
 

@@ -7,8 +7,10 @@ import { memoryStorage, diskStorage } from 'multer';
 import { extname, join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
 import { CompanySettingsService } from '../../domain/services/company-settings.service';
-import { UpdateCompanySettingsDto } from '../../application/dto/company-settings.dto';
-import { Public } from '../decorators/public.decorator';
+import { SetVoidPinDto, UpdateCompanySettingsDto } from '../../application/dto/company-settings.dto';
+import { UserRole } from '../../domain/entities/user.entity';
+import { CurrentUser } from '../decorators/current-user.decorator';
+import { Roles } from '../decorators/roles.decorator';
 
 // Certificates still need disk storage (openssl operations require a real file path)
 const CERTS_DIR = join(process.cwd(), 'uploads', 'certificates');
@@ -26,9 +28,8 @@ const certStorage = diskStorage({
 export class CompanySettingsController {
   constructor(private readonly service: CompanySettingsService) {}
 
-  @Public()
   @Get()
-  async get() {
+  async get(@CurrentUser('role') role: UserRole) {
     const settings = await this.service.get();
     // If logo is still a local /uploads path, fetch the Railway public URL and persist it
     if (settings.logoUrl?.startsWith('/uploads') && settings.sunatApiKey && settings.sunatApiUrl) {
@@ -37,10 +38,10 @@ export class CompanySettingsController {
         if (res) settings.logoUrl = res;
       } catch {}
     }
-    return settings;
+    return this.service.toSafeView(settings, role === UserRole.ADMIN);
   }
 
-  @Public()
+  @Roles(UserRole.ADMIN)
   @Post('sync')
   @HttpCode(HttpStatus.OK)
   async syncFromApisunat(@Body() dto: { apiKey?: string; apiSecret?: string; apiUrl?: string }) {
@@ -48,10 +49,20 @@ export class CompanySettingsController {
     return { success, message: success ? 'Datos sincronizados desde APISUNAT' : 'No se pudo sincronizar. Verifique sus credenciales.' };
   }
 
+  @Roles(UserRole.ADMIN)
   @Put()
   @HttpCode(HttpStatus.OK)
   async update(@Body() dto: UpdateCompanySettingsDto) {
-    return this.service.update(dto);
+    return this.service.toSafeView(await this.service.update(dto), true);
+  }
+
+  /** Define la clave que el backend exige para anular ventas. */
+  @Roles(UserRole.ADMIN)
+  @Put('void-pin')
+  @HttpCode(HttpStatus.OK)
+  async setVoidPin(@Body() dto: SetVoidPinDto) {
+    await this.service.setVoidPin(dto.pin);
+    return { message: 'Clave de anulación actualizada' };
   }
 
   /**
@@ -60,6 +71,7 @@ export class CompanySettingsController {
    * where the filesystem is read-only. The file is sent directly to Railway
    * from memory, and the resulting public URL is saved as logoUrl.
    */
+  @Roles(UserRole.ADMIN)
   @Post('logo')
   @UseInterceptors(
     FileInterceptor('file', {
@@ -93,11 +105,18 @@ export class CompanySettingsController {
   /**
    * Register company in APISUNAT by uploading digital certificate.
    */
+  @Roles(UserRole.ADMIN)
   @Post('register-sunat-api')
   @UseInterceptors(
     FileInterceptor('certificado', {
       storage: certStorage,
       limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
+      fileFilter: (_req, file, cb) => {
+        if (!['.p12', '.pfx'].includes(extname(file.originalname).toLowerCase())) {
+          return cb(new BadRequestException('Solo se permiten certificados .p12 o .pfx'), false);
+        }
+        cb(null, true);
+      },
     }),
   )
   async registerSunatApi(

@@ -8,11 +8,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as ExcelJS from 'exceljs';
 import { ProductEntity, ProductUnit, TipAfeIgv } from '../entities/product.entity';
+import { ProductPresentationEntity } from '../entities/product-presentation.entity';
 import { InventoryMovementEntity, MovementType, MovementReferenceType } from '../entities/inventory-movement.entity';
 import { CategoryEntity } from '../entities/category.entity';
 import { SupplierEntity } from '../entities/supplier.entity';
 import { ProductBatchEntity } from '../entities/product-batch.entity';
-import { CreateProductDto, UpdateProductDto, StockAdjustmentDto } from '../../application/dtos/product.dto';
+import {
+  CreateProductDto, UpdateProductDto, StockAdjustmentDto, ProductPresentationInputDto,
+} from '../../application/dtos/product.dto';
 
 export interface ProductFilters {
   search?: string;
@@ -43,6 +46,8 @@ export class ProductService {
   constructor(
     @InjectRepository(ProductEntity)
     private readonly productRepo: Repository<ProductEntity>,
+    @InjectRepository(ProductPresentationEntity)
+    private readonly presentationRepo: Repository<ProductPresentationEntity>,
     @InjectRepository(InventoryMovementEntity)
     private readonly movementRepo: Repository<InventoryMovementEntity>,
     @InjectRepository(CategoryEntity)
@@ -60,7 +65,8 @@ export class ProductService {
     const qb = this.productRepo
       .createQueryBuilder('p')
       .leftJoinAndSelect('p.category', 'c')
-      .leftJoinAndSelect('p.supplier', 's');
+      .leftJoinAndSelect('p.supplier', 's')
+      .leftJoinAndSelect('p.presentations', 'pr');
 
     if (search) {
       qb.andWhere('(p.name LIKE :s OR p.barcode LIKE :s OR p.sku LIKE :s)', { s: `%${search}%` });
@@ -88,26 +94,71 @@ export class ProductService {
     return product;
   }
 
-  async findByBarcode(barcode: string): Promise<ProductEntity> {
-    const product = await this.productRepo.findOne({
-      where: { barcode, isActive: true },
-      relations: { category: true },
-    });
+  /** Busca en la unidad, el empaque y las presentaciones. `matchedOption` indica cuál se escaneó. */
+  async findByBarcode(barcode: string) {
+    const relations = { category: true, presentations: true };
+
+    const unit = await this.productRepo.findOne({ where: { barcode, isActive: true }, relations });
+    if (unit) return { ...unit, matchedOption: 'U' };
+
+    const box = await this.productRepo.findOne({ where: { boxBarcode: barcode, isActive: true }, relations });
+    if (box) return { ...box, matchedOption: 'B' };
+
+    const presentation = await this.presentationRepo.findOne({ where: { barcode } });
+    const product = presentation
+      ? await this.productRepo.findOne({ where: { id: presentation.productId, isActive: true }, relations })
+      : null;
     if (!product) throw new NotFoundException(`Product with barcode "${barcode}" not found`);
-    return product;
+    return { ...product, matchedOption: `P${presentation!.id}` };
   }
 
-  async create(dto: CreateProductDto): Promise<ProductEntity> {
-    if (dto.barcode) {
-      const exists = await this.productRepo.findOne({ where: { barcode: dto.barcode } });
-      if (exists) throw new ConflictException(`Barcode "${dto.barcode}" already registered`);
+  private async assertBarcodesFree(barcodes: (string | null | undefined)[], productId?: number) {
+    const codes = barcodes.filter((code): code is string => !!code);
+    if (new Set(codes).size !== codes.length) {
+      throw new ConflictException('Hay códigos de barras repetidos en este producto');
     }
+
+    for (const code of codes) {
+      const owner = await this.productRepo.findOne({ where: [{ barcode: code }, { boxBarcode: code }] });
+      const presentation = await this.presentationRepo.findOne({ where: { barcode: code } });
+      const ownerId = owner?.id ?? presentation?.productId;
+      if (ownerId && ownerId !== productId) {
+        throw new ConflictException(`Barcode "${code}" already registered`);
+      }
+    }
+  }
+
+  private async savePresentations(productId: number, input: ProductPresentationInputDto[]) {
+    const names = input.map((p) => p.name.trim().toLowerCase());
+    if (new Set(names).size !== names.length) {
+      throw new BadRequestException('Hay presentaciones con el mismo nombre');
+    }
+
+    const current = await this.presentationRepo.find({ where: { productId } });
+    const kept = new Set(input.map((p) => p.id));
+    const removed = current.filter((p) => !kept.has(p.id));
+    if (removed.length) await this.presentationRepo.remove(removed);
+
+    await this.presentationRepo.save(
+      input.map((p) => this.presentationRepo.create({
+        ...p,
+        id: current.some((c) => c.id === p.id) ? p.id : undefined,
+        productId,
+        name: p.name.trim(),
+        barcode: p.barcode || null,
+      })),
+    );
+  }
+
+  async create({ presentations, ...dto }: CreateProductDto): Promise<ProductEntity> {
+    await this.assertBarcodesFree([dto.barcode, dto.boxBarcode, ...(presentations ?? []).map((p) => p.barcode)]);
     if (dto.sku) {
       const exists = await this.productRepo.findOne({ where: { sku: dto.sku } });
       if (exists) throw new ConflictException(`SKU "${dto.sku}" already registered`);
     }
     const product = this.productRepo.create(dto);
     const saved = await this.productRepo.save(product);
+    if (presentations) await this.savePresentations(saved.id, presentations);
 
     if (Number(saved.stockQuantity) > 0) {
       await this.batchRepo.save(
@@ -122,10 +173,16 @@ export class ProductService {
     return saved;
   }
 
-  async update(id: number, dto: UpdateProductDto): Promise<ProductEntity> {
+  async update(id: number, { presentations, ...dto }: UpdateProductDto): Promise<ProductEntity> {
     const product = await this.findById(id);
+    await this.assertBarcodesFree(
+      [dto.barcode ?? product.barcode, dto.boxBarcode ?? product.boxBarcode, ...(presentations ?? []).map((p) => p.barcode)],
+      id,
+    );
     Object.assign(product, dto);
-    return this.productRepo.save(product);
+    const saved = await this.productRepo.save(product);
+    if (presentations) await this.savePresentations(id, presentations);
+    return saved;
   }
 
   async remove(id: number): Promise<void> {

@@ -121,7 +121,8 @@ export function stripBoxSuffix(
   if (!productName) return '';
   if (!boxUnitName) return productName;
   // Remove exactly " (${boxUnitName})" at the end of the string
+  const escaped = boxUnitName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   return productName
-    .replace(new RegExp(`\\s*\\(${boxUnitName}\\)\\s*$`), '')
+    .replace(new RegExp(`\\s*\\(${escaped}\\)\\s*$`), '')
     .trim();
 }

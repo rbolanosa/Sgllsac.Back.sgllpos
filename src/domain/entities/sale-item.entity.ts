@@ -46,6 +46,21 @@ export class SaleItemEntity {
   @Column({ type: 'decimal', precision: 12, scale: 4 })
   subtotal: number;
 
+  @Column({ name: 'presentation_id', type: 'int', nullable: true })
+  presentationId: number | null;
+
+  /** Nombre de la presentación vendida (ej: Caja, Kilo). Null = unidad base */
+  @Column({ name: 'presentation_name', type: 'varchar', length: 50, nullable: true })
+  presentationName: string | null;
+
+  /** Catálogo Nº 3 SUNAT de lo vendido, cuando difiere de la unidad del producto */
+  @Column({ name: 'sunat_unit', type: 'varchar', length: 10, nullable: true })
+  sunatUnit: string | null;
+
+  /** Unidades base que salieron del stock: es lo que debe volver al anular */
+  @Column({ name: 'units_deducted', type: 'decimal', precision: 12, scale: 3, nullable: true })
+  unitsDeducted: number | null;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 }

@@ -156,3 +156,10 @@ export class UpdateCompanySettingsDto {
   @MaxLength(300)
   whatsappApiUrl?: string;
 }
+
+export class SetVoidPinDto {
+  @IsString()
+  @MinLength(4)
+  @MaxLength(20)
+  pin: string;
+}

@@ -7,9 +7,11 @@ import {
   ManyToOne,
   JoinColumn,
   Index,
+  OneToMany,
 } from 'typeorm';
 import { CategoryEntity } from './category.entity';
 import { SupplierEntity } from './supplier.entity';
+import { ProductPresentationEntity } from './product-presentation.entity';
 
 /**
  * Catálogo Nº 3 SUNAT - Unidades de Medida
@@ -183,6 +185,14 @@ export class ProductEntity {
    */
   @Column({ name: 'box_unit_name', type: 'varchar', length: 50, nullable: true, default: 'Caja' })
   boxUnitName: string | null;
+
+  /** Código de barras de la caja/empaque, distinto al de la unidad */
+  @Column({ name: 'box_barcode', type: 'varchar', length: 50, nullable: true })
+  boxBarcode: string | null;
+
+  /** Presentaciones adicionales al empaque principal (ej: Kilo, Paquete) */
+  @OneToMany(() => ProductPresentationEntity, (presentation) => presentation.product)
+  presentations: ProductPresentationEntity[];
 
   /**
    * Peso unitario del producto en kilogramos (KGM).

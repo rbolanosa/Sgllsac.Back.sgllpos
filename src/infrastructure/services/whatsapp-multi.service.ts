@@ -169,7 +169,18 @@ export class WhatsappMultiService {
     }
 
     const cleanPhone = phoneToUse.replace(/\D/g, '');
-    const phone = cleanPhone.length === 9 ? `51${cleanPhone}` : cleanPhone;
+    const localPhone = cleanPhone.length === 11 && cleanPhone.startsWith('51') ? cleanPhone.slice(2) : cleanPhone;
+    if (localPhone.length !== 9) {
+      throw new BadRequestException('El celular debe tener 9 dígitos');
+    }
+    const phone = `51${localPhone}`;
+
+    // Se guarda antes de enviar: el dato sirve aunque WhatsApp esté caído.
+    // Consumidor final es un registro compartido y no debe quedarse con un número.
+    const customer = sale.customer;
+    if (customer && customer.nit !== 'CF' && customer.phone !== localPhone) {
+      await this.customerRepo.update(customer.id, { phone: localPhone });
+    }
 
     // Generate PDF Buffer
     const pdfBuffer = await this.whatsappAdapter.generateReceiptPdfBuffer(sale, company);

@@ -1,16 +1,21 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import FormData from 'form-data';
 import * as fs from 'fs';
-import { execSync } from 'child_process';
+import { execFileSync } from 'child_process';
+import * as bcrypt from 'bcryptjs';
 import { CompanySettingsEntity } from '../entities/company-settings.entity';
 import { UpdateCompanySettingsDto } from '../../application/dto/company-settings.dto';
 import { SaleEntity } from '../entities/sale.entity';
+import { UserRole } from '../entities/user.entity';
 
 const SINGLETON_ID = 1;
+
+/** Un valor vacío en estos campos significa "no cambiar": la API nunca los devuelve al formulario. */
+const WRITE_ONLY_FIELDS = ['claveSol', 'sunatApiKey', 'sunatApiSecret', 'sunatClientSecret', 'certificadoPassword'] as const;
 
 @Injectable()
 export class CompanySettingsService {
@@ -30,9 +35,64 @@ export class CompanySettingsService {
     return settings;
   }
 
+  /** Versión de la configuración apta para enviar al cliente: nunca incluye secretos. */
+  async toSafeView(settings: CompanySettingsEntity, isAdmin: boolean) {
+    const {
+      claveSol, sunatApiSecret, sunatClientSecret, certificadoPassword, certificadoUrl, voidPinHash,
+      sunatApiKey, sunatApiUrl, sunatClientId, usuarioSol,
+      ...safe
+    } = settings;
+
+    const hasVoidPin = !!(await this.getVoidPinHash());
+    if (!isAdmin) return { ...safe, hasVoidPin };
+
+    return {
+      ...safe,
+      hasVoidPin,
+      sunatApiUrl,
+      sunatClientId,
+      usuarioSol,
+      sunatApiKey: sunatApiKey ? `••••${sunatApiKey.slice(-4)}` : null,
+    };
+  }
+
+  async setVoidPin(pin: string): Promise<void> {
+    await this.get();
+    await this.repo.update(SINGLETON_ID, { voidPinHash: await bcrypt.hash(pin, 10) });
+  }
+
+  /** Sin clave configurada, solo un administrador puede anular. */
+  async assertVoidAuthorized(pin: string | undefined, role?: string): Promise<void> {
+    const hash = await this.getVoidPinHash();
+
+    if (!hash) {
+      if (role === UserRole.ADMIN) return;
+      throw new ForbiddenException('Un administrador debe configurar la clave de anulación.');
+    }
+
+    if (!pin || !(await bcrypt.compare(pin, hash))) {
+      throw new ForbiddenException('La clave de autorización para anular no es válida.');
+    }
+  }
+
+  private async getVoidPinHash(): Promise<string | null> {
+    const row = await this.repo.findOne({
+      where: { id: SINGLETON_ID },
+      select: { id: true, voidPinHash: true },
+    });
+    return row?.voidPinHash ?? null;
+  }
+
   /** Syncs company profile, main establishment, and document series from APISUNAT into local DB */
   async syncFromApisunat(apiKey?: string, apiSecret?: string, apiUrl?: string): Promise<boolean> {
     const settings = await this.get();
+
+    // Las credenciales guardadas solo pueden viajar a la URL guardada
+    const isOtherUrl = !!apiUrl && apiUrl.replace(/\/$/, '') !== (settings.sunatApiUrl || '').replace(/\/$/, '');
+    if (isOtherUrl && (!apiKey || !apiSecret)) {
+      throw new BadRequestException('Para usar otra URL debe indicar la API key y el secret.');
+    }
+
     const key = apiKey || settings.sunatApiKey;
     const secret = apiSecret || settings.sunatApiSecret;
     const url = (apiUrl || settings.sunatApiUrl || '').replace(/\/$/, '');
@@ -108,9 +168,14 @@ export class CompanySettingsService {
     // Ensure record exists
     const current = await this.get();
 
-    await this.repo.update(SINGLETON_ID, {
-      ...dto,
-    });
+    const changes = { ...dto };
+    for (const field of WRITE_ONLY_FIELDS) {
+      if (!changes[field]) delete changes[field];
+    }
+
+    if (Object.keys(changes).length > 0) {
+      await this.repo.update(SINGLETON_ID, changes);
+    }
 
     const updated = await this.get();
 
@@ -164,7 +229,7 @@ export class CompanySettingsService {
   async registerSunatApi(
     certFile: Express.Multer.File,
     certPassword?: string,
-  ): Promise<{ message: string; apiKey: string; apiSecret: string }> {
+  ): Promise<{ message: string; apiKey: string }> {
     const settings = await this.get();
 
     if (!settings.ruc || settings.ruc.length !== 11) {
@@ -269,7 +334,6 @@ export class CompanySettingsService {
       return {
         message: resData?.mensaje || 'Empresa registrada exitosamente en APISUNAT',
         apiKey,
-        apiSecret,
       };
     } catch (err: any) {
       if (activeCertPath !== certFile.path && fs.existsSync(activeCertPath)) {
@@ -366,12 +430,10 @@ export class CompanySettingsService {
     const tempPem = `${filePath}.pem`;
     const modernPfx = `${filePath}_modern.pfx`;
     try {
-      execSync(`openssl pkcs12 -in "${filePath}" -legacy -passin pass:"${password}" -nodes -out "${tempPem}"`, {
-        stdio: 'ignore',
-      });
-      execSync(`openssl pkcs12 -export -in "${tempPem}" -out "${modernPfx}" -passout pass:"${password}"`, {
-        stdio: 'ignore',
-      });
+      // Sin shell y con la clave por entorno: no se interpreta ni aparece en la lista de procesos
+      const options = { stdio: 'ignore' as const, env: { ...process.env, CERT_PASSWORD: password } };
+      execFileSync('openssl', ['pkcs12', '-in', filePath, '-legacy', '-passin', 'env:CERT_PASSWORD', '-nodes', '-out', tempPem], options);
+      execFileSync('openssl', ['pkcs12', '-export', '-in', tempPem, '-out', modernPfx, '-passout', 'env:CERT_PASSWORD'], options);
       if (fs.existsSync(tempPem)) fs.unlinkSync(tempPem);
       if (fs.existsSync(modernPfx)) return modernPfx;
     } catch {
@@ -388,19 +450,20 @@ export class CompanySettingsService {
       ? await manager.findOne(CompanySettingsEntity, { where: { id: SINGLETON_ID } })
       : await this.get();
 
+    // correlativo_* guarda el próximo número a emitir, igual que establishment_series
     let serie = settings?.serieBoleta || 'B001';
-    let nextCorrelativo = (settings?.correlativoBoleta || 0) + 1;
+    let nextCorrelativo = settings?.correlativoBoleta || 1;
     let fieldToIncrement = 'correlativo_boleta';
     let entityField: 'correlativoBoleta' | 'correlativoFactura' | 'correlativoNotaVenta' = 'correlativoBoleta';
 
     if (type === 'factura') {
       serie = settings?.serieFactura || 'F001';
-      nextCorrelativo = (settings?.correlativoFactura || 0) + 1;
+      nextCorrelativo = settings?.correlativoFactura || 1;
       fieldToIncrement = 'correlativo_factura';
       entityField = 'correlativoFactura';
     } else if (type === 'nota_venta') {
       serie = settings?.serieNotaVenta || 'NV01';
-      nextCorrelativo = (settings?.correlativoNotaVenta || 0) + 1;
+      nextCorrelativo = settings?.correlativoNotaVenta || 1;
       fieldToIncrement = 'correlativo_nota_venta';
       entityField = 'correlativoNotaVenta';
     }

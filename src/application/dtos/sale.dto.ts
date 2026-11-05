@@ -58,6 +58,13 @@ export class SaleItemInputDto {
   @Min(0)
   quantity?: number;
 
+  /** Vende una presentación adicional: usa quantity y unitPrice, e ignora sellUnit. */
+  @ApiPropertyOptional({ description: 'ID de product_presentations' })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  presentationId?: number;
+
   @ApiPropertyOptional({ default: 0 })
   @IsOptional()
   @Type(() => Number)
@@ -146,6 +153,12 @@ export class VoidSaleDto {
   @IsString()
   @IsNotEmpty()
   reason: string;
+
+  @ApiPropertyOptional({ description: 'Clave de autorización para anular' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(20)
+  pin?: string;
 }
 
 export class CreateCreditNoteDto {

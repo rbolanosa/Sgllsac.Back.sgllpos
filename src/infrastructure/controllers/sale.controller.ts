@@ -89,8 +89,8 @@ export class SaleController {
 
   @Patch(':id/void')
   @ApiOperation({ summary: 'Void a completed sale (reverses stock movements)' })
-  void(@Param('id', ParseIntPipe) id: number, @Body() dto: VoidSaleDto) {
-    return this.saleService.voidSale(id, dto);
+  void(@Param('id', ParseIntPipe) id: number, @Body() dto: VoidSaleDto, @Req() req: any) {
+    return this.saleService.voidSale(id, dto, req.user?.id, req.user?.role);
   }
 
   @Post(':id/send-whatsapp')

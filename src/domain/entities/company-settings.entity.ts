@@ -128,6 +128,10 @@ export class CompanySettingsEntity {
   @Column({ name: 'certificado_password', type: 'varchar', length: 255, nullable: true })
   certificadoPassword: string | null;
 
+  // select: false para que el hash nunca salga en una consulta normal
+  @Column({ name: 'void_pin_hash', type: 'varchar', length: 200, nullable: true, select: false })
+  voidPinHash: string | null;
+
   // ── WhatsApp Multi-Empresa API ───────────────────────────────────────────
   @Column({ name: 'whatsapp_company_id', type: 'varchar', length: 100, nullable: true, default: 'empresa_demo' })
   whatsappCompanyId: string | null;

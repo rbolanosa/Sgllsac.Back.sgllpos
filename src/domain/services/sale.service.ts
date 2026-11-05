@@ -9,6 +9,7 @@ import { Repository, DataSource } from 'typeorm';
 import { SaleEntity, SaleStatus, DocumentType } from '../../domain/entities/sale.entity';
 import { SaleItemEntity } from '../../domain/entities/sale-item.entity';
 import { ProductEntity } from '../../domain/entities/product.entity';
+import { ProductPresentationEntity } from '../entities/product-presentation.entity';
 import { ProductBatchEntity } from '../../domain/entities/product-batch.entity';
 import { CustomerEntity } from '../../domain/entities/customer.entity';
 import { UserEntity } from '../../domain/entities/user.entity';
@@ -109,8 +110,43 @@ export class SaleService {
         let displayPrice       = 0;
 
         let itemProductName = product.name;
+        let presentationId: number | null = null;
+        let presentationName: string | null = null;
+        let sunatUnit: string | null = null;
 
-        if (sellUnit === 'box') {
+        if (item.presentationId) {
+          // ── Presentación adicional (ej: Kilo, Paquete) ────────────────────
+          const presentation = await manager.findOne(ProductPresentationEntity, {
+            where: { id: item.presentationId, productId: product.id },
+          });
+          if (!presentation) {
+            throw new BadRequestException(`La presentación ya no existe para "${product.name}"`);
+          }
+          const qty = Number(item.quantity ?? 0);
+          if (qty <= 0) {
+            throw new BadRequestException(`Debe indicar la cantidad de "${product.name} (${presentation.name})"`);
+          }
+          const unitsNeeded = Math.round(qty * Number(presentation.factor) * 1000) / 1000;
+          if (unitsNeeded > stockUnits) {
+            throw new BadRequestException(
+              `Stock insuficiente para "${product.name}". ` +
+              `Disponible: ${stockUnits}. Solicitado: ${unitsNeeded} (${qty} ${presentation.name}).`,
+            );
+          }
+          const price = (item.unitPrice != null && Number(item.unitPrice) > 0)
+            ? Number(item.unitPrice)
+            : Number(presentation.salePrice);
+
+          totalUnitsToDeduct = unitsNeeded;
+          lineTotal          = qty * price - disc;
+          displayQty         = qty;
+          displayPrice       = price;
+          itemProductName    = `${product.name} (${presentation.name})`;
+          presentationId     = presentation.id;
+          presentationName   = presentation.name;
+          sunatUnit          = presentation.sunatUnit;
+
+        } else if (sellUnit === 'box') {
           // ── Modo Caja / Saco ──────────────────────────────────────────────
           if (!upb) {
             throw new BadRequestException(
@@ -143,6 +179,7 @@ export class SaleService {
 
           const boxLabel = product.boxUnitName || 'Caja';
           itemProductName = `${product.name} (${boxLabel})`;
+          presentationName = boxLabel;
 
         } else if (sellUnit === 'mixed') {
           // ── Modo Mixto: Cajas + Unidades sueltas ──────────────────────────
@@ -227,6 +264,10 @@ export class SaleService {
           taxRate: Number(product.taxRate),
           discount: disc,
           subtotal: lineTotal,
+          presentationId,
+          presentationName,
+          sunatUnit,
+          unitsDeducted: totalUnitsToDeduct,
         });
 
         // 3. Descontar stock en UNIDADES
@@ -405,7 +446,7 @@ export class SaleService {
       // Use product's SUNAT fields (Catalogo 3 unit, Catalogo 7 IGV type)
       // resolveSunatUnit maps product.boxUnitName → Catálogo 03 code when the
       // item was sold in "box" mode (name contains the boxUnitName in parentheses).
-      const sunatUnit = resolveSunatUnit(
+      const sunatUnit = item.sunatUnit || resolveSunatUnit(
         item.product?.unit,
         item.product?.boxUnitName,
         item.productName,
@@ -424,7 +465,7 @@ export class SaleService {
       const porcentajeIgv = isGravado ? taxRate : 0;
       const valorUnitario = isGravado ? unitPrice * taxFactor : unitPrice;
 
-      const cleanName = stripBoxSuffix(item.productName, item.product?.boxUnitName)
+      const cleanName = stripBoxSuffix(item.productName, item.presentationName ?? item.product?.boxUnitName)
         || item.product?.name
         || 'Producto';
 
@@ -642,13 +683,14 @@ export class SaleService {
           if (!item.productId) continue;
           const product = await manager.findOne(ProductEntity, { where: { id: item.productId } });
           if (product) {
-            product.stockQuantity = Number(product.stockQuantity) + Number(item.quantity);
+            const unitsToReturn = Number(item.unitsDeducted ?? item.quantity);
+            product.stockQuantity = Number(product.stockQuantity) + unitsToReturn;
             await manager.save(product);
             await manager.save(
               manager.create(InventoryMovementEntity, {
                 productId: product.id,
                 movementType: MovementType.IN,
-                quantity: item.quantity,
+                quantity: unitsToReturn,
                 referenceType: MovementReferenceType.SALE,
                 notes: `NC ${ncNumber} — motivo ${reason} — doc. orig. ${original.invoiceNumber}`,
               }),
@@ -752,13 +794,13 @@ export class SaleService {
 
     const items = (original.items || []).map((item) => {
       const unitPrice = Number(item.unitPrice || 0);
-      const sunatUnit = resolveSunatUnit(
+      const sunatUnit = item.sunatUnit || resolveSunatUnit(
         item.product?.unit,
         item.product?.boxUnitName,
         item.productName,
       );
       const tipAfeIgv = item.product?.tipAfeIgv || '10';
-      const cleanName = stripBoxSuffix(item.productName, item.product?.boxUnitName)
+      const cleanName = stripBoxSuffix(item.productName, item.presentationName ?? item.product?.boxUnitName)
         || item.product?.name
         || 'Producto';
       return {
@@ -1055,7 +1097,9 @@ export class SaleService {
     } catch {}
   }
 
-  async voidSale(id: number, dto: VoidSaleDto, performedBy?: number): Promise<SaleEntity> {
+  async voidSale(id: number, dto: VoidSaleDto, performedBy?: number, role?: string): Promise<SaleEntity> {
+    await this.companySettings.assertVoidAuthorized(dto.pin, role);
+
     return this.dataSource.transaction(async (manager) => {
       const sale = await manager.findOne(SaleEntity, {
         where: { id },
@@ -1071,13 +1115,14 @@ export class SaleService {
         if (!item.productId) continue;
         const product = await manager.findOne(ProductEntity, { where: { id: item.productId } });
         if (product) {
-          product.stockQuantity = Number(product.stockQuantity) + Number(item.quantity);
+          const unitsToReturn = Number(item.unitsDeducted ?? item.quantity);
+          product.stockQuantity = Number(product.stockQuantity) + unitsToReturn;
           await manager.save(product);
           await manager.save(
             manager.create(InventoryMovementEntity, {
               productId: product.id,
               movementType: MovementType.IN,
-              quantity: item.quantity,
+              quantity: unitsToReturn,
               referenceType: MovementReferenceType.SALE,
               notes: `Void sale #${sale.invoiceNumber}: ${dto.reason}`,
               performedBy,

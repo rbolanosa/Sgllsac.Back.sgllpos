@@ -1,10 +1,46 @@
 import {
-  IsString, IsOptional, IsBoolean, IsNumber, IsEnum,
-  IsPositive, Min, Max, MaxLength, IsNotEmpty,
+  IsString, IsOptional, IsBoolean, IsNumber, IsEnum, IsPositive, Min, Max, MaxLength, IsNotEmpty, IsArray, ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ProductUnit, TipAfeIgv } from '../../domain/entities/product.entity';
+
+export class ProductPresentationInputDto {
+  @ApiPropertyOptional({ description: 'Solo al editar una presentación existente' })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  id?: number;
+
+  @ApiProperty({ example: 'Paquete' })
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(50)
+  name: string;
+
+  @ApiProperty({ example: 20, description: 'Unidades base que descuenta del stock' })
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0.0001)
+  factor: number;
+
+  @ApiProperty({ example: 25 })
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  salePrice: number;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  @MaxLength(50)
+  barcode?: string | null;
+
+  @ApiPropertyOptional({ enum: ProductUnit, default: ProductUnit.NIU })
+  @IsOptional()
+  @IsEnum(ProductUnit)
+  sunatUnit?: string;
+}
 
 export class CreateProductDto {
   @ApiPropertyOptional({ example: '7501000000000' })
@@ -146,6 +182,19 @@ export class CreateProductDto {
   @IsString()
   @MaxLength(50)
   boxUnitName?: string = 'Caja';
+
+  @ApiPropertyOptional({ description: 'Código de barras de la caja/empaque' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(50)
+  boxBarcode?: string | null;
+
+  @ApiPropertyOptional({ type: [ProductPresentationInputDto] })
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ProductPresentationInputDto)
+  presentations?: ProductPresentationInputDto[];
 
   @ApiPropertyOptional({
     example: 0.6,
@@ -293,6 +342,19 @@ export class UpdateProductDto {
   @IsString()
   @MaxLength(50)
   boxUnitName?: string;
+
+  @ApiPropertyOptional({ description: 'Código de barras de la caja/empaque' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(50)
+  boxBarcode?: string | null;
+
+  @ApiPropertyOptional({ type: [ProductPresentationInputDto] })
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ProductPresentationInputDto)
+  presentations?: ProductPresentationInputDto[];
 
   @ApiPropertyOptional({
     example: 0.6,

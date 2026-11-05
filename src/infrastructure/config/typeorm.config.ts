@@ -8,6 +8,7 @@ import * as dotenv from 'dotenv';
 import { UserEntity } from '../../domain/entities/user.entity';
 import { CategoryEntity } from '../../domain/entities/category.entity';
 import { ProductEntity } from '../../domain/entities/product.entity';
+import { ProductPresentationEntity } from '../../domain/entities/product-presentation.entity';
 import { CustomerEntity } from '../../domain/entities/customer.entity';
 import { SupplierEntity } from '../../domain/entities/supplier.entity';
 import { SaleEntity } from '../../domain/entities/sale.entity';
@@ -30,6 +31,7 @@ const entities = [
   UserEntity,
   CategoryEntity,
   ProductEntity,
+  ProductPresentationEntity,
   CustomerEntity,
   SupplierEntity,
   SaleEntity,
