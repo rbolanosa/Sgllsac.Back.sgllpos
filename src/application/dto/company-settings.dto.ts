@@ -157,6 +157,28 @@ export class UpdateCompanySettingsDto {
   whatsappApiUrl?: string;
 }
 
+export class UpdateSunatCredentialsDto {
+  @IsOptional()
+  @IsString()
+  @MaxLength(50)
+  usuarioSol?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(50)
+  claveSol?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  sunatClientId?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  sunatClientSecret?: string;
+}
+
 export class SetVoidPinDto {
   @IsString()
   @MinLength(4)

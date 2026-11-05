@@ -11,7 +11,7 @@ import { randomUUID } from 'crypto';
 import { execFileSync } from 'child_process';
 import * as bcrypt from 'bcryptjs';
 import { CompanySettingsEntity } from '../entities/company-settings.entity';
-import { UpdateCompanySettingsDto } from '../../application/dto/company-settings.dto';
+import { UpdateCompanySettingsDto, UpdateSunatCredentialsDto } from '../../application/dto/company-settings.dto';
 import { SaleEntity } from '../entities/sale.entity';
 import { UserRole } from '../entities/user.entity';
 
@@ -435,6 +435,60 @@ export class CompanySettingsService {
   }
 
   /** Converts legacy PFX/P12 certificate encryption to modern PFX format if openssl is available. */
+  /** Envía solo las credenciales a APISUNAT y devuelve lo que quedó guardado allá. */
+  async updateSunatCredentials(dto: UpdateSunatCredentialsDto) {
+    const settings = await this.get();
+    if (!settings.sunatApiKey || !settings.sunatApiSecret || !settings.sunatApiUrl) {
+      throw new BadRequestException('La empresa aún no está conectada a APISUNAT.');
+    }
+
+    const changes = Object.fromEntries(
+      Object.entries(dto).map(([field, value]) => [field, value?.trim()]).filter(([, value]) => value),
+    ) as UpdateSunatCredentialsDto;
+    if (Object.keys(changes).length === 0) {
+      throw new BadRequestException('Escribe al menos una credencial.');
+    }
+
+    const payload: Record<string, string> = {};
+    if (changes.usuarioSol) payload.sol_user = changes.usuarioSol;
+    if (changes.claveSol) payload.sol_pass = changes.claveSol;
+    if (changes.sunatClientId) payload.client_id = changes.sunatClientId;
+    if (changes.sunatClientSecret) payload.client_secret = changes.sunatClientSecret;
+
+    const url = settings.sunatApiUrl.replace(/\/$/, '');
+    const config = {
+      headers: { 'X-Api-Key': settings.sunatApiKey, 'X-Api-Secret': settings.sunatApiSecret },
+      timeout: 10_000,
+    };
+
+    try {
+      await firstValueFrom(this.httpService.put(`${url}/empresa`, payload, config));
+    } catch (err: any) {
+      const detail = err?.response?.data?.mensaje || err?.response?.data?.message;
+      throw new BadGatewayException(detail || 'APISUNAT no recibió las credenciales.');
+    }
+
+    await this.repo.update(SINGLETON_ID, changes);
+
+    try {
+      const res = await firstValueFrom(this.httpService.get(`${url}/empresa`, config));
+      const emp = res.data?.datos || res.data;
+      return {
+        message: 'Credenciales actualizadas en APISUNAT',
+        apisunat: {
+          usuarioSol: emp?.sol_user ?? null,
+          tieneClaveSol: !!emp?.tiene_sol_pass,
+          clientId: emp?.client_id ?? null,
+          tieneClientSecret: !!emp?.tiene_client_secret,
+          tieneCertificado: !!emp?.tiene_certificado,
+          entorno: emp?.entorno ?? null,
+        },
+      };
+    } catch {
+      return { message: 'Credenciales enviadas, pero no se pudo comprobar APISUNAT.', apisunat: null };
+    }
+  }
+
   /** Reemplaza el certificado de la empresa ya registrada, sin tocar sus credenciales. */
   async updateSunatCertificate(certFile: Express.Multer.File, certPassword: string): Promise<{ message: string }> {
     const settings = await this.get();

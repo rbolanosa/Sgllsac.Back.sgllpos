@@ -7,7 +7,7 @@ import { memoryStorage, diskStorage } from 'multer';
 import { extname, join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
 import { CompanySettingsService } from '../../domain/services/company-settings.service';
-import { SetVoidPinDto, UpdateCompanySettingsDto } from '../../application/dto/company-settings.dto';
+import { SetVoidPinDto, UpdateCompanySettingsDto, UpdateSunatCredentialsDto } from '../../application/dto/company-settings.dto';
 import { UserRole } from '../../domain/entities/user.entity';
 import { CurrentUser } from '../decorators/current-user.decorator';
 import { Roles } from '../decorators/roles.decorator';
@@ -63,6 +63,14 @@ export class CompanySettingsController {
   async setVoidPin(@Body() dto: SetVoidPinDto) {
     await this.service.setVoidPin(dto.pin);
     return { message: 'Clave de anulación actualizada' };
+  }
+
+  /** Update only the SUNAT credentials, without touching the emission mode. */
+  @Roles(UserRole.ADMIN)
+  @Put('sunat-credentials')
+  @HttpCode(HttpStatus.OK)
+  updateSunatCredentials(@Body() dto: UpdateSunatCredentialsDto) {
+    return this.service.updateSunatCredentials(dto);
   }
 
   /**

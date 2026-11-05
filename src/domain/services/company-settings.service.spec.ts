@@ -109,3 +109,44 @@ describe('CompanySettingsService.update', () => {
     await expect(service.update({ direccion: 'Jr. Lima 1' })).resolves.toBeDefined();
   });
 });
+
+describe('CompanySettingsService.updateSunatCredentials', () => {
+  const setup = (put: () => unknown) => {
+    const settings = {
+      id: 1,
+      sunatApiKey: 'key',
+      sunatApiSecret: 'secret',
+      sunatApiUrl: 'http://apisunat.test/',
+    };
+    const repo = {
+      findOne: () => Promise.resolve(settings),
+      update: jest.fn(() => Promise.resolve()),
+    };
+    const http = {
+      get: () => of({ data: { datos: { client_id: 'id', tiene_client_secret: true, entorno: 'production' } } }),
+      put: jest.fn(put),
+    };
+    const service = new CompanySettingsService(repo as never, http as never);
+    return { service, repo, http };
+  };
+
+  it('envía solo las credenciales, nunca el entorno, y devuelve lo guardado', async () => {
+    const { service, http } = setup(() => of({ data: {} }));
+
+    const result = await service.updateSunatCredentials({ sunatClientId: ' id ', sunatClientSecret: 'clave', claveSol: '' });
+
+    expect(http.put).toHaveBeenCalledWith(
+      'http://apisunat.test/empresa',
+      { client_id: 'id', client_secret: 'clave' },
+      expect.anything(),
+    );
+    expect(result.apisunat).toMatchObject({ clientId: 'id', tieneClientSecret: true, entorno: 'production' });
+  });
+
+  it('no guarda localmente si APISUNAT rechaza las credenciales', async () => {
+    const { service, repo } = setup(() => throwError(() => new Error('sin conexión')));
+
+    await expect(service.updateSunatCredentials({ sunatClientSecret: 'clave' })).rejects.toBeInstanceOf(BadGatewayException);
+    expect(repo.update).not.toHaveBeenCalled();
+  });
+});
