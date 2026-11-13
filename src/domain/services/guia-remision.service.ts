@@ -512,7 +512,17 @@ export class GuiaRemisionService {
     const fechaIso = guia.fechaEmision
       ? new Date(guia.fechaEmision).toISOString().split('T')[0]
       : '';
-    const qrText = fullPdfUrl
+    // El QR oficial lo entrega SUNAT en el CDR; APISUNAT lo expone como sunat.qr.
+    let sunatQr: string | null = null;
+    if (guia.apisunatId && guia.sunatStatus === 'ACEPTADO') {
+      try {
+        const res: any = await this.facturacion.get(`/guias-remision/${guia.apisunatId}`);
+        sunatQr = (res?.data ?? res)?.sunat?.qr || null;
+      } catch { /* sin enlace: se usa el respaldo */ }
+    }
+    const qrText = sunatQr
+      ? sunatQr
+      : fullPdfUrl
       ? fullPdfUrl
       : `${ruc}|09|${serie}|${numero}|${fechaIso}|${guia.destTipoDoc || '6'}|${guia.destNumDoc || ''}|`;
     let qrBuffer: Buffer | null = null;
