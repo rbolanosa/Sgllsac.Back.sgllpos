@@ -159,11 +159,12 @@ export class GuiaRemisionService {
           const cdr  = item.archivos?.cdr || null;
           const pdf  = item.archivos?.pdf || null;
 
-          const match = data.find(
-            (g) =>
-              (numComp && g.numeroCompleto === numComp) ||
-              g.apisunatId === item.id ||
-              g.id === item.id,
+          // Una guía reenviada antes generaba registros nuevos en APISUNAT: solo vale el
+          // registro enlazado (apisunatId). Comparar con el id local mezclaba guías distintas.
+          const match = data.find((g) =>
+            g.apisunatId
+              ? g.apisunatId === item.id
+              : !!numComp && this.sameNumber(g.numeroCompleto, numComp),
           );
 
           if (match) {
@@ -415,6 +416,15 @@ export class GuiaRemisionService {
       conductor:     g.conductorJson     ? JSON.parse(g.conductorJson)     : null,
       items:         g.itemsJson         ? JSON.parse(g.itemsJson)         : [],
     };
+  }
+
+  /** T001-35 y T001-00000035 son el mismo número. */
+  private sameNumber(a: string | null, b: string): boolean {
+    const norm = (v: string) => {
+      const [serie, corr] = String(v).split('-');
+      return `${serie}-${Number(corr)}`;
+    };
+    return !!a && norm(a) === norm(b);
   }
 
   /** Lleva a hoy (hora de Perú) las fechas que quedaron en el pasado. Indica si cambió alguna. */

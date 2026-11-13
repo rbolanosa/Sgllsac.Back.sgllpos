@@ -81,3 +81,26 @@ describe('GuiaRemisionService.resendSunat', () => {
     expect(repo.update).toHaveBeenCalledWith(5, expect.objectContaining({ fechaEmision: today() }));
   });
 });
+
+describe('GuiaRemisionService.findAll (sincronización)', () => {
+  it('toma el estado solo del registro de APISUNAT enlazado', async () => {
+    const guide = { id: 5, serie: 'T001', numeroCompleto: 'T001-00000035', apisunatId: 57, sunatStatus: 'RECHAZADO', sunatMessage: 'viejo' };
+    const qb: any = {
+      orderBy: () => qb, skip: () => qb, take: () => qb, andWhere: () => qb,
+      getManyAndCount: () => Promise.resolve([[guide], 1]),
+    };
+    const repo = { createQueryBuilder: () => qb, update: jest.fn(() => Promise.resolve()) };
+    const facturacion = {
+      get: () => Promise.resolve({ datos: [
+        { id: 5, numero_completo: 'T001-25', sunat: { estado: 'rechazado', descripcion: '401 antiguo' } },
+        { id: 57, numero_completo: 'T001-35', sunat: { estado: 'aceptado', descripcion: 'aceptado' } },
+      ] }),
+    };
+    const service = new GuiaRemisionService(repo as never, null as never, facturacion as never);
+
+    const res: any = await service.findAll({ page: 1, limit: 20 } as never);
+
+    expect(res.data[0].sunatStatus).toBe('ACEPTADO');
+    expect(res.data[0].sunatMessage).toBe('aceptado');
+  });
+});
