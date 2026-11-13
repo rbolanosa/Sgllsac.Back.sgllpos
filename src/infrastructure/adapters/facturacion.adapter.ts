@@ -140,6 +140,15 @@ export class FacturacionAdapter implements OnModuleInit {
     }
   }
 
+  /** Sin reintentos: un PUT de documento vuelve a enviarlo a SUNAT. */
+  async put<T>(endpoint: string, body: unknown): Promise<T> {
+    const { baseUrl, headers } = await this.getResolvedConfig();
+    const response = await firstValueFrom(
+      this.httpService.put<T>(`${baseUrl}${endpoint}`, body, { headers, timeout: 15_000 }),
+    );
+    return response.data;
+  }
+
   async get<T>(endpoint: string, attempt = 1): Promise<T> {
     if (this.isCircuitOpen()) {
       throw new Error('Facturación: Circuit breaker abierto, servicio no disponible');

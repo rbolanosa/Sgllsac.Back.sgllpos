@@ -206,9 +206,23 @@ export class GuiaRemisionService {
     const dto = this.deserializeToDto(entity);
     try {
       if (entity.apisunatId) {
-        // Reenvía la misma guía: conserva su número en vez de emitir una nueva
-        const res: any = await this.facturacion.post(`/guias-remision/${entity.apisunatId}/enviar`, {});
-        await this.applyApisunatResponse(entity, res);
+        // Reenvía la misma guía (conserva su número). SUNAT rechaza fechas pasadas (2108),
+        // así que una guía de días anteriores se actualiza a la fecha de hoy.
+        if (this.moveDatesToToday(entity)) {
+          await this.repo.update(entity.id, {
+            fechaEmision: entity.fechaEmision,
+            fechaTraslado: entity.fechaTraslado,
+            fechaEntregaTransportista: entity.fechaEntregaTransportista,
+          });
+          const res: any = await this.facturacion.put(
+            `/guias-remision/${entity.apisunatId}`,
+            this.buildPayload(entity, this.deserializeToDto(entity)),
+          );
+          await this.applyApisunatResponse(entity, res);
+        } else {
+          const res: any = await this.facturacion.post(`/guias-remision/${entity.apisunatId}/enviar`, {});
+          await this.applyApisunatResponse(entity, res);
+        }
       } else {
         await this.sendToApisunat(entity, dto);
       }
@@ -239,6 +253,16 @@ export class GuiaRemisionService {
   // ── Internal: send to APISUNAT ────────────────────────────────────────────
 
   private async sendToApisunat(entity: GuiaRemisionEntity, dto: CreateGuiaRemisionDto) {
+    const payload = this.buildPayload(entity, dto);
+
+    // Log full payload for debugging
+    this.logger.log(`GRR #${entity.id} → payload:\n${JSON.stringify(payload, null, 2)}`);
+
+    const res: any = await this.facturacion.post('/guias-remision', payload);
+    return this.applyApisunatResponse(entity, res);
+  }
+
+  private buildPayload(entity: GuiaRemisionEntity, dto: CreateGuiaRemisionDto) {
     const conductor   = entity.conductorJson ? JSON.parse(entity.conductorJson) : null;
     const conductores = Array.isArray(conductor) ? conductor : null;
     const conductorSingle = !Array.isArray(conductor) ? conductor : null;
@@ -271,11 +295,7 @@ export class GuiaRemisionService {
     if (conductores)                         payload.conductores = conductores;
     if (dto.indicadores?.length)             payload.indicadores = dto.indicadores;
 
-    // Log full payload for debugging
-    this.logger.log(`GRR #${entity.id} → payload:\n${JSON.stringify(payload, null, 2)}`);
-
-    const res: any = await this.facturacion.post('/guias-remision', payload);
-    return this.applyApisunatResponse(entity, res);
+    return payload;
   }
 
   /** Guarda en la guía el estado y el número que devolvió APISUNAT. */
@@ -395,6 +415,21 @@ export class GuiaRemisionService {
       conductor:     g.conductorJson     ? JSON.parse(g.conductorJson)     : null,
       items:         g.itemsJson         ? JSON.parse(g.itemsJson)         : [],
     };
+  }
+
+  /** Lleva a hoy (hora de Perú) las fechas que quedaron en el pasado. Indica si cambió alguna. */
+  private moveDatesToToday(entity: GuiaRemisionEntity): boolean {
+    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Lima' }).format(new Date());
+    const day = (value: string | null) => (value ? String(value).slice(0, 10) : null);
+    let changed = false;
+
+    if (day(entity.fechaEmision)! < today) { entity.fechaEmision = today; changed = true; }
+    if (day(entity.fechaTraslado)! < today) { entity.fechaTraslado = today; changed = true; }
+    if (entity.fechaEntregaTransportista && day(entity.fechaEntregaTransportista)! < today) {
+      entity.fechaEntregaTransportista = today;
+      changed = true;
+    }
+    return changed;
   }
 
   private deserializeToDto(entity: GuiaRemisionEntity): CreateGuiaRemisionDto {

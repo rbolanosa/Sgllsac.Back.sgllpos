@@ -1,7 +1,9 @@
 import { GuiaRemisionService } from './guia-remision.service';
 
+const today = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Lima' }).format(new Date());
+
 describe('GuiaRemisionService.resendSunat', () => {
-  const setup = (apisunatId: number | null) => {
+  const setup = (apisunatId: number | null, overrides: Record<string, unknown> = {}) => {
     const entity = {
       id: 5,
       serie: 'T001',
@@ -9,12 +11,22 @@ describe('GuiaRemisionService.resendSunat', () => {
       numeroCompleto: 'T001-00000035',
       apisunatId,
       itemsJson: '[]',
+      fechaEmision: today(),
+      fechaTraslado: today(),
+      fechaEntregaTransportista: null as string | null,
+      ...overrides,
     };
     const repo = {
       findOne: jest.fn(() => Promise.resolve({ ...entity })),
       update: jest.fn(() => Promise.resolve()),
     };
+    const reply = () =>
+      Promise.resolve({
+        estado: 'exito',
+        datos: { id: apisunatId ?? 99, numero_completo: 'T001-35', sunat: { estado: 'enviado' } },
+      });
     const facturacion = {
+      put: jest.fn(reply),
       post: jest.fn(() =>
         Promise.resolve({
           estado: 'exito',
@@ -45,5 +57,27 @@ describe('GuiaRemisionService.resendSunat', () => {
     await service.resendSunat(5);
 
     expect(facturacion.post).toHaveBeenCalledWith('/guias-remision', expect.any(Object));
+  });
+
+  it('reenvía una guía antigua con la fecha de hoy y el mismo número', async () => {
+    const { service, repo, facturacion } = setup(57, {
+      fechaEmision: '2026-11-04',
+      fechaTraslado: '2026-11-04',
+      fechaEntregaTransportista: '2026-11-05',
+    });
+
+    await service.resendSunat(5);
+
+    expect(facturacion.post).not.toHaveBeenCalled();
+    expect(facturacion.put).toHaveBeenCalledWith(
+      '/guias-remision/57',
+      expect.objectContaining({
+        serie: 'T001',
+        fecha_emision: today(),
+        fecha_traslado: today(),
+        fecha_de_entrega_al_transportista: today(),
+      }),
+    );
+    expect(repo.update).toHaveBeenCalledWith(5, expect.objectContaining({ fechaEmision: today() }));
   });
 });
