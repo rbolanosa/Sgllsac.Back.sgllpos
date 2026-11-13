@@ -419,6 +419,10 @@ export class GuiaRemisionService {
   }
 
   /** T001-35 y T001-00000035 son el mismo número. */
+  private unwrap(res: any): any {
+    return res?.datos ?? res?.data ?? res;
+  }
+
   private sameNumber(a: string | null, b: string): boolean {
     const norm = (v: string) => {
       const [serie, corr] = String(v).split('-');
@@ -514,11 +518,25 @@ export class GuiaRemisionService {
       : '';
     // El QR oficial lo entrega SUNAT en el CDR; APISUNAT lo expone como sunat.qr.
     let sunatQr: string | null = null;
-    if (guia.apisunatId && guia.sunatStatus === 'ACEPTADO') {
+    if (guia.sunatStatus === 'ACEPTADO') {
       try {
-        const res: any = await this.facturacion.get(`/guias-remision/${guia.apisunatId}`);
-        sunatQr = (res?.data ?? res)?.sunat?.qr || null;
-      } catch { /* sin enlace: se usa el respaldo */ }
+        if (guia.apisunatId) {
+          const res: any = await this.facturacion.get(`/guias-remision/${guia.apisunatId}`);
+          sunatQr = this.unwrap(res)?.sunat?.qr || null;
+        } else if (guia.numeroCompleto) {
+          // Guías antiguas sin enlace: se busca por número en APISUNAT.
+          const res: any = await this.facturacion.get('/guias-remision?por_pagina=50');
+          const raw = res?.datos?.datos ?? res?.datos ?? res?.data ?? res;
+          const list: any[] = Array.isArray(raw) ? raw : [];
+          const item = list.find((g: any) => this.sameNumber(g.numero_completo, guia.numeroCompleto));
+          if (item?.id) {
+            const one: any = await this.facturacion.get(`/guias-remision/${item.id}`);
+            sunatQr = this.unwrap(one)?.sunat?.qr || null;
+          }
+        }
+      } catch (e: any) {
+        this.logger.warn(`QR SUNAT no disponible para ${guia.numeroCompleto}: ${e?.message}`);
+      }
     }
     const qrText = sunatQr
       ? sunatQr
@@ -656,7 +674,8 @@ export class GuiaRemisionService {
         doc.text(String(it.cantidad || 1), margin, rowY, { width: 32 });
         doc.text(it.unidad || 'NIU', margin + 32, rowY, { width: 36 });
         doc.text((it.descripcion || it.codigo || 'Producto').toUpperCase(), margin + 68, rowY, { width: printWidth - 68 });
-        doc.y = rowY + 11;
+        // Las descripciones largas ocupan varias líneas: la fila siguiente empieza debajo.
+        doc.y = Math.max(doc.y, rowY + 11) + 2;
       });
 
       doc.moveDown(0.3);
