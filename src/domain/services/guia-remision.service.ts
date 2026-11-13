@@ -205,7 +205,13 @@ export class GuiaRemisionService {
     // Reconstruct DTO from stored JSON
     const dto = this.deserializeToDto(entity);
     try {
-      await this.sendToApisunat(entity, dto);
+      if (entity.apisunatId) {
+        // Reenvía la misma guía: conserva su número en vez de emitir una nueva
+        const res: any = await this.facturacion.post(`/guias-remision/${entity.apisunatId}/enviar`, {});
+        await this.applyApisunatResponse(entity, res);
+      } else {
+        await this.sendToApisunat(entity, dto);
+      }
     } catch (err: any) {
       this.logger.error('Error al reenviar GRR a APISUNAT:', err?.response?.data || err?.message);
       const apiData = err?.response?.data;
@@ -269,7 +275,11 @@ export class GuiaRemisionService {
     this.logger.log(`GRR #${entity.id} → payload:\n${JSON.stringify(payload, null, 2)}`);
 
     const res: any = await this.facturacion.post('/guias-remision', payload);
+    return this.applyApisunatResponse(entity, res);
+  }
 
+  /** Guarda en la guía el estado y el número que devolvió APISUNAT. */
+  private async applyApisunatResponse(entity: GuiaRemisionEntity, res: any) {
     // Log full response for debugging
     this.logger.log(`GRR #${entity.id} ← respuesta APISUNAT:\n${JSON.stringify(res, null, 2)}`);
 
@@ -349,7 +359,7 @@ export class GuiaRemisionService {
       xmlUrl:      archivos?.xml  || null,
       pdfUrl:      archivos?.pdf  || null,
       cdrUrl:      archivos?.cdr  || null,
-      apisunatId:  apiId,
+      apisunatId:  apiId ?? entity.apisunatId,
     });
 
     entity.sunatStatus    = sunatStatus;
