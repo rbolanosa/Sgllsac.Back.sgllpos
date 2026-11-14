@@ -68,7 +68,62 @@ export class SaleService {
       .orderBy('s.saleDate', 'DESC')
       .getManyAndCount();
 
+    await this.syncSunatStatuses(data);
+
     return { data, total, page, limit };
+  }
+
+  /** Fecha YYYY-MM-DD en hora de Lima (el servidor corre en UTC). */
+  private limaDate(d: Date | string): string {
+    return new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'America/Lima', year: 'numeric', month: '2-digit', day: '2-digit',
+    }).format(new Date(d));
+  }
+
+  /**
+   * Consulta en APISUNAT el estado real de las boletas/facturas que siguen
+   * esperando respuesta de SUNAT. Solo lee; nunca reenvía nada.
+   */
+  private async syncSunatStatuses(sales: SaleEntity[]): Promise<void> {
+    const waiting = sales
+      .filter((s) =>
+        (s.documentType === DocumentType.BOLETA || s.documentType === DocumentType.FACTURA) &&
+        ['ENVIADO', 'PENDIENTE'].includes(String(s.sunatStatus || '').toUpperCase()) &&
+        /^[A-Z0-9]{4}-\d+$/.test(s.invoiceNumber || ''))
+      .slice(0, 10);
+    if (!waiting.length) return;
+
+    const work = Promise.all(waiting.map(async (sale) => {
+      try {
+        const [serie, corr] = sale.invoiceNumber.split('-');
+        const endpoint = sale.documentType === DocumentType.FACTURA ? '/facturas' : '/boletas';
+        const res: any = await this.facturacionAdapter.get(
+          `${endpoint}?serie=${serie}&correlativo=${Number(corr)}&por_pagina=5`,
+        );
+        const list: any[] = res?.datos?.datos ?? res?.datos ?? [];
+        const item = (Array.isArray(list) ? list : []).find((d: any) => {
+          const [ds, dc] = String(d.numero_completo || '').split('-');
+          return ds === serie && Number(dc) === Number(corr);
+        });
+        const estado = String(item?.sunat?.estado || '').toLowerCase();
+        if (estado !== 'aceptado' && estado !== 'rechazado') return;
+
+        const update: Partial<SaleEntity> = {
+          sunatStatus: estado === 'aceptado' ? 'ACEPTADO' : 'RECHAZADO',
+          sunatMessage: item.sunat?.descripcion
+            || (estado === 'aceptado' ? 'Comprobante Aceptado por SUNAT' : 'SUNAT rechazó el comprobante'),
+        };
+        if (item.archivos?.xml) update.xmlUrl = item.archivos.xml;
+        if (item.archivos?.cdr) update.cdrUrl = item.archivos.cdr;
+        if (item.archivos?.pdf) update.pdfUrl = item.archivos.pdf;
+        await this.saleRepo.update(sale.id, update);
+        Object.assign(sale, update);
+      } catch (e: any) {
+        this.logger.warn(`No se pudo consultar estado SUNAT de ${sale.invoiceNumber}: ${e?.message}`);
+      }
+    }));
+    // La lista no debe quedar esperando si APISUNAT tarda.
+    await Promise.race([work, new Promise((r) => setTimeout(r, 6000))]);
   }
 
   async findById(id: number): Promise<SaleEntity> {
@@ -485,11 +540,7 @@ export class SaleService {
       };
     });
 
-    const localDate = new Date(sale.saleDate);
-    const year = localDate.getFullYear();
-    const month = String(localDate.getMonth() + 1).padStart(2, '0');
-    const day = String(localDate.getDate()).padStart(2, '0');
-    const fechaEmisionStr = `${year}-${month}-${day}`;
+    const fechaEmisionStr = this.limaDate(sale.saleDate);
 
     const payload = {
       tipo_documento: sale.documentType === DocumentType.FACTURA ? '01' : '03',
@@ -524,11 +575,19 @@ export class SaleService {
       let pdfUrl = datos?.archivos?.pdf || null;
       let qrCode = datos?.qr_code || null;
 
-      if (['enviado', 'aceptado', 'pendiente', 'exito'].includes(String(sunatStatus).toLowerCase())) {
+      // APISUNAT responde 'enviado' al encolar; la respuesta real de SUNAT llega
+      // después y se sincroniza en findAll (syncSunatStatuses).
+      const estado = String(sunatStatus).toLowerCase();
+      if (estado === 'aceptado') {
         sunatStatus = 'ACEPTADO';
         if (!sunatMessage || sunatMessage.includes('encolada') || sunatMessage.includes('registrado') || sunatMessage.includes('Beta')) {
           sunatMessage = 'Comprobante Aceptado por SUNAT';
         }
+      } else if (estado === 'rechazado') {
+        sunatStatus = 'RECHAZADO';
+      } else {
+        sunatStatus = 'ENVIADO';
+        sunatMessage = 'Enviado a SUNAT, esperando respuesta';
       }
 
       // ── Correlativo LOCAL es INMUTABLE ──────────────────────────────────────
@@ -812,11 +871,7 @@ export class SaleService {
       };
     });
 
-    const localDate = new Date(nc.saleDate);
-    const year = localDate.getFullYear();
-    const month = String(localDate.getMonth() + 1).padStart(2, '0');
-    const day = String(localDate.getDate()).padStart(2, '0');
-    const fechaEmisionStr = `${year}-${month}-${day}`;
+    const fechaEmisionStr = this.limaDate(nc.saleDate);
 
     // reasonCode always arrives as clean code ('01'..'10') from the validated DTO
     const cleanCodMotivo = String(reasonCode || '01').padStart(2, '0');
