@@ -24,6 +24,7 @@ import { CashModule } from './infrastructure/modules/cash.module';
 import { GuiaRemisionModule } from './infrastructure/modules/guia-remision.module';
 import { WhatsappMultiModule } from './infrastructure/modules/whatsapp-multi.module';
 import { StockEntryModule } from './infrastructure/modules/stock-entry.module';
+import { DashboardModule } from './infrastructure/modules/dashboard.module';
 
 @Module({
   imports: [
@@ -86,6 +87,7 @@ import { StockEntryModule } from './infrastructure/modules/stock-entry.module';
     GuiaRemisionModule,
     WhatsappMultiModule,
     StockEntryModule,
+    DashboardModule,
   ],
 })
 export class AppModule {}
