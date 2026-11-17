@@ -23,6 +23,8 @@ import { ProductBatchEntity } from '../../domain/entities/product-batch.entity';
 import { CashSessionEntity } from '../../domain/entities/cash-session.entity';
 import { CashMovementEntity } from '../../domain/entities/cash-movement.entity';
 import { GuiaRemisionEntity } from '../../domain/entities/guia-remision.entity';
+import { StockEntryEntity } from '../../domain/entities/stock-entry.entity';
+import { SupplierProductMapEntity } from '../../domain/entities/supplier-product-map.entity';
 
 // Carga el .env cuando el archivo se usa desde TypeORM CLI (ts-node)
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
@@ -46,6 +48,8 @@ const entities = [
   CashSessionEntity,
   CashMovementEntity,
   GuiaRemisionEntity,
+  StockEntryEntity,
+  SupplierProductMapEntity,
 ];
 
 export const typeOrmConfig: TypeOrmModuleAsyncOptions = {

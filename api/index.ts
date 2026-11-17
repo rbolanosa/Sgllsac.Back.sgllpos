@@ -5,6 +5,7 @@ import { ValidationPipe, VersioningType } from '@nestjs/common';
 import express from 'express';
 import mysql from 'mysql2/promise';
 import { ensurePresentationsSchema } from '../src/infrastructure/database/ensure-presentations-schema';
+import { ensureStockEntriesSchema } from '../src/infrastructure/database/ensure-stock-entries-schema';
 let cachedServer: any;
 
 const CORS_HEADERS = {
@@ -93,6 +94,13 @@ async function ensureProductionSchema() {
             FOREIGN KEY (\`session_id\`) REFERENCES \`cash_sessions\`(\`id\`) ON DELETE CASCADE
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
       `);
+
+      // Al final y aparte: si fallara, no afecta a las tablas anteriores
+      try {
+        await ensureStockEntriesSchema(conn);
+      } catch (seErr: any) {
+        console.warn('[ensureStockEntriesSchema] Warning:', seErr?.message);
+      }
     } finally {
       await conn.end();
     }
