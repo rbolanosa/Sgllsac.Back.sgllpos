@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Query, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, Req, Param, ParseIntPipe } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { StockEntryService } from '../../domain/services/stock-entry.service';
 import { PreviewStockEntryDto, ConfirmStockEntryDto } from '../../application/dtos/stock-entry.dto';
@@ -13,6 +13,12 @@ export class StockEntryController {
   @ApiOperation({ summary: 'Facturas de compra cargadas' })
   findAll(@Query('page') page = 1, @Query('limit') limit = 20) {
     return this.service.findAll(+page, +limit);
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Productos que ingresaron con una factura cargada' })
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.service.findOne(id);
   }
 
   @Post('preview')

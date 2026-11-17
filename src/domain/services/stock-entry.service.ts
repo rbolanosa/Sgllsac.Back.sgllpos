@@ -142,6 +142,53 @@ export class StockEntryService {
     return { data, total, page, limit };
   }
 
+  /** Productos que ingresaron con una factura: cantidades, empaque, costo y si se crearon ahí */
+  async findOne(id: number) {
+    const entry = await this.entryRepo.findOne({ where: { id } });
+    if (!entry) throw new NotFoundException(`Factura cargada #${id} no encontrada`);
+    if (!entry.purchaseOrderId) return { ...entry, items: [] };
+
+    const rows: any[] = await this.dataSource.query(
+      `SELECT i.id, i.product_id AS productId, p.name, p.barcode,
+              i.quantity_received AS units, i.unit_cost AS unitCost, i.subtotal,
+              p.stock_quantity AS currentStock, p.sale_price AS salePrice,
+              m.notes AS note,
+              -- Nuevo: este ingreso fue el primer movimiento de stock del producto
+              NOT EXISTS (SELECT 1 FROM inventory_movements o
+                           WHERE o.product_id = i.product_id AND o.id < m.id) AS isNew
+         FROM purchase_order_items i
+         LEFT JOIN products p ON p.id = i.product_id
+         LEFT JOIN inventory_movements m ON m.id = (
+              SELECT MIN(x.id) FROM inventory_movements x
+               WHERE x.reference_type = 'purchase_order' AND x.reference_id = i.purchase_order_id
+                 AND x.product_id = i.product_id)
+        WHERE i.purchase_order_id = ?
+        ORDER BY i.id`,
+      [entry.purchaseOrderId],
+    );
+
+    const items = rows.map((r) => {
+      // La nota guarda el empaque de la factura: "Factura F001-1 (2 CAJA x 12)"
+      const pack = /\(([\d.]+)\s+(.*?)\s+x\s+([\d.]+)\)\s*$/.exec(r.note || '');
+      return {
+        id: r.id,
+        productId: r.productId,
+        name: r.name ?? '(producto eliminado)',
+        barcode: r.barcode,
+        packages: pack ? Number(pack[1]) : null,
+        packageLabel: pack ? pack[2] : null,
+        factor: pack ? Number(pack[3]) : null,
+        units: Number(r.units),
+        unitCost: Number(r.unitCost),
+        subtotal: Number(r.subtotal),
+        salePrice: r.salePrice != null ? Number(r.salePrice) : null,
+        currentStock: r.currentStock != null ? Number(r.currentStock) : null,
+        isNew: Number(r.isNew) === 1,
+      };
+    });
+    return { ...entry, items };
+  }
+
   private async findDuplicate(ruc?: string, invoice?: string) {
     if (!ruc || !invoice || !/^[A-Z0-9]{1,4}-\d+$/i.test(invoice.trim())) return null;
     return this.entryRepo.findOne({ where: { supplierRuc: ruc.trim(), invoiceNumber: normalizeInvoice(invoice) } });
