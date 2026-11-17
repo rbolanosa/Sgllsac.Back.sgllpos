@@ -182,15 +182,15 @@ export class DashboardService {
     // ── Comprobantes SUNAT de los últimos 30 días ────────────────────────────
     const sunatFrom = new Date(Date.now() - 30 * DAY);
     const sunatRaw = await this.saleRepo.createQueryBuilder('s')
-      .select('UPPER(COALESCE(s.sunatStatus, \'\'))', 'status')
+      .select('s.sunatStatus', 'sunat_state')
       .addSelect('COUNT(*)', 'count')
       .where('s.documentType IN (:...docs)', { docs: [DocumentType.BOLETA, DocumentType.FACTURA, DocumentType.NOTA_CREDITO] })
       .andWhere('s.saleDate >= :f', { f: sunatFrom })
-      .groupBy('status')
+      .groupBy('s.sunatStatus')
       .getRawMany();
     const sunat = { accepted: 0, pending: 0, rejected: 0 };
     sunatRaw.forEach((x) => {
-      const st = String(x.status);
+      const st = String(x.sunat_state ?? '').toUpperCase();
       const n = Number(x.count);
       if (st === 'ACEPTADO') sunat.accepted += n;
       else if (st.includes('RECHAZ') || st.includes('ERROR')) sunat.rejected += n;
