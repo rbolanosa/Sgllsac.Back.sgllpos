@@ -6,6 +6,7 @@ import express from 'express';
 import mysql from 'mysql2/promise';
 import { ensurePresentationsSchema } from '../src/infrastructure/database/ensure-presentations-schema';
 import { ensureStockEntriesSchema } from '../src/infrastructure/database/ensure-stock-entries-schema';
+import { ensureQuotesSchema } from '../src/infrastructure/database/ensure-quotes-schema';
 let cachedServer: any;
 
 const CORS_HEADERS = {
@@ -100,6 +101,11 @@ async function ensureProductionSchema() {
         await ensureStockEntriesSchema(conn);
       } catch (seErr: any) {
         console.warn('[ensureStockEntriesSchema] Warning:', seErr?.message);
+      }
+      try {
+        await ensureQuotesSchema(conn);
+      } catch (qErr: any) {
+        console.warn('[ensureQuotesSchema] Warning:', qErr?.message);
       }
     } finally {
       await conn.end();

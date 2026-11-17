@@ -121,6 +121,16 @@ type CatalogProduct = Pick<ProductEntity,
   'id' | 'name' | 'barcode' | 'sku' | 'stockQuantity' | 'costPrice' | 'salePrice' |
   'hasBoxPresentation' | 'unitsPerBox' | 'boxUnitName'>;
 
+/**
+ * Línea que define el producto nuevo cuando varias comparten nombre: la que trae precio
+ * (no la bonificación) y, entre esas, la de empaque más grande para conservar la caja.
+ */
+export function pickBaseLine<T extends Pick<ConfirmLineDto, 'factor' | 'unitPrice'>>(lines: T[]): T {
+  const priced = lines.filter((l) => Number(l.unitPrice) > 0);
+  const pool = priced.length ? priced : lines;
+  return pool.reduce((best, l) => (Number(l.factor) > Number(best.factor) ? l : best), pool[0]);
+}
+
 @Injectable()
 export class StockEntryService {
   constructor(
@@ -280,24 +290,19 @@ export class StockEntryService {
       }
     });
 
-    const ids = active.filter((l) => l.action === 'existing').map((l) => Number(l.productId));
-    const repeated = ids.find((id, i) => ids.indexOf(id) !== i);
-    if (repeated) {
-      // Permitido (dos líneas del mismo producto), pero solo si comparten empaque
-      const facs = new Set(active.filter((l) => Number(l.productId) === repeated).map((l) => Number(l.factor)));
-      if (facs.size > 1) {
-        throw new BadRequestException('Un mismo producto aparece en varias líneas con distinto empaque: revisa las unidades por empaque');
+    // Varias líneas pueden ir al mismo producto (p. ej. compra + bonificación): cada una
+    // convierte a unidades con su propio empaque. Los productos nuevos con el mismo nombre
+    // se crean una sola vez. Un código de barras no puede repetirse entre nombres distintos.
+    const codeOwner = new Map<string, string>();
+    active.filter((l) => l.action === 'new' && l.newProduct?.barcode?.trim()).forEach((l) => {
+      const code = l.newProduct!.barcode!.trim();
+      const name = normalizeText(l.newProduct!.name);
+      const prev = codeOwner.get(code);
+      if (prev !== undefined && prev !== name) {
+        throw new BadRequestException(`El código de barras "${code}" está en dos productos nuevos distintos`);
       }
-    }
-
-    const names = active.filter((l) => l.action === 'new').map((l) => normalizeText(l.newProduct!.name));
-    if (new Set(names).size !== names.length) {
-      throw new BadRequestException('Hay dos productos nuevos con el mismo nombre en esta factura');
-    }
-    const codes = active.filter((l) => l.action === 'new' && l.newProduct?.barcode).map((l) => l.newProduct!.barcode!.trim());
-    if (new Set(codes).size !== codes.length) {
-      throw new BadRequestException('Hay dos productos nuevos con el mismo código de barras');
-    }
+      codeOwner.set(code, name);
+    });
 
     // La suma de TODAS las líneas (más descuentos u otros cargos) debe cuadrar con el total impreso
     const sum = invoiceSum(dto);
@@ -370,7 +375,7 @@ export class StockEntryService {
         // ── Productos nuevos: validar nombres y códigos de una vez ──────────────
         const news = active.filter(({ line }) => line.action === 'new');
         if (news.length) {
-          const names = news.map(({ line }) => line.newProduct!.name.trim().toUpperCase());
+          const names = [...new Set(news.map(({ line }) => line.newProduct!.name.trim().toUpperCase()))];
           const sameName = await manager.createQueryBuilder(ProductEntity, 'p')
             .where('UPPER(TRIM(p.name)) IN (:...names) AND p.isActive = 1', { names })
             .getOne();
@@ -390,10 +395,20 @@ export class StockEntryService {
               throw new ConflictException(`El código de barras "${code}" ya pertenece a otro producto`);
             }
           }
+          // Un solo producto por nombre; el stock de todas sus líneas se suma abajo
+          const groups = new Map<string, ConfirmLineDto[]>();
           for (const { line } of news) {
-            const created = await manager.save(this.buildNewProduct(manager, line, supplier.id));
+            const key = normalizeText(line.newProduct!.name);
+            groups.set(key, [...(groups.get(key) ?? []), line]);
+          }
+          for (const lines of groups.values()) {
+            const base = pickBaseLine(lines);
+            const barcode = lines.map((l) => l.newProduct!.barcode?.trim()).find((c) => !!c);
+            const created = await manager.save(this.buildNewProduct(
+              manager, { ...base, newProduct: { ...base.newProduct!, barcode } } as ConfirmLineDto, supplier.id,
+            ));
             byId.set(created.id, created);
-            line.productId = created.id;
+            lines.forEach((l) => { l.productId = created.id; });
           }
         }
 
@@ -493,13 +508,13 @@ export class StockEntryService {
           total: Number(dto.invoiceTotal ?? sum),
           purchaseOrderId: po.id,
           linesCount: active.length,
-          newProducts: news.length,
+          newProducts: new Set(news.map(({ line }) => Number(line.productId))).size,
           createdBy: userId ?? null,
         }));
 
         return {
           entryId: entry.id, purchaseOrder: po.orderNumber, invoiceNumber,
-          linesLoaded: active.length, newProducts: news.length, products: touched,
+          linesLoaded: active.length, newProducts: new Set(news.map(({ line }) => Number(line.productId))).size, products: touched,
         };
       });
     } catch (err: any) {

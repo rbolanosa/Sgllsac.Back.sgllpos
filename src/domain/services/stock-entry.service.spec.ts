@@ -1,6 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 import {
-  StockEntryService, similarity, matchKeyOf, normalizeText, keywords, invoiceSum, lineUnitCost,
+  StockEntryService, similarity, matchKeyOf, normalizeText, keywords, invoiceSum, lineUnitCost, pickBaseLine,
 } from './stock-entry.service';
 
 const line = (over: any = {}) => ({
@@ -79,9 +79,21 @@ describe('StockEntryService.validate', () => {
     expect(validate(dto({ lines: [line({ newSalePrice: 4 })] }))).toBe(39.36);
   });
 
-  it('rechaza dos productos nuevos con el mismo nombre', () => {
-    const a = line({ action: 'new', productId: undefined, unitPrice: 0, newProduct: { name: 'Poett', salePrice: 5 } });
-    expect(() => validate(dto({ lines: [a, { ...a }], invoiceTotal: undefined }))).toThrow(/mismo nombre/);
+  it('acepta compra + bonificación del mismo producto nuevo (se unen al cargar)', () => {
+    const buy = line({ action: 'new', productId: undefined, quantity: 2, factor: 18, unitPrice: 115.76, newProduct: { name: 'Nosotras 18x10', salePrice: 7 } });
+    const bonus = line({ action: 'new', productId: undefined, quantity: 3, factor: 1, unitPrice: 0, newProduct: { name: 'NOSOTRAS 18X10', salePrice: 7 } });
+    expect(() => validate(dto({ lines: [buy, bonus], invoiceTotal: undefined }))).not.toThrow();
+  });
+
+  it('rechaza un código de barras repetido entre productos nuevos distintos', () => {
+    const a = line({ action: 'new', productId: undefined, unitPrice: 0, newProduct: { name: 'Poett', salePrice: 5, barcode: '775' } });
+    const b = line({ action: 'new', productId: undefined, unitPrice: 0, newProduct: { name: 'Sapolio', salePrice: 5, barcode: '775' } });
+    expect(() => validate(dto({ lines: [a, b], invoiceTotal: undefined }))).toThrow(/código de barras/);
+  });
+
+  it('el producto nuevo toma el empaque de la línea con precio, no la bonificación', () => {
+    const base = pickBaseLine([{ factor: 1, unitPrice: 0 }, { factor: 18, unitPrice: 115.76 }, { factor: 6, unitPrice: 40 }]);
+    expect(base.factor).toBe(18);
   });
 });
 
