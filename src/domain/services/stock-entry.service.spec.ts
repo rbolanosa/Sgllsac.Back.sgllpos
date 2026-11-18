@@ -120,3 +120,14 @@ describe('StockEntryService montos', () => {
     expect(() => validate(dto({ lines: [l], invoiceTotal: undefined, pricesIncludeIgv: false }))).toThrow(/menor que el costo/);
   });
 });
+
+describe('medidas en kilos', () => {
+  it('lee "X 10 K" como 10 kg y no lo confunde con 370 g', () => {
+    expect([...keywords('AVENA GRANO DE ORO X 10 K').sizes]).toEqual(['10000G']);
+    expect(similarity('AVENA GRANO DE ORO X 10 K', 'QUINUAVENA GRANO DE ORO 12 X 370 GR')).toBeLessThan(0.55);
+  });
+
+  it('sigue reconociendo el mismo producto con la misma medida', () => {
+    expect(similarity('AVENA GRANO DE ORO X 10 K', 'AVENA GRANO DE ORO 10KG')).toBeGreaterThanOrEqual(0.55);
+  });
+});

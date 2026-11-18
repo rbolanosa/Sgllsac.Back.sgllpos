@@ -38,7 +38,7 @@ const ABBREVIATIONS: Record<string, string> = {
   SH: 'SHAMPOO', SHAMP: 'SHAMPOO', ACOND: 'ACONDICIONADOR', DEO: 'DESODORANTE', DES: 'DESODORANTE',
   MERMELAD: 'MERMELADA', MERM: 'MERMELADA', CHOC: 'CHOCOLATE', ACEIT: 'ACEITE', DET: 'DETERGENTE',
   LAVAV: 'LAVAVAJILLA', GALL: 'GALLETA', GALLET: 'GALLETA', LECH: 'LECHE', BEB: 'BEBIDA',
-  GRS: 'G', GR: 'G', GRM: 'G', GRAMOS: 'G', KGS: 'KG', KILO: 'KG', LT: 'L', LTS: 'L', LTR: 'L', LITRO: 'L', CC: 'ML',
+  GRS: 'G', GR: 'G', GRM: 'G', GRAMOS: 'G', KGS: 'KG', KILO: 'KG', KILOS: 'KG', K: 'KG', KL: 'KG', LT: 'L', LTS: 'L', LTR: 'L', LITRO: 'L', CC: 'ML',
 };
 
 /** Palabras de empaque que no ayudan a identificar el producto */
@@ -50,7 +50,7 @@ const NOISE = new Set(['X', 'CAJA', 'CJA', 'CJ', 'PAQ', 'PAQUETE', 'TIRA', 'TIRA
  * "SEDAL SH CERAMIDAS 12X650ML" → SEDAL, SHAMPOO, CERAMIDAS y la medida 650ML.
  */
 export function keywords(text: string): { words: Set<string>; sizes: Set<string> } {
-  let t = normalizeText(text).replace(/(\d)\s+(ML|G|GR|GRS|KG|L|LT|LTS|CC)\b/g, '$1$2'); // "650 ML" → "650ML"
+  let t = normalizeText(text).replace(/(\d)\s+(ML|G|GR|GRS|KG|KGS|K|KL|KILOS?|L|LT|LTS|CC)\b/g, '$1$2'); // "650 ML", "10 K" → "650ML", "10K"
   // "12X650ML", "16X6X40ML" → "650ML", "40ML" (se repite para varios multiplicadores)
   for (let prev = ''; prev !== t;) { prev = t; t = t.replace(/(^|\s)\d+\s*X\s*(?=\d)/g, '$1'); }
   t = t.replace(/(^|\s)X\s*\d+(?=\s|$)/g, ' ');                   // "X12", "X 24" → fuera
@@ -58,7 +58,7 @@ export function keywords(text: string): { words: Set<string>; sizes: Set<string>
   const sizes = new Set<string>();
   for (const raw of t.split(' ')) {
     if (!raw) continue;
-    const m = raw.match(/^(\d+(?:\.\d+)?)(ML|G|GR|GRS|GRM|KG|KGS|L|LT|LTS|LTR|CC)$/);
+    const m = raw.match(/^(\d+(?:\.\d+)?)(ML|G|GR|GRS|GRM|KG|KGS|K|KL|KILOS?|L|LT|LTS|LTR|CC)$/);
     if (m) {
       const unit = ABBREVIATIONS[m[2]] ?? m[2];
       let n = Number(m[1]);
