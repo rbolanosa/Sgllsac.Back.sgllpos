@@ -30,6 +30,13 @@ export class ProductPresentationInputDto {
   @Min(0)
   salePrice: number;
 
+  @ApiPropertyOptional({ example: 20.5, description: 'Costo de esta presentación' })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  costPrice?: number | null;
+
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
@@ -173,6 +180,13 @@ export class CreateProductDto {
   @IsNumber()
   @Min(0)
   boxSalePrice?: number;
+
+  @ApiPropertyOptional({ description: 'Costo de una caja/empaque completo' })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  boxCostPrice?: number | null;
 
   @ApiPropertyOptional({
     example: 'Caja',
@@ -329,6 +343,13 @@ export class UpdateProductDto {
   @IsNumber()
   @Min(0)
   boxSalePrice?: number;
+
+  @ApiPropertyOptional({ description: 'Costo de una caja/empaque completo' })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  boxCostPrice?: number | null;
 
   @ApiPropertyOptional()
   @IsOptional()

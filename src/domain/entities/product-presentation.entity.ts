@@ -40,6 +40,10 @@ export class ProductPresentationEntity {
   @Column({ name: 'sale_price', type: 'decimal', precision: 10, scale: 4 })
   salePrice: number;
 
+  /** Costo de la presentación completa (null = se calcula desde el costo por unidad) */
+  @Column({ name: 'cost_price', type: 'decimal', precision: 12, scale: 4, nullable: true })
+  costPrice: number | null;
+
   @Index()
   @Column({ type: 'varchar', length: 50, nullable: true })
   barcode: string | null;

@@ -71,3 +71,9 @@ export async function ensurePresentationsSchema(conn: Connection): Promise<void>
     `);
   }
 }
+
+/** Costo propio de cada presentación y de la caja. Aparte para no afectar lo anterior si falla. */
+export async function ensurePresentationCostsSchema(conn: Connection): Promise<void> {
+  await addColumnIfMissing(conn, 'product_presentations', 'cost_price', 'DECIMAL(12,4) NULL');
+  await addColumnIfMissing(conn, 'products', 'box_cost_price', 'DECIMAL(12,4) NULL');
+}

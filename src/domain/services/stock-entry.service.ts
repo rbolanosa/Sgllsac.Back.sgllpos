@@ -451,6 +451,9 @@ export class StockEntryService {
               stockQuantity: () => `stock_quantity + ${units}`,
               // Las bonificaciones (precio 0) suman stock pero no cambian el costo
               ...(unitCost > 0 ? { costPrice: unitCost } : {}),
+              // Si llegó en su caja, el costo de la caja también se actualiza
+              ...(unitCost > 0 && product.hasBoxPresentation && Number(product.unitsPerBox) === factor
+                ? { boxCostPrice: round4(unitCost * factor) } : {}),
               ...(!isNew && line.newSalePrice ? { salePrice: Number(line.newSalePrice) } : {}),
               ...(!product.supplierId ? { supplierId: supplier.id } : {}),
             })

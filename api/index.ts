@@ -4,7 +4,7 @@ import { ExpressAdapter } from '@nestjs/platform-express';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import express from 'express';
 import mysql from 'mysql2/promise';
-import { ensurePresentationsSchema } from '../src/infrastructure/database/ensure-presentations-schema';
+import { ensurePresentationsSchema, ensurePresentationCostsSchema } from '../src/infrastructure/database/ensure-presentations-schema';
 import { ensureStockEntriesSchema } from '../src/infrastructure/database/ensure-stock-entries-schema';
 import { ensureQuotesSchema } from '../src/infrastructure/database/ensure-quotes-schema';
 let cachedServer: any;
@@ -101,6 +101,11 @@ async function ensureProductionSchema() {
         await ensureStockEntriesSchema(conn);
       } catch (seErr: any) {
         console.warn('[ensureStockEntriesSchema] Warning:', seErr?.message);
+      }
+      try {
+        await ensurePresentationCostsSchema(conn);
+      } catch (pcErr: any) {
+        console.warn('[ensurePresentationCostsSchema] Warning:', pcErr?.message);
       }
       try {
         await ensureQuotesSchema(conn);

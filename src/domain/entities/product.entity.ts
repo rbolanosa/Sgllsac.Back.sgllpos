@@ -178,6 +178,10 @@ export class ProductEntity {
   @Column({ name: 'box_sale_price', type: 'decimal', precision: 10, scale: 4, nullable: true })
   boxSalePrice: number | null;
 
+  /** Costo de una caja completa (null = unitsPerBox × costPrice) */
+  @Column({ name: 'box_cost_price', type: 'decimal', precision: 12, scale: 4, nullable: true })
+  boxCostPrice: number | null;
+
   /**
    * Nombre de la presentación mayorista / empaque.
    * Ej: 'Caja', 'Paquete', 'Tira', 'Blíster', 'Saco', 'Fardo', 'Palet', etc.
