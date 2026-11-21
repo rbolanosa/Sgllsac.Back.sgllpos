@@ -1,6 +1,6 @@
 import {
   IsString, IsOptional, IsBoolean, IsNumber, IsEnum,
-  IsArray, ArrayMinSize, ValidateNested, Min, MaxLength, IsNotEmpty, IsIn,
+  IsArray, ArrayMinSize, ArrayMaxSize, ValidateNested, Min, MaxLength, IsNotEmpty, IsIn, Matches,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
@@ -93,6 +93,30 @@ export class PaymentItemInputDto {
   amount: number;
 }
 
+/** Cuota de una venta al crédito */
+export class CreditInstallmentDto {
+  @ApiProperty({ example: 590 })
+  @Type(() => Number)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @Min(0.01)
+  amount: number;
+
+  @ApiProperty({ example: '2026-12-20' })
+  @IsString()
+  @Matches(/^\d{4}-\d{2}-\d{2}$/)
+  dueDate: string;
+}
+
+export class CreditPlanDto {
+  @ApiProperty({ type: [CreditInstallmentDto] })
+  @IsArray()
+  @ArrayMinSize(1)
+  @ArrayMaxSize(36)
+  @ValidateNested({ each: true })
+  @Type(() => CreditInstallmentDto)
+  installments: CreditInstallmentDto[];
+}
+
 export class CreateSaleDto {
   @ApiPropertyOptional()
   @IsOptional()
@@ -146,6 +170,12 @@ export class CreateSaleDto {
   @ValidateNested({ each: true })
   @Type(() => SaleItemInputDto)
   items: SaleItemInputDto[];
+
+  @ApiPropertyOptional({ type: CreditPlanDto, description: 'Solo para ventas al crédito (factura o nota de venta)' })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => CreditPlanDto)
+  credit?: CreditPlanDto;
 }
 
 export class VoidSaleDto {

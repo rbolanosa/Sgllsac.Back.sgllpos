@@ -2,7 +2,7 @@ import { Controller, Get, Post, Put, Patch, Body, Query, Req, Param, ParseIntPip
 import { Response } from 'express';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { QuoteService } from '../../domain/services/quote.service';
-import { SaveQuoteDto, QuoteStatusDto } from '../../application/dtos/quote.dto';
+import { SaveQuoteDto, QuoteStatusDto, QuoteSoldDto } from '../../application/dtos/quote.dto';
 import { Public } from '../decorators/public.decorator';
 
 @ApiTags('Cotizaciones')
@@ -20,6 +20,12 @@ export class QuoteController {
     @Query('status') status?: string,
   ) {
     return this.service.findAll({ page: +page, limit: +limit, search, status });
+  }
+
+  @Get('summary')
+  @ApiOperation({ summary: 'Pendientes, aceptadas y vendidas del mes' })
+  summary() {
+    return this.service.summary();
   }
 
   // El enlace usa un token aleatorio: se puede compartir con el cliente sin exponer otras cotizaciones.
@@ -58,5 +64,11 @@ export class QuoteController {
   @Patch(':id/status')
   setStatus(@Param('id', ParseIntPipe) id: number, @Body() dto: QuoteStatusDto) {
     return this.service.setStatus(id, dto.status);
+  }
+
+  @Patch(':id/sold')
+  @ApiOperation({ summary: 'Marca la cotización como vendida (la llama el POS)' })
+  markSold(@Param('id', ParseIntPipe) id: number, @Body() dto: QuoteSoldDto) {
+    return this.service.markSold(id, dto.saleRef);
   }
 }

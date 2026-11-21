@@ -252,15 +252,34 @@ export class WhatsappAdapter {
 
       const textLeftMargin = isNota ? margin : margin + 92;
       doc.font('Helvetica-Bold').fontSize(8).text('FORMA DE PAGO:', textLeftMargin, bottomBlockY);
-      doc.font('Helvetica').fontSize(8).text('Contado', textLeftMargin + 76, bottomBlockY);
+      const isCredit = sale.paymentMethod === 'credit';
+      const cuotas: { amount: number; dueDate: string }[] = Array.isArray(sale.creditInstallments) ? sale.creditInstallments : [];
+      doc.font('Helvetica').fontSize(8).text(isCredit ? 'Crédito' : 'Contado', textLeftMargin + 76, bottomBlockY);
 
-      doc.font('Helvetica-Bold').text('PAGOS:', textLeftMargin, bottomBlockY + 12);
-      doc.font('Helvetica').text(`- Efectivo - S/ ${totalAmtStr}`, textLeftMargin, bottomBlockY + 23);
+      let infoY = bottomBlockY + 12;
+      if (isCredit) {
+        // Factura al crédito: monto pendiente y cada cuota con su fecha (lo que exige SUNAT)
+        doc.font('Helvetica-Bold').text('PENDIENTE:', textLeftMargin, infoY);
+        doc.font('Helvetica').text(`S/ ${totalAmtStr}`, textLeftMargin + 52, infoY);
+        infoY += 11;
+        doc.font('Helvetica-Bold').text(`CUOTAS (${cuotas.length}):`, textLeftMargin, infoY);
+        infoY += 11;
+        cuotas.forEach((c, i) => {
+          const [y, m, d] = String(c.dueDate).slice(0, 10).split('-');
+          doc.font('Helvetica').text(`${i + 1}. ${d}/${m}/${y} - S/ ${Number(c.amount).toFixed(2)}`, textLeftMargin, infoY);
+          infoY += 10;
+        });
+        infoY += 4;
+      } else {
+        doc.font('Helvetica-Bold').text('PAGOS:', textLeftMargin, infoY);
+        doc.font('Helvetica').text(`- Efectivo - S/ ${totalAmtStr}`, textLeftMargin, infoY + 11);
+        infoY += 26;
+      }
 
-      doc.font('Helvetica-Bold').text('VENDEDOR:', textLeftMargin, bottomBlockY + 38);
-      doc.font('Helvetica').text(sale.cashier?.name || sale.cashierName || 'Administrador', textLeftMargin + 52, bottomBlockY + 38);
+      doc.font('Helvetica-Bold').text('VENDEDOR:', textLeftMargin, infoY);
+      doc.font('Helvetica').text(sale.cashier?.name || sale.cashierName || 'Administrador', textLeftMargin + 52, infoY);
 
-      doc.y = Math.max(doc.y, bottomBlockY + 90);
+      doc.y = Math.max(doc.y, bottomBlockY + 90, infoY + 14);
       doc.moveDown(0.5);
 
       // 10. Pie de Comprobante Oficial

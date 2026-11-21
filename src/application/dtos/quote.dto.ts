@@ -1,6 +1,6 @@
 import {
   IsString, IsOptional, IsNumber, IsArray, ArrayMinSize, ArrayMaxSize, ValidateNested,
-  Min, Max, IsNotEmpty, IsIn, MaxLength, IsInt,
+  Min, Max, IsNotEmpty, IsIn, MaxLength, IsInt, Matches,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
@@ -11,6 +11,25 @@ export class QuoteItemDto {
   @IsOptional()
   @IsInt()
   productId?: number | null;
+
+  @ApiPropertyOptional({ description: 'U unidad, B caja, P<id> otra presentación' })
+  @IsOptional()
+  @IsString()
+  @Matches(/^(U|B|P\d+)$/)
+  optionKey?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  @MaxLength(50)
+  optionLabel?: string;
+
+  @ApiPropertyOptional({ description: 'Unidades base de la presentación' })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber({ maxDecimalPlaces: 4 })
+  @Min(0.0001)
+  factor?: number;
 
   @ApiProperty()
   @IsString()
@@ -102,4 +121,12 @@ export class QuoteStatusDto {
   @ApiProperty({ enum: QUOTE_STATUSES })
   @IsIn(QUOTE_STATUSES)
   status: (typeof QUOTE_STATUSES)[number];
+}
+
+export class QuoteSoldDto {
+  @ApiProperty({ example: 'B001-45' })
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(30)
+  saleRef: string;
 }

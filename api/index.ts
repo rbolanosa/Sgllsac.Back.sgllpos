@@ -7,6 +7,7 @@ import mysql from 'mysql2/promise';
 import { ensurePresentationsSchema, ensurePresentationCostsSchema } from '../src/infrastructure/database/ensure-presentations-schema';
 import { ensureStockEntriesSchema } from '../src/infrastructure/database/ensure-stock-entries-schema';
 import { ensureQuotesSchema } from '../src/infrastructure/database/ensure-quotes-schema';
+import { ensureReceivablesSchema } from '../src/infrastructure/database/ensure-receivables-schema';
 let cachedServer: any;
 
 const CORS_HEADERS = {
@@ -106,6 +107,11 @@ async function ensureProductionSchema() {
         await ensurePresentationCostsSchema(conn);
       } catch (pcErr: any) {
         console.warn('[ensurePresentationCostsSchema] Warning:', pcErr?.message);
+      }
+      try {
+        await ensureReceivablesSchema(conn);
+      } catch (rcErr: any) {
+        console.warn('[ensureReceivablesSchema] Warning:', rcErr?.message);
       }
       try {
         await ensureQuotesSchema(conn);

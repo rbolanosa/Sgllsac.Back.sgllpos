@@ -6,7 +6,9 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
-import { SaleEntity, SaleStatus, DocumentType } from '../../domain/entities/sale.entity';
+import { SaleEntity, SaleStatus, DocumentType, PaymentMethod } from '../../domain/entities/sale.entity';
+import { ReceivableEntity, ReceivableInstallmentEntity } from '../../domain/entities/receivable.entity';
+import { validateCreditPlan } from './credit-plan';
 import { SaleItemEntity } from '../../domain/entities/sale-item.entity';
 import { ProductEntity } from '../../domain/entities/product.entity';
 import { ProductPresentationEntity } from '../entities/product-presentation.entity';
@@ -387,6 +389,19 @@ export class SaleService {
         }
       }
 
+      // Venta al crédito: solo con cliente identificado y en factura o nota de venta
+      let creditPlan: { amount: number; dueDate: string }[] | null = null;
+      if (dto.credit) {
+        if (docType !== DocumentType.FACTURA && docType !== DocumentType.NOTA_VENTA) {
+          throw new BadRequestException('La venta al crédito se emite con factura o nota de venta');
+        }
+        const debtor = customerId ? await manager.findOne(CustomerEntity, { where: { id: customerId } }) : null;
+        if (!dto.customerId || !debtor || debtor.nit === 'CF') {
+          throw new BadRequestException('Para vender al crédito elige al cliente');
+        }
+        creditPlan = validateCreditPlan(dto.credit.installments, totalAmount, this.limaDate(new Date()));
+      }
+
       const invoiceNumber = await this.generateInvoiceNumber(manager, docType, cashierId);
 
       const sale = manager.create(SaleEntity, {
@@ -401,9 +416,9 @@ export class SaleService {
         taxAmount,
         discountAmount,
         totalAmount,
-        paymentMethod: dto.paymentMethod,
-        amountTendered: dto.amountTendered ?? null,
-        changeGiven,
+        paymentMethod: creditPlan ? PaymentMethod.CREDIT : dto.paymentMethod,
+        amountTendered: creditPlan ? null : dto.amountTendered ?? null,
+        changeGiven: creditPlan ? null : changeGiven,
         status: SaleStatus.COMPLETED,
         notes: dto.notes ?? null,
       });
@@ -413,6 +428,21 @@ export class SaleService {
         item.saleId = savedSale.id;
       }
       await manager.save(SaleItemEntity, saleItems as SaleItemEntity[]);
+
+      // La deuda queda registrada junto con la venta (misma transacción)
+      if (creditPlan) {
+        const receivable = await manager.save(manager.create(ReceivableEntity, {
+          saleId: savedSale.id,
+          customerId: customerId!,
+          documentNumber: invoiceNumber,
+          total: Math.round(totalAmount * 100) / 100,
+          paid: 0,
+          status: 'PENDIENTE',
+        }));
+        await manager.save(ReceivableInstallmentEntity, creditPlan.map((c, i) => manager.create(ReceivableInstallmentEntity, {
+          receivableId: receivable.id, number: i + 1, dueDate: c.dueDate, amount: c.amount, paidAmount: 0, note: null,
+        })));
+      }
 
       return manager.findOne(SaleEntity, {
         where: { id: savedSale.id },
@@ -443,7 +473,8 @@ export class SaleService {
     }
 
     // Register movement in active cash session (if cashier has one open)
-    if (result && cashierId) {
+    // Al crédito no entra dinero a la caja: entra cuando el cliente abona
+    if (result && cashierId && result.paymentMethod !== PaymentMethod.CREDIT) {
       // Format: F001-26 (strip leading zeros from correlativo)
       const [serie, corr] = (result.invoiceNumber || '').split('-');
       const shortNum = corr ? `${serie}-${parseInt(corr, 10)}` : (result.invoiceNumber || '');
@@ -462,6 +493,21 @@ export class SaleService {
     }
 
     return result;
+  }
+
+  /** Cuotas de una venta al crédito, en orden (para la factura que va a SUNAT) */
+  private async creditInstallmentsOf(saleId: number): Promise<{ amount: number; dueDate: string }[]> {
+    const rows = await this.dataSource.getRepository(ReceivableInstallmentEntity)
+      .createQueryBuilder('i')
+      .innerJoin(ReceivableEntity, 'r', 'r.id = i.receivableId')
+      .where('r.saleId = :saleId', { saleId })
+      .andWhere('i.note IS NULL')
+      .orderBy('i.number', 'ASC')
+      .getMany();
+    const ymd = (v: any) => (v instanceof Date
+      ? `${v.getFullYear()}-${String(v.getMonth() + 1).padStart(2, '0')}-${String(v.getDate()).padStart(2, '0')}`
+      : String(v).slice(0, 10));
+    return rows.map((r) => ({ amount: Number(r.amount), dueDate: ymd(r.dueDate) }));
   }
 
   /** Transmit Factura or Boleta to APISUNAT service */
@@ -542,6 +588,9 @@ export class SaleService {
 
     const fechaEmisionStr = this.limaDate(sale.saleDate);
 
+    // Factura al crédito: SUNAT exige forma de pago "Credito" con sus cuotas
+    const cuotas = sale.paymentMethod === PaymentMethod.CREDIT ? await this.creditInstallmentsOf(sale.id) : [];
+
     const payload = {
       tipo_documento: sale.documentType === DocumentType.FACTURA ? '01' : '03',
       serie,
@@ -549,7 +598,11 @@ export class SaleService {
       fecha_emision: fechaEmisionStr,
       tipo_operacion: '0101',
       tipo_moneda: 'PEN',
-      forma_pago: 'Contado',
+      forma_pago: cuotas.length ? 'Credito' : 'Contado',
+      ...(cuotas.length ? {
+        cuotas: cuotas.map((c) => ({ monto: Number(c.amount), fecha_pago: c.dueDate })),
+        fecha_vencimiento: cuotas[cuotas.length - 1].dueDate,
+      } : {}),
       cliente: {
         tipo_doc: tipoDoc,
         num_doc: numDoc,
@@ -1308,6 +1361,10 @@ export class SaleService {
   async generatePdfBuffer(id: number): Promise<{ buffer: Buffer; fileName: string }> {
     const sale = await this.findById(id);
     const company = await this.companySettings.get();
+    // Al crédito: el PDF muestra la forma de pago "Crédito" con sus cuotas
+    if (sale.paymentMethod === PaymentMethod.CREDIT) {
+      (sale as any).creditInstallments = await this.creditInstallmentsOf(sale.id);
+    }
     const buffer = await this.whatsappAdapter.generateReceiptPdfBuffer(sale, company);
     const fileName = `${sale.invoiceNumber || 'COMPROBANTE'}.pdf`;
     return { buffer, fileName };

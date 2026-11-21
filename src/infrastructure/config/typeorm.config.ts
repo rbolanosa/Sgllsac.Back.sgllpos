@@ -26,6 +26,8 @@ import { GuiaRemisionEntity } from '../../domain/entities/guia-remision.entity';
 import { StockEntryEntity } from '../../domain/entities/stock-entry.entity';
 import { SupplierProductMapEntity } from '../../domain/entities/supplier-product-map.entity';
 import { QuoteEntity } from '../../domain/entities/quote.entity';
+import { ReceivableEntity, ReceivableInstallmentEntity, ReceivablePaymentEntity } from '../../domain/entities/receivable.entity';
+import { SunatVoidEntity } from '../../domain/entities/sunat-void.entity';
 
 // Carga el .env cuando el archivo se usa desde TypeORM CLI (ts-node)
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
@@ -52,6 +54,10 @@ const entities = [
   StockEntryEntity,
   SupplierProductMapEntity,
   QuoteEntity,
+  ReceivableEntity,
+  ReceivableInstallmentEntity,
+  ReceivablePaymentEntity,
+  SunatVoidEntity,
 ];
 
 export const typeOrmConfig: TypeOrmModuleAsyncOptions = {

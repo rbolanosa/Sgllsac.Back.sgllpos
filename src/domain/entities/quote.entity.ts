@@ -1,10 +1,16 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
 
-export type QuoteStatus = 'PENDIENTE' | 'ACEPTADA' | 'RECHAZADA' | 'ANULADA';
+export type QuoteStatus = 'PENDIENTE' | 'ACEPTADA' | 'RECHAZADA' | 'ANULADA' | 'VENDIDA';
+/** Estados que se pueden poner a mano. VENDIDA solo la pone el POS al emitir el comprobante. */
 export const QUOTE_STATUSES: QuoteStatus[] = ['PENDIENTE', 'ACEPTADA', 'RECHAZADA', 'ANULADA'];
 
 export interface QuoteItem {
   productId: number | null;
+  /** Presentación con la que se cotizó: U unidad, B caja, P<id> otra (como en el POS) */
+  optionKey?: string;
+  optionLabel?: string;
+  /** Unidades base que trae esa presentación */
+  factor?: number;
   description: string;
   unit: string;
   quantity: number;
@@ -63,6 +69,10 @@ export class QuoteEntity {
 
   @Column({ type: 'text', nullable: true })
   notes: string | null;
+
+  /** Comprobante con el que se vendió */
+  @Column({ name: 'sale_ref', type: 'varchar', length: 30, nullable: true })
+  saleRef: string | null;
 
   @Column({ name: 'public_token', type: 'varchar', length: 40 })
   publicToken: string;

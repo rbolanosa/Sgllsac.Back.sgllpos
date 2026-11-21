@@ -30,4 +30,16 @@ export async function ensureQuotesSchema(conn: Pick<Connection, 'query'>): Promi
       INDEX \`IDX_quotes_status\` (\`status\`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
   `);
+
+  const [rows] = await conn.query(
+    `SELECT 1 FROM information_schema.COLUMNS
+     WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'quotes' AND COLUMN_NAME = 'sale_ref'`,
+  );
+  if (!(rows as any[]).length) {
+    try {
+      await conn.query('ALTER TABLE `quotes` ADD COLUMN `sale_ref` VARCHAR(30) NULL');
+    } catch (err: any) {
+      if (err?.code !== 'ER_DUP_FIELDNAME') throw err;
+    }
+  }
 }

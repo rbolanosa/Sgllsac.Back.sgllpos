@@ -75,6 +75,11 @@ export class QuoteService {
       const unitPrice = Number(i.unitPrice);
       return {
         productId: i.productId ?? null,
+        ...(i.productId && i.optionKey ? {
+          optionKey: i.optionKey,
+          optionLabel: (i.optionLabel || '').trim().slice(0, 50) || undefined,
+          factor: i.factor ? Number(i.factor) : 1,
+        } : {}),
         description: i.description.trim(),
         unit: (i.unit || 'UND').trim().toUpperCase().slice(0, 20),
         quantity,
@@ -171,8 +176,43 @@ export class QuoteService {
     const q = await this.repo.findOne({ where: { id } });
     if (!q) throw new NotFoundException('Cotización no encontrada');
     if (q.status === 'ANULADA') throw new BadRequestException('La cotización está anulada');
+    if (q.status === 'VENDIDA') throw new BadRequestException(`La cotización ya se vendió (${q.saleRef})`);
     q.status = status;
     return this.toView(await this.repo.save(q));
+  }
+
+  /** La llama el POS cuando se emite el comprobante de una venta armada desde la cotización */
+  async markSold(id: number, saleRef: string) {
+    const q = await this.repo.findOne({ where: { id } });
+    if (!q) throw new NotFoundException('Cotización no encontrada');
+    if (q.status === 'ANULADA') throw new BadRequestException('La cotización está anulada');
+    if (q.status === 'VENDIDA') return this.toView(q);
+    q.status = 'VENDIDA';
+    q.saleRef = saleRef.trim();
+    return this.toView(await this.repo.save(q));
+  }
+
+  /** Números para la cabecera del módulo */
+  async summary() {
+    const today = limaYmd(new Date());
+    const monthStart = `${today.slice(0, 7)}-01`;
+    const row = await this.repo.createQueryBuilder('q')
+      .select("SUM(CASE WHEN q.status = 'PENDIENTE' AND q.validUntil >= :today THEN 1 ELSE 0 END)", 'pendingCount')
+      .addSelect("COALESCE(SUM(CASE WHEN q.status = 'PENDIENTE' AND q.validUntil >= :today THEN q.total ELSE 0 END), 0)", 'pendingTotal')
+      .addSelect("SUM(CASE WHEN q.status = 'ACEPTADA' THEN 1 ELSE 0 END)", 'acceptedCount')
+      .addSelect("COALESCE(SUM(CASE WHEN q.status = 'ACEPTADA' THEN q.total ELSE 0 END), 0)", 'acceptedTotal')
+      .addSelect("SUM(CASE WHEN q.status = 'VENDIDA' AND q.updatedAt >= :monthStart THEN 1 ELSE 0 END)", 'soldCount')
+      .addSelect("COALESCE(SUM(CASE WHEN q.status = 'VENDIDA' AND q.updatedAt >= :monthStart THEN q.total ELSE 0 END), 0)", 'soldTotal')
+      .addSelect("SUM(CASE WHEN q.status = 'PENDIENTE' AND q.validUntil >= :today AND q.validUntil <= :soon THEN 1 ELSE 0 END)", 'expiringSoon')
+      .setParameters({ today, monthStart, soon: addDays(today, 3) })
+      .getRawOne();
+    const n = (v: any) => Number(v || 0);
+    return {
+      pending: { count: n(row?.pendingCount), total: round2(n(row?.pendingTotal)) },
+      accepted: { count: n(row?.acceptedCount), total: round2(n(row?.acceptedTotal)) },
+      soldThisMonth: { count: n(row?.soldCount), total: round2(n(row?.soldTotal)) },
+      expiringSoon: n(row?.expiringSoon),
+    };
   }
 
   // ── PDF A4 ────────────────────────────────────────────────────────────────

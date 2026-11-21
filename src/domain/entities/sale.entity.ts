@@ -21,6 +21,8 @@ export enum PaymentMethod {
   YAPE     = 'yape',
   PLIN     = 'plin',
   DEPOSIT  = 'deposit',
+  /** Venta al crédito: no entra a caja; se cobra con abonos en Cuentas por cobrar */
+  CREDIT   = 'credit',
 }
 
 export enum SaleStatus {

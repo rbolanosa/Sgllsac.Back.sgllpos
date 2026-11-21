@@ -26,6 +26,8 @@ import { WhatsappMultiModule } from './infrastructure/modules/whatsapp-multi.mod
 import { StockEntryModule } from './infrastructure/modules/stock-entry.module';
 import { DashboardModule } from './infrastructure/modules/dashboard.module';
 import { QuoteModule } from './infrastructure/modules/quote.module';
+import { ReceivableModule } from './infrastructure/modules/receivable.module';
+import { SunatDocsModule } from './infrastructure/modules/sunat-docs.module';
 
 @Module({
   imports: [
@@ -90,6 +92,8 @@ import { QuoteModule } from './infrastructure/modules/quote.module';
     StockEntryModule,
     DashboardModule,
     QuoteModule,
+    ReceivableModule,
+    SunatDocsModule,
   ],
 })
 export class AppModule {}
