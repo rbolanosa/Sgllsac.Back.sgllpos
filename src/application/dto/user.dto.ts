@@ -1,4 +1,4 @@
-import { IsEmail, IsString, IsEnum, IsBoolean, IsOptional, MinLength } from 'class-validator';
+import { IsEmail, IsString, IsEnum, IsBoolean, IsOptional, MinLength, IsInt } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { UserRole } from '../../domain/entities/user.entity';
 
@@ -24,6 +24,11 @@ export class CreateUserDto {
   @ApiPropertyOptional()
   @IsOptional()
   establishmentId?: number;
+
+  @ApiPropertyOptional({ description: 'Perfil de acceso (null = el de su rol)' })
+  @IsOptional()
+  @IsInt()
+  profileId?: number | null;
 }
 
 export class UpdateUserDto {
@@ -51,6 +56,11 @@ export class UpdateUserDto {
   @ApiPropertyOptional()
   @IsOptional()
   establishmentId?: number;
+
+  @ApiPropertyOptional({ description: 'Perfil de acceso (null = el de su rol)' })
+  @IsOptional()
+  @IsInt()
+  profileId?: number | null;
 
   @ApiPropertyOptional()
   @IsOptional()
