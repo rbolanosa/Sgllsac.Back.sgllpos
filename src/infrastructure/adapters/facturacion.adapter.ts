@@ -178,4 +178,13 @@ export class FacturacionAdapter implements OnModuleInit {
       throw error;
     }
   }
+
+  /** Una sola llamada, sin reintentos: para pedidos que SUNAT registra (repetirlos los duplica) */
+  async once<T>(method: 'get' | 'post', endpoint: string, body?: unknown): Promise<T> {
+    const { baseUrl, headers } = await this.getResolvedConfig();
+    const response = await firstValueFrom(
+      this.httpService.request<T>({ method, url: `${baseUrl}${endpoint}`, data: body, headers, timeout: 45_000 }),
+    );
+    return response.data;
+  }
 }

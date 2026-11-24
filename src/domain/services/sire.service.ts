@@ -10,7 +10,7 @@ const round2 = (n: number) => Math.round((n + Number.EPSILON) * 100) / 100;
 export const invoiceKey = (ruc: string, serie: string, num?: string | number) => {
   let s = serie; let n = num;
   if (n === undefined) { [s, n] = String(serie).split('-'); }
-  return `${String(ruc).trim()}|${String(s || '').trim().toUpperCase()}-${Number(n)}`;
+  return `${String(ruc).trim()}|${String(s || '').trim().toUpperCase()}-${/^\d+$/.test(String(n).trim()) ? Number(n) : String(n).trim().toUpperCase()}`;
 };
 
 /**
@@ -37,11 +37,24 @@ export class SireService {
     throw new BadRequestException(d?.mensaje || d?.message || e?.message || 'No se pudo consultar SIRE');
   }
 
+  /** Activa SIRE en APISUNAT con las credenciales de API SUNAT que la empresa ya tiene (las de las guías) */
+  async activate() {
+    try {
+      const res: any = await this.facturacion.once('post', '/sire/activar', {});
+      const d = res?.datos ?? res;
+      return { enabled: true, message: d?.mensaje || 'SIRE activado' };
+    } catch (e: any) {
+      const d = e?.response?.data;
+      const detail = [d?.mensaje || d?.message, d?.errores?.sunat_code ? `(código SUNAT ${d.errores.sunat_code})` : ''].filter(Boolean).join(' ');
+      throw new BadRequestException(`SUNAT no aceptó la activación: ${detail || e?.message || 'error desconocido'}`);
+    }
+  }
+
   /** Pide a SUNAT la propuesta del periodo (SUNAT la prepara en unos minutos) */
   async request(periodo: string) {
     this.checkPeriod(periodo);
     try {
-      const res: any = await this.facturacion.get(`/sire/rce/${periodo}/propuesta`);
+      const res: any = await this.facturacion.once('get', `/sire/rce/${periodo}/propuesta`);
       const d = res?.datos ?? res;
       return { enabled: true, ticket: d?.num_ticket ?? null, message: 'Pedido enviado a SUNAT. En unos minutos puedes comparar.' };
     } catch (e: any) {
@@ -52,7 +65,7 @@ export class SireService {
   async tickets(periodo: string) {
     this.checkPeriod(periodo);
     try {
-      const res: any = await this.facturacion.get(`/sire/tickets?per_tributario=${periodo}`);
+      const res: any = await this.facturacion.once('get', `/sire/tickets?per_tributario=${periodo}`);
       const page = res?.datos ?? res;
       return { enabled: true, tickets: (page?.data ?? []).slice(0, 5) };
     } catch (e: any) {
@@ -65,7 +78,7 @@ export class SireService {
     const sunat: any[] = [];
     try {
       for (let page = 1; page <= 20; page++) {
-        const res: any = await this.facturacion.get(`/sire/rce/${periodo}/comprobantes?page=${page}`);
+        const res: any = await this.facturacion.once('get', `/sire/rce/${periodo}/comprobantes?page=${page}`);
         const pag = (res?.datos ?? res)?.comprobantes;
         sunat.push(...(pag?.data ?? []));
         if (!pag || page >= Number(pag.last_page || 1)) break;
@@ -88,12 +101,13 @@ export class SireService {
       const key = invoiceKey(c.num_doc_proveedor, c.num_serie_cdp, c.num_cdp);
       sunatKeys.add(key);
       const row = {
-        ruc: c.num_doc_proveedor, supplier: c.razon_social_proveedor, number: `${c.num_serie_cdp}-${Number(c.num_cdp)}`,
+        ruc: c.num_doc_proveedor, supplier: c.razon_social_proveedor, number: `${c.num_serie_cdp}-${/^\d+$/.test(String(c.num_cdp)) ? Number(c.num_cdp) : c.num_cdp}`,
         date: String(c.fec_emision || '').slice(0, 10), type: c.cod_tipo_cdp, total: round2(Number(c.mto_total || 0)),
       };
       const mine = localByKey.get(key);
       if (mine) matched.push({ ...row, loadedTotal: Number(mine.total), entryId: mine.id, diff: round2(row.total - Number(mine.total)) });
-      else missing.push(row);
+      // Notas y otros documentos no se cargan como factura de compra
+      else if (String(c.cod_tipo_cdp) === '01') missing.push(row);
     }
     const onlyLocal = local
       .filter((e) => !sunatKeys.has(invoiceKey(e.supplierRuc, e.invoiceNumber)))

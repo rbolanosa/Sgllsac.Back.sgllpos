@@ -42,6 +42,12 @@ export class SunatDocsController {
     return this.service.createDebitNote(id, dto);
   }
 
+  @Post('sire/activate')
+  @ApiOperation({ summary: 'Activa SIRE en APISUNAT con las credenciales de la empresa' })
+  sireActivate() {
+    return this.sire.activate();
+  }
+
   @Post('sire/:periodo/request')
   @ApiOperation({ summary: 'Pide a SUNAT la propuesta del Registro de Compras del periodo (AAAAMM)' })
   sireRequest(@Param('periodo') periodo: string) {
