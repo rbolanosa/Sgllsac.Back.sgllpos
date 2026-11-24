@@ -60,7 +60,9 @@ export class SaleService {
       .leftJoinAndSelect('s.items', 'i');
 
     if (status)       qb.andWhere('s.status = :status', { status });
-    if (documentType) qb.andWhere('s.documentType = :documentType', { documentType });
+    // 'sunat': todo lo electrónico, sin notas de venta
+    if (documentType === 'sunat') qb.andWhere('s.documentType <> :nv', { nv: DocumentType.NOTA_VENTA });
+    else if (documentType) qb.andWhere('s.documentType = :documentType', { documentType });
     if (from)         qb.andWhere('s.saleDate >= :from', { from: this.limaDayStart(from) });
     if (to)           qb.andWhere('s.saleDate < :to', { to: this.limaDayStart(to, 1) });
     if (q?.trim()) {
