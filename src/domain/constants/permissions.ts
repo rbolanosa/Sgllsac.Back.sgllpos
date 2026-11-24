@@ -119,6 +119,7 @@ export const ROUTE_RULES: Record<string, Rule> = {
   'GET sunat-docs/sales/:id/void': ['comprobantes:ver'], 'GET sunat-docs/voids': ['comprobantes:ver'],
   'POST sunat-docs/voids/refresh': ['comprobantes:ver'],
   'POST sunat-docs/sales/:id/void': ['comprobantes:eliminar'], 'POST sunat-docs/sales/:id/debit-note': ['comprobantes:crear'],
+  'GET sunat-docs/alerts': ['comprobantes:ver'],
   'GET sunat-docs/sales-register': ['comprobantes:ver'],
   'POST sunat-docs/sire/activate': 'admin', 'POST sunat-docs/sire/:periodo/request': ['sire:crear'],
   'GET sunat-docs/sire/:periodo/tickets': ['sire:ver'], 'GET sunat-docs/sire/:periodo/compare': ['sire:ver'],
@@ -128,7 +129,7 @@ export const ROUTE_RULES: Record<string, Rule> = {
   'GET whatsapp/status': ['whatsapp:ver'], 'GET whatsapp/contacts': ['whatsapp:ver'], 'POST whatsapp/send-text': ['whatsapp:crear'],
   'POST whatsapp/send-voucher/:saleId': ['pos:crear', 'comprobantes:crear', 'whatsapp:crear'],
 };
-export const ADMIN_ONLY = ['company-settings', 'establishments', 'users', 'profiles'];
+export const ADMIN_ONLY = ['company-settings', 'establishments', 'users', 'profiles', 'audit', 'backup'];
 
 export function isAllowed(rule: Rule | undefined, role: string, perms: Permissions): boolean {
   if (role === 'admin' || rule === '*') return true;

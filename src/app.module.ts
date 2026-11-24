@@ -28,6 +28,7 @@ import { DashboardModule } from './infrastructure/modules/dashboard.module';
 import { QuoteModule } from './infrastructure/modules/quote.module';
 import { ReceivableModule } from './infrastructure/modules/receivable.module';
 import { SunatDocsModule } from './infrastructure/modules/sunat-docs.module';
+import { AuditModule } from './infrastructure/modules/audit.module';
 
 @Module({
   imports: [
@@ -94,6 +95,7 @@ import { SunatDocsModule } from './infrastructure/modules/sunat-docs.module';
     QuoteModule,
     ReceivableModule,
     SunatDocsModule,
+    AuditModule,
   ],
 })
 export class AppModule {}

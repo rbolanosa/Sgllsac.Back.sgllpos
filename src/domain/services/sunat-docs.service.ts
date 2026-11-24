@@ -164,6 +164,67 @@ export class SunatDocsService {
     return [...latest.values()].map((v) => ({ saleId: v.saleId, ...this.voidView(v) }));
   }
 
+  // ── Alertas ───────────────────────────────────────────────────────────────
+
+  /** Rechazados y sin respuesta de los últimos 60 días. Antes consulta las notas que siguen esperando. */
+  async alerts() {
+    await Promise.race([
+      this.refreshPendingNotes().catch((e) => this.logger.warn(`Notas pendientes: ${e?.message}`)),
+      new Promise((r) => setTimeout(r, 8000)),
+    ]);
+    const now = Date.now();
+    const since = new Date(now - 60 * 86400000);
+    const sales = await this.saleRepo.createQueryBuilder('s')
+      .where('s.documentType <> :nv', { nv: DocumentType.NOTA_VENTA })
+      .andWhere('s.saleDate >= :since', { since })
+      .andWhere('s.status <> :voided', { voided: SaleStatus.VOIDED })
+      .andWhere("COALESCE(UPPER(s.sunatStatus), '') NOT IN ('ACEPTADO', 'ANULADO')")
+      .orderBy('s.saleDate', 'DESC').take(100).getMany();
+    const guias: any[] = await this.dataSource.query(
+      `SELECT id, COALESCE(numero_completo, serie) AS number, sunat_status AS status, sunat_message AS message, created_at AS date
+       FROM guias_remision WHERE created_at >= ? AND UPPER(sunat_status) <> 'ACEPTADO' ORDER BY id DESC LIMIT 50`, [since],
+    ).catch(() => []);
+    const rejected = (st: any) => /RECHAZADO|ERROR/.test(String(st || '').toUpperCase());
+    const items = [
+      ...sales.map((s) => ({ id: s.id, kind: 'sale', number: s.invoiceNumber, total: round2(Number(s.totalAmount)), date: s.saleDate, rejected: rejected(s.sunatStatus), message: s.sunatMessage })),
+      ...guias.map((g) => ({ id: g.id, kind: 'guia', number: g.number, total: null, date: g.date, rejected: rejected(g.status), message: g.message })),
+    ]
+      // Lo recién enviado suele confirmarse en minutos
+      .filter((x) => x.rejected || now - +new Date(x.date) > 3600_000);
+    return { items };
+  }
+
+  /** Las notas no se sincronizaban después de enviarlas. Solo se confirma si coinciden número y comprobante afectado. */
+  private async refreshPendingNotes() {
+    const waiting = await this.saleRepo.find({
+      where: { documentType: In([DocumentType.NOTA_CREDITO, DocumentType.NOTA_DEBITO]), sunatStatus: In(['ENVIADO', 'PENDIENTE', 'enviado', 'pendiente']) },
+      take: 10, order: { id: 'DESC' },
+    });
+    for (const note of waiting) {
+      if (!note.relatedDocumentId) continue;
+      const original = await this.saleRepo.findOne({ where: { id: note.relatedDocumentId } });
+      if (!original) continue;
+      const credit = note.documentType === DocumentType.NOTA_CREDITO;
+      const [serie, corr] = (note.dteNumber || note.invoiceNumber).split('-');
+      const [aSerie, aCorr] = original.invoiceNumber.split('-');
+      const res: any = await this.facturacion.once('get', `${credit ? '/notas-credito' : '/notas-debito'}?serie=${encodeURIComponent(serie)}&por_pagina=100`);
+      const found = (res?.datos?.datos ?? []).find((d: any) => d.serie === serie && Number(d.correlativo) === Number(corr)
+        && d.doc_afectado?.serie === aSerie && Number(d.doc_afectado?.correlativo) === Number(aCorr));
+      const estado = String(found?.sunat?.estado || '').toLowerCase();
+      if (estado !== 'aceptado' && estado !== 'rechazado') continue;
+      await this.saleRepo.update(note.id, {
+        sunatStatus: estado.toUpperCase(),
+        sunatMessage: found.sunat?.descripcion || (estado === 'aceptado' ? 'Nota aceptada por SUNAT' : 'SUNAT rechazó la nota'),
+        ...(found.archivos?.xml ? { xmlUrl: found.archivos.xml } : {}),
+        ...(found.archivos?.cdr ? { cdrUrl: found.archivos.cdr } : {}),
+      });
+      // Igual que al emitirla: aceptada la nota de crédito, el original queda anulado con NC
+      if (credit && estado === 'aceptado' && original.status === SaleStatus.COMPLETED) {
+        await this.saleRepo.update(original.id, { status: SaleStatus.REFUNDED });
+      }
+    }
+  }
+
   // ── Nota de débito ────────────────────────────────────────────────────────
 
   async createDebitNote(originalId: number, dto: { reasonCode: string; description: string; amount: number }) {

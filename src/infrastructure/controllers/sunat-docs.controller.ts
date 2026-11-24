@@ -43,6 +43,12 @@ export class SunatDocsController {
     return this.service.createDebitNote(id, dto);
   }
 
+  @Get('alerts')
+  @ApiOperation({ summary: 'Comprobantes y guías que SUNAT rechazó o todavía no responde' })
+  alerts() {
+    return this.service.alerts();
+  }
+
   @Get('sales-register')
   @ApiOperation({ summary: 'Comprobantes enviados a SUNAT en un rango de fechas, con sus montos' })
   salesRegister(@Query('from') from: string, @Query('to') to: string) {

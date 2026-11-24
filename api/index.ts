@@ -8,6 +8,7 @@ import { ensurePresentationsSchema, ensurePresentationCostsSchema } from '../src
 import { ensureStockEntriesSchema } from '../src/infrastructure/database/ensure-stock-entries-schema';
 import { ensureQuotesSchema } from '../src/infrastructure/database/ensure-quotes-schema';
 import { ensureProfilesSchema } from '../src/infrastructure/database/ensure-profiles-schema';
+import { ensureAuditSchema } from '../src/infrastructure/database/ensure-audit-schema';
 import { ensureReceivablesSchema } from '../src/infrastructure/database/ensure-receivables-schema';
 let cachedServer: any;
 
@@ -113,6 +114,11 @@ async function ensureProductionSchema() {
         await ensureProfilesSchema(conn);
       } catch (pfErr: any) {
         console.warn('[ensureProfilesSchema] Warning:', pfErr?.message);
+      }
+      try {
+        await ensureAuditSchema(conn);
+      } catch (auErr: any) {
+        console.warn('[ensureAuditSchema] Warning:', auErr?.message);
       }
       try {
         await ensureReceivablesSchema(conn);
