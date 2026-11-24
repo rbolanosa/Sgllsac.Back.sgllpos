@@ -119,6 +119,7 @@ export const ROUTE_RULES: Record<string, Rule> = {
   'GET sunat-docs/sales/:id/void': ['comprobantes:ver'], 'GET sunat-docs/voids': ['comprobantes:ver'],
   'POST sunat-docs/voids/refresh': ['comprobantes:ver'],
   'POST sunat-docs/sales/:id/void': ['comprobantes:eliminar'], 'POST sunat-docs/sales/:id/debit-note': ['comprobantes:crear'],
+  'GET sunat-docs/sales-register': ['comprobantes:ver'],
   'POST sunat-docs/sire/activate': 'admin', 'POST sunat-docs/sire/:periodo/request': ['sire:crear'],
   'GET sunat-docs/sire/:periodo/tickets': ['sire:ver'], 'GET sunat-docs/sire/:periodo/compare': ['sire:ver'],
   'GET suppliers': ['suppliers:ver', 'products:ver', 'inventory:ver', 'purchase_orders:ver', 'pos:ver'],

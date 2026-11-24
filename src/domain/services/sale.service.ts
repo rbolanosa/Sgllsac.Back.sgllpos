@@ -52,8 +52,8 @@ export class SaleService {
     private readonly cashService: CashService,
   ) {}
 
-  async findAll(filters: { page?: number; limit?: number; status?: SaleStatus; from?: string; to?: string; documentType?: string } = {}) {
-    const { page = 1, limit = 30, status, from, to, documentType } = filters;
+  async findAll(filters: { page?: number; limit?: number; status?: SaleStatus; from?: string; to?: string; documentType?: string; q?: string } = {}) {
+    const { page = 1, limit = 30, status, from, to, documentType, q } = filters;
     const qb = this.saleRepo
       .createQueryBuilder('s')
       .leftJoinAndSelect('s.customer', 'c')
@@ -61,18 +61,36 @@ export class SaleService {
 
     if (status)       qb.andWhere('s.status = :status', { status });
     if (documentType) qb.andWhere('s.documentType = :documentType', { documentType });
-    if (from)         qb.andWhere('s.saleDate >= :from', { from });
-    if (to)           qb.andWhere('s.saleDate <= :to', { to });
+    if (from)         qb.andWhere('s.saleDate >= :from', { from: this.limaDayStart(from) });
+    if (to)           qb.andWhere('s.saleDate < :to', { to: this.limaDayStart(to, 1) });
+    if (q?.trim()) {
+      // "F001-32" también encuentra F001-00000032
+      const term = q.trim();
+      const short = term.match(/^([A-Za-z0-9]{4})-0*(\d+)$/);
+      qb.andWhere(
+        '(s.invoiceNumber LIKE :q OR c.name LIKE :q OR c.nit LIKE :q OR s.invoiceNumber = :full)',
+        { q: `%${term}%`, full: short ? `${short[1].toUpperCase()}-${short[2].padStart(8, '0')}` : term },
+      );
+    }
 
     const [data, total] = await qb
       .skip((page - 1) * limit)
       .take(limit)
       .orderBy('s.saleDate', 'DESC')
+      .addOrderBy('s.id', 'DESC')
       .getManyAndCount();
 
     await this.syncSunatStatuses(data);
 
     return { data, total, page, limit };
+  }
+
+  /** Medianoche de Lima del día indicado (más N días) */
+  private limaDayStart(ymd: string, addDays = 0): Date {
+    const d = new Date(`${String(ymd).slice(0, 10)}T00:00:00-05:00`);
+    if (isNaN(+d)) throw new BadRequestException('Fecha inválida');
+    d.setUTCDate(d.getUTCDate() + addDays);
+    return d;
   }
 
   /** Fecha YYYY-MM-DD en hora de Lima (el servidor corre en UTC). */

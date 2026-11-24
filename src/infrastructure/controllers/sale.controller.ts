@@ -23,8 +23,9 @@ export class SaleController {
     @Query('from') from?: string,
     @Query('to') to?: string,
     @Query('documentType') documentType?: string,
+    @Query('q') q?: string,
   ) {
-    return this.saleService.findAll({ page: +page, limit: +limit, status, from, to, documentType });
+    return this.saleService.findAll({ page: +page, limit: +limit, status, from, to, documentType, q });
   }
 
   @Get('summary')
