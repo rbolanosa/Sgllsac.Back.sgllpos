@@ -204,15 +204,18 @@ export class SunatDocsService {
     });
     let r: any;
     try {
-      r = this.unwrap(await this.facturacion.once('get', `/consultar-cpe?${params}`));
+      // Facturas y sus notas: con la clave SOL de envío. Boletas: SUNAT solo las atiende en la Consulta Integrada
+      r = serie.startsWith('F')
+        ? this.unwrap(await this.facturacion.once('post', '/consultar-cdr', { tipo_documento: code, serie, correlativo: Number(corr) }))
+        : this.unwrap(await this.facturacion.once('get', `/consultar-cpe?${params}`));
     } catch (e: any) {
       const msg = this.apiError(e, 'sin respuesta');
-      if (/client_id|client_secret|credenciales|autoriz/i.test(msg)) {
-        throw new BadRequestException(`SUNAT no autorizó la consulta con las credenciales de API SUNAT de tu empresa (${msg}). En Clave SOL → Empresas → Credenciales de API SUNAT, revisa que tu aplicación tenga permiso para consultar comprobantes.`);
+      if (!serie.startsWith('F') && /client_id|client_secret|credenciales|autoriz/i.test(msg)) {
+        throw new BadRequestException('SUNAT no permite consultar boletas con las credenciales actuales. Las facturas y sus notas sí se pueden consultar.');
       }
       throw new BadRequestException(`SUNAT no respondió la consulta: ${msg}`);
     }
-    if (!r?.encontrado) return { sunat: 'NO EXISTE', changed: false, message: r?.mensaje || 'SUNAT no tiene registrado este comprobante' };
+    if (!r?.encontrado) return { sunat: 'NO EXISTE', changed: false, message: 'SUNAT no tiene registrado este comprobante' };
     const estado = String(r.estado_cp_descripcion || '').toUpperCase();
     const local = String(sale.sunatStatus || '').toUpperCase();
     let changed = false;

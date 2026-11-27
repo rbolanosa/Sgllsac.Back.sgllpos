@@ -45,10 +45,11 @@ describe('anular boletas y consultar en SUNAT', () => {
     const ok = make(sale({ documentType: 'nota_credito', invoiceNumber: 'FC01-2', sunatStatus: 'ENVIADO', relatedDocumentId: 7 }),
       async () => ({ datos: { encontrado: true, estado_cp_descripcion: 'ACEPTADO' } }));
     expect(await ok.svc.checkInSunat(1)).toMatchObject({ sunat: 'ACEPTADO', changed: true });
-    expect(ok.fac.once.mock.calls[0][1]).toContain('tipo_doc=07&serie=FC01&correlativo=2');
+    expect(ok.fac.once.mock.calls[0].slice(0, 3)).toEqual(['post', '/consultar-cdr', { tipo_documento: '07', serie: 'FC01', correlativo: 2 }]);
     expect(ok.saleRepo.update).toHaveBeenCalledTimes(2);
     const nulled = make(sale({ sunatStatus: 'ENVIADO' }), async () => ({ datos: { encontrado: true, estado_cp_descripcion: 'ANULADO' } }));
     expect(await nulled.svc.checkInSunat(1)).toMatchObject({ sunat: 'ANULADO', changed: false });
     expect(nulled.saleRepo.update).not.toHaveBeenCalled();
+    expect(nulled.fac.once.mock.calls[0][1]).toContain('/consultar-cpe?tipo_doc=03&serie=B001');
   });
 });
