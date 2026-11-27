@@ -207,8 +207,8 @@ export class SunatDocsService {
       r = this.unwrap(await this.facturacion.once('get', `/consultar-cpe?${params}`));
     } catch (e: any) {
       const msg = this.apiError(e, 'sin respuesta');
-      if (/client_id|client_secret|credenciales/i.test(msg)) {
-        throw new BadRequestException('Falta activar la Consulta Integrada de SUNAT: genera el client_id y client_secret en Clave SOL (Empresas → Comprobantes de pago → Consulta Integrada CPE → API) y regístralos en APISUNAT.');
+      if (/client_id|client_secret|credenciales|autoriz/i.test(msg)) {
+        throw new BadRequestException(`SUNAT no autorizó la consulta con las credenciales de API SUNAT de tu empresa (${msg}). En Clave SOL → Empresas → Credenciales de API SUNAT, revisa que tu aplicación tenga permiso para consultar comprobantes.`);
       }
       throw new BadRequestException(`SUNAT no respondió la consulta: ${msg}`);
     }
