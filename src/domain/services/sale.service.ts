@@ -30,6 +30,18 @@ import { WhatsappMultiService } from '../../infrastructure/services/whatsapp-mul
 import { CashService } from './cash.service';
 import { resolveSunatUnit, stripBoxSuffix } from '../constants/sunat-units';
 
+/**
+ * Un comprobante que SUNAT aceptó (o que todavía puede aceptar) no se anula solo en el sistema:
+ * para SUNAT seguiría vigente. Se anula ante SUNAT o con nota de crédito.
+ */
+export function sunatVoidBlock(sale: Pick<SaleEntity, 'documentType' | 'sunatStatus'>): string | null {
+  if (sale.documentType === DocumentType.NOTA_VENTA) return null;
+  const st = String(sale.sunatStatus || '').toUpperCase();
+  if (st === 'ACEPTADO') return 'SUNAT ya aceptó este comprobante: anúlalo ante SUNAT (hasta 7 días) o emite una nota de crédito.';
+  if (st === 'ENVIADO' || st === 'PENDIENTE') return 'SUNAT todavía no responde por este comprobante: consulta su estado en SUNAT antes de anularlo.';
+  return null;
+}
+
 @Injectable()
 export class SaleService {
   private readonly logger = new Logger(SaleService.name);
@@ -1237,6 +1249,8 @@ export class SaleService {
       if (sale.status !== SaleStatus.COMPLETED) {
         throw new BadRequestException('Only completed sales can be voided');
       }
+      const lock = sunatVoidBlock(sale);
+      if (lock) throw new BadRequestException(lock);
 
       // Reverse stock
       for (const item of sale.items) {
