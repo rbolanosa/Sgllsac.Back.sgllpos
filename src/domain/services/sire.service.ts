@@ -13,6 +13,26 @@ export const invoiceKey = (ruc: string, serie: string, num?: string | number) =>
   return `${String(ruc).trim()}|${String(s || '').trim().toUpperCase()}-${/^\d+$/.test(String(n).trim()) ? Number(n) : String(n).trim().toUpperCase()}`;
 };
 
+/** Tipos que no son factura: se listan aparte, sin compararlos con Ingreso por factura */
+export const OTHER_TYPES: Record<string, string> = { '03': 'Boleta', '07': 'Nota de crédito', '08': 'Nota de débito' };
+
+/** Las notas de crédito restan, sea cual sea el signo con que SUNAT las mande */
+export const signedTotal = (type: string, total: number) => (String(type) === '07' ? -Math.abs(total) : total);
+
+/**
+ * Comprobante que modifica una nota, leído de la línea original de la propuesta.
+ * Columnas tras moneda y tipo de cambio: fecha, tipo, serie, DAM y número del documento modificado.
+ * Si algo no tiene el formato esperado, devuelve null en vez de adivinar.
+ */
+export function affectedFromRaw(raw?: string | null): { type: string; number: string; date: string | null } | null {
+  const f = String(raw || '').split('|').map((x) => x.trim());
+  if (!/^\d{11}$/.test(f[0] || '')) return null;
+  const [date, type, serie, , num] = f.slice(27, 32);
+  if (!/^0[1-9]$/.test(type || '') || !/^[A-Z0-9]{1,4}$/i.test(serie || '') || !/^\d+$/.test(num || '')) return null;
+  const d = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(date || '');
+  return { type, number: `${serie.toUpperCase()}-${Number(num)}`, date: d ? `${d[3]}-${d[2]}-${d[1]}` : null };
+}
+
 /**
  * Registro de Compras de SUNAT (SIRE): lo que tus proveedores declararon a tu nombre,
  * cruzado con las facturas cargadas en "Ingreso por factura". Solo lee.
@@ -97,6 +117,7 @@ export class SireService {
     const sunatKeys = new Set<string>();
     const missing: any[] = [];
     const matched: any[] = [];
+    const others: any[] = [];
     for (const c of sunat) {
       const key = invoiceKey(c.num_doc_proveedor, c.num_serie_cdp, c.num_cdp);
       sunatKeys.add(key);
@@ -108,6 +129,8 @@ export class SireService {
       if (mine) matched.push({ ...row, loadedTotal: Number(mine.total), entryId: mine.id, diff: round2(row.total - Number(mine.total)) });
       // Notas y otros documentos no se cargan como factura de compra
       else if (String(c.cod_tipo_cdp) === '01') missing.push(row);
+      // Notas y boletas no se cargan como factura de compra: se muestran aparte, con el signo que corresponde
+      else others.push({ ...row, typeLabel: OTHER_TYPES[String(c.cod_tipo_cdp)] ?? `Tipo ${c.cod_tipo_cdp}`, total: signedTotal(c.cod_tipo_cdp, row.total), affected: affectedFromRaw(c.raw_line) });
     }
     const onlyLocal = local
       .filter((e) => !sunatKeys.has(invoiceKey(e.supplierRuc, e.invoiceNumber)))
@@ -119,9 +142,11 @@ export class SireService {
       sunatCount: sunat.length,
       totals: {
         sunat: round2(sunat.reduce((s, c) => s + Number(c.mto_total || 0), 0)),
+        // Neto: las notas de crédito restan
+        sunatNet: round2(sunat.reduce((s, c) => s + signedTotal(c.cod_tipo_cdp, Number(c.mto_total || 0)), 0)),
         loaded: round2(local.reduce((s, e) => s + Number(e.total || 0), 0)),
       },
-      matched, missing, onlyLocal,
+      matched, missing, onlyLocal, others,
     };
   }
 }
