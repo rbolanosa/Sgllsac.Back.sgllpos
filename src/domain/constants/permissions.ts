@@ -117,7 +117,7 @@ export const ROUTE_RULES: Record<string, Rule> = {
   'GET stock-entries': ['stock_entry:ver'], 'GET stock-entries/:id': ['stock_entry:ver'],
   'POST stock-entries/preview': ['stock_entry:crear'], 'POST stock-entries': ['stock_entry:crear'],
   'GET sunat-docs/sales/:id/void': ['comprobantes:ver'], 'GET sunat-docs/voids': ['comprobantes:ver'],
-  'POST sunat-docs/voids/refresh': ['comprobantes:ver'],
+  'POST sunat-docs/voids/refresh': ['comprobantes:ver'], 'POST sunat-docs/sales/:id/sunat-check': ['comprobantes:ver'],
   'POST sunat-docs/sales/:id/void': ['comprobantes:eliminar'], 'POST sunat-docs/sales/:id/debit-note': ['comprobantes:crear'],
   'GET sunat-docs/alerts': ['comprobantes:ver'],
   'GET sunat-docs/sales-register': ['comprobantes:ver'],

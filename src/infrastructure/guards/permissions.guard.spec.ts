@@ -46,7 +46,7 @@ describe('permisos', () => {
       .forEach((r) => expect([r, can(r, 'cajero')]).toEqual([r, false]));
   });
   it('consulta no cambia nada', () => {
-    expect(routes.filter((r) => !r.startsWith('GET') && can(r, 'consulta'))).toEqual(['POST sunat-docs/voids/refresh']);
+    expect(routes.filter((r) => !r.startsWith('GET') && can(r, 'consulta'))).toEqual(['POST sunat-docs/sales/:id/sunat-check', 'POST sunat-docs/voids/refresh']);
   });
   it('descarta permisos inventados y los que no tienen "ver"', () => {
     expect(cleanPermissions({ users: { ver: true }, sales: { ver: false, eliminar: true }, pos: { ver: true, borrar: true } })).toEqual({ pos: { ver: true } });

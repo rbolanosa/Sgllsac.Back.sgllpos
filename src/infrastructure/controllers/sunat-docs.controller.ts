@@ -24,6 +24,12 @@ export class SunatDocsController {
     return this.service.requestVoid(id, dto.reason, rawId ? Number(rawId) : undefined);
   }
 
+  @Post('sales/:id/sunat-check')
+  @ApiOperation({ summary: 'Consulta en SUNAT el estado real del comprobante' })
+  sunatCheck(@Param('id', ParseIntPipe) id: number) {
+    return this.service.checkInSunat(id);
+  }
+
   @Post('voids/refresh')
   @ApiOperation({ summary: 'Consulta en SUNAT las bajas pendientes' })
   refreshPending() {

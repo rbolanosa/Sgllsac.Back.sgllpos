@@ -23,6 +23,11 @@ export const DEBIT_REASONS: Record<string, string> = {
 /** Días que SUNAT permite para la comunicación de baja de una factura */
 export const VOID_MAX_DAYS = 7;
 
+/** Código SUNAT de cada comprobante que se puede consultar */
+export const CPE_CODES: Partial<Record<DocumentType, string>> = {
+  [DocumentType.FACTURA]: '01', [DocumentType.BOLETA]: '03', [DocumentType.NOTA_CREDITO]: '07', [DocumentType.NOTA_DEBITO]: '08',
+};
+
 export function daysSince(issueYmd: string, todayYmd: string): number {
   return Math.round((+new Date(`${todayYmd}T12:00:00Z`) - +new Date(`${issueYmd}T12:00:00Z`)) / 86400000);
 }
@@ -62,11 +67,12 @@ export class SunatDocsService {
     const last = await this.voidRepo.findOne({ where: { saleId }, order: { id: 'DESC' } });
     const days = daysSince(limaYmd(new Date(sale.saleDate)), limaYmd(new Date()));
     let reason: string | null = null;
-    if (sale.documentType !== DocumentType.FACTURA) reason = 'Solo las facturas se anulan con comunicación de baja';
+    const kind = sale.documentType === DocumentType.BOLETA ? 'la boleta' : 'la factura';
+    if (sale.documentType !== DocumentType.FACTURA && sale.documentType !== DocumentType.BOLETA) reason = 'Solo las facturas y boletas se anulan ante SUNAT';
     else if (sale.status !== SaleStatus.COMPLETED) reason = 'La venta ya está anulada';
-    else if (String(sale.sunatStatus || '').toUpperCase() !== 'ACEPTADO') reason = 'SUNAT todavía no acepta la factura';
-    else if (days > VOID_MAX_DAYS) reason = `Pasaron ${days} días: SUNAT solo permite la baja hasta ${VOID_MAX_DAYS} días. Usa nota de crédito`;
-    else if (last && last.status !== 'RECHAZADO') reason = 'Ya se pidió la baja de esta factura';
+    else if (String(sale.sunatStatus || '').toUpperCase() !== 'ACEPTADO') reason = `SUNAT todavía no acepta ${kind}`;
+    else if (days > VOID_MAX_DAYS) reason = `Pasaron ${days} días: SUNAT solo permite anular hasta ${VOID_MAX_DAYS} días después. Usa nota de crédito`;
+    else if (last && last.status !== 'RECHAZADO') reason = `Ya se pidió la baja de ${kind}`;
     return { allowed: !reason, reason, daysLeft: Math.max(0, VOID_MAX_DAYS - days), last: last ? this.voidView(last) : null };
   }
 
@@ -83,17 +89,29 @@ export class SunatDocsService {
 
     let res: any;
     try {
-      res = await this.facturacion.post<any>('/anulaciones', {
-        fecha_generacion: limaYmd(new Date(sale.saleDate)),
-        fecha_comunicacion: today,
-        detalles: [{ tipo_documento: '01', serie, correlativo: String(Number(corr)), motivo: reason.trim().slice(0, 255) }],
-      });
+      if (sale.documentType === DocumentType.BOLETA) {
+        // Las boletas se anulan con un resumen diario (RC) de la fecha en que se emitieron
+        const found: any = await this.facturacion.once('get', `/boletas?serie=${encodeURIComponent(serie)}&correlativo=${Number(corr)}&por_pagina=5`);
+        const boleta = (this.unwrap(found)?.datos ?? []).find((b: any) => b.serie === serie && Number(b.correlativo) === Number(corr));
+        if (!boleta?.id) throw new BadRequestException('No se encontró la boleta en APISUNAT');
+        res = await this.facturacion.once('post', '/resumenes', {
+          fecha_resumen: limaYmd(new Date(sale.saleDate)),
+          anular: [{ id: boleta.id, motivo: reason.trim().slice(0, 255) }],
+        });
+      } else {
+        res = await this.facturacion.post<any>('/anulaciones', {
+          fecha_generacion: limaYmd(new Date(sale.saleDate)),
+          fecha_comunicacion: today,
+          detalles: [{ tipo_documento: '01', serie, correlativo: String(Number(corr)), motivo: reason.trim().slice(0, 255) }],
+        });
+      }
     } catch (e: any) {
+      if (e instanceof BadRequestException) throw e;
       throw new BadRequestException(`SUNAT/APISUNAT no aceptó la baja: ${this.apiError(e, 'error al enviar')}`);
     }
     const d = this.unwrap(res);
     const v = await this.voidRepo.save(this.voidRepo.create({
-      saleId, apisunatId: d?.id_anulacion ?? null, identifier: d?.identifier ?? null,
+      saleId, apisunatId: d?.id_anulacion ?? d?.id_resumen ?? null, identifier: d?.identifier ?? null,
       reason: reason.trim().slice(0, 255), status: 'PENDIENTE',
       message: 'Baja enviada a SUNAT. Se confirma en unos minutos.', createdBy: userId ?? null,
     }));
@@ -108,7 +126,9 @@ export class SunatDocsService {
     if (!v) throw new NotFoundException('Comunicación de baja no encontrada');
     if (v.status !== 'PENDIENTE' || !v.apisunatId) return this.voidView(v);
 
-    const res: any = await this.facturacion.get(`/anulaciones/${v.apisunatId}/estado`);
+    // RC = resumen diario (boletas); RA = comunicación de baja (facturas)
+    const path = String(v.identifier || '').startsWith('RC-') ? 'resumenes' : 'anulaciones';
+    const res: any = await this.facturacion.get(`/${path}/${v.apisunatId}/estado`);
     const d = this.unwrap(res);
     const estado = String(d?.estado_sunat || '').toLowerCase();
     if (estado === 'aceptado') {
@@ -162,6 +182,52 @@ export class SunatDocsService {
     const latest = new Map<number, SunatVoidEntity>();
     rows.forEach((r) => { if (!latest.has(r.saleId)) latest.set(r.saleId, r); });
     return [...latest.values()].map((v) => ({ saleId: v.saleId, ...this.voidView(v) }));
+  }
+
+  // ── Estado real en SUNAT ──────────────────────────────────────────────────
+
+  /**
+   * Pregunta a SUNAT (Consulta Integrada) por el comprobante. Solo corrige el estado si SUNAT
+   * confirma que está aceptado; si dice anulado o inexistente, solo informa: no toca stock ni ventas.
+   */
+  async checkInSunat(saleId: number) {
+    const sale = await this.saleRepo.findOne({ where: { id: saleId } });
+    if (!sale) throw new NotFoundException('Venta no encontrada');
+    const code = CPE_CODES[sale.documentType];
+    if (!code) throw new BadRequestException('Las notas de venta no se envían a SUNAT');
+    const [serie, corr] = (sale.dteNumber || sale.invoiceNumber).split('-');
+    if (!/^[A-Z0-9]{4}$/.test(serie || '') || !/^\d+$/.test(corr || '')) throw new BadRequestException('El comprobante todavía no tiene número de SUNAT');
+    const [y, m, d] = limaYmd(new Date(sale.saleDate)).split('-');
+    const params = new URLSearchParams({
+      tipo_doc: code, serie, correlativo: String(Number(corr)), fecha_emision: `${d}/${m}/${y}`,
+      monto: round2(Number(sale.totalAmount)).toFixed(2),
+    });
+    let r: any;
+    try {
+      r = this.unwrap(await this.facturacion.once('get', `/consultar-cpe?${params}`));
+    } catch (e: any) {
+      const msg = this.apiError(e, 'sin respuesta');
+      if (/client_id|client_secret|credenciales/i.test(msg)) {
+        throw new BadRequestException('Falta activar la Consulta Integrada de SUNAT: genera el client_id y client_secret en Clave SOL (Empresas → Comprobantes de pago → Consulta Integrada CPE → API) y regístralos en APISUNAT.');
+      }
+      throw new BadRequestException(`SUNAT no respondió la consulta: ${msg}`);
+    }
+    if (!r?.encontrado) return { sunat: 'NO EXISTE', changed: false, message: r?.mensaje || 'SUNAT no tiene registrado este comprobante' };
+    const estado = String(r.estado_cp_descripcion || '').toUpperCase();
+    const local = String(sale.sunatStatus || '').toUpperCase();
+    let changed = false;
+    if (estado === 'ACEPTADO' && local !== 'ACEPTADO' && local !== 'ANULADO') {
+      await this.saleRepo.update(sale.id, { sunatStatus: 'ACEPTADO', sunatMessage: 'Aceptado: confirmado en la consulta a SUNAT' });
+      // Igual que al emitirla: aceptada la nota de crédito, el original queda anulado con NC
+      if (sale.documentType === DocumentType.NOTA_CREDITO && sale.relatedDocumentId) {
+        await this.saleRepo.update({ id: sale.relatedDocumentId, status: SaleStatus.COMPLETED }, { status: SaleStatus.REFUNDED });
+      }
+      changed = true;
+    }
+    const message = estado === 'ACEPTADO' ? (changed ? 'SUNAT lo tiene aceptado. Se actualizó el estado.' : 'SUNAT lo tiene aceptado.')
+      : estado === 'ANULADO' ? 'SUNAT lo tiene anulado. Revisa la venta: el sistema no la anula solo.'
+      : `Estado en SUNAT: ${estado || 'desconocido'}`;
+    return { sunat: estado, changed, message };
   }
 
   // ── Alertas ───────────────────────────────────────────────────────────────

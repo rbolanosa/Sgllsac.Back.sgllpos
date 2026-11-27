@@ -16,7 +16,7 @@ export const AUDITED: Record<string, string> = {
   'POST quotes': 'Creó cotización', 'PUT quotes/:id': 'Editó cotización', 'PATCH quotes/:id/status': 'Cambió estado de cotización',
   'POST sales': 'Registró venta', 'PATCH sales/:id/void': 'Anuló venta', 'POST sales/credit-note': 'Emitió nota de crédito',
   'POST sales/:id/resend-sunat': 'Reenvió comprobante a SUNAT',
-  'POST sunat-docs/sales/:id/void': 'Dio de baja factura en SUNAT', 'POST sunat-docs/sales/:id/debit-note': 'Emitió nota de débito',
+  'POST sunat-docs/sales/:id/void': 'Pidió anular comprobante ante SUNAT', 'POST sunat-docs/sales/:id/sunat-check': 'Consultó estado en SUNAT', 'POST sunat-docs/sales/:id/debit-note': 'Emitió nota de débito',
   'POST guias-remision': 'Emitió guía de remisión', 'POST guias-remision/:id/resend-sunat': 'Reenvió guía a SUNAT',
   'POST receivables/:id/payments': 'Registró cobro',
   'POST users': 'Creó usuario', 'PUT users/:id': 'Editó usuario', 'DELETE users/:id': 'Desactivó usuario',
